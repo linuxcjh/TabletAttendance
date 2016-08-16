@@ -1,5 +1,12 @@
 package com.nuoman.tabletattendance.common.utils;
 
+import android.content.Context;
+import android.os.Build;
+import android.os.Environment;
+import android.text.InputType;
+import android.widget.EditText;
+
+import java.io.File;
 import java.lang.reflect.Method;
 import java.util.IdentityHashMap;
 import java.util.Map;
@@ -68,8 +75,72 @@ public class AppTools {
 //        return result;
 //    }
 
+    /**
+     * 方法名:获取文件存取路径
+     * <p>
+     * 功能说明：获取文件存取路径
+     * </p>
+     *
+     * @return
+     */
+    public static String getFileSavePath(Context context) {
+        if (AppTools.getSDPath().equals("")) {
+            return context.getFilesDir().getPath();
+        }
+        File file = new File(AppTools.getSDPath() + "/nuoman/pictures");
+        if (!file.exists()) {
+            if (file.mkdirs()) {
+                return file.getPath();
+            }
+            return "";
+        }
+        return file.getPath();
+    }
 
+    /**
+     * 方法名: 判断SD卡是否存在
+     * <p>
+     * 功能说明： 判断SD卡是否存在, 如果存在返回SD卡路径 , 如果不存在返回路径为空
+     * </p>
+     *
+     * @return
+     */
+    public static String getSDPath() {
+        boolean sdCardExist = Environment.getExternalStorageState().equals(
+                android.os.Environment.MEDIA_MOUNTED);
+        if (sdCardExist) {
+            File sdDir = Environment.getExternalStorageDirectory();
+            return sdDir.toString();
+        }
+        return "";
+    }
 
+    /**
+     * 禁止Edittext弹出软件盘，光标依然正常显示。
+     */
+    public static void disableShowSoftInput(EditText editTv) {
+        if (Build.VERSION.SDK_INT <= 10) {
+            editTv.setInputType(InputType.TYPE_NULL);
+        } else {
+            Class<EditText> cls = EditText.class;
+            Method method;
+            try {
+                method = cls.getMethod("setShowSoftInputOnFocus", boolean.class);
+                method.setAccessible(true);
+                method.invoke(editTv, false);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            try {
+                method = cls.getMethod("setSoftInputShownOnFocus", boolean.class);
+                method.setAccessible(true);
+                method.invoke(editTv, false);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
 
 }

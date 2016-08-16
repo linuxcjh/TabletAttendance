@@ -3,35 +3,44 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.nuoman.tabletattendance.MainActivity"
-    android:orientation="vertical">
+    tools:context="com.nuoman.tabletattendance.MainActivity">
 
     <TextView
         android:id="@+id/content_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Hello World!" />
-    
+
     <EditText
         android:id="@+id/edit_tv"
         android:layout_width="match_parent"
+        android:layout_height="80dp"
         android:layout_below="@id/content_tv"
-        android:text="水电费水电费三分水电费是打发士大夫的发送到发送到"
-        android:layout_height="80dp" />
+        android:text="水电费水电费三分水电费是打发士大夫的发送到发送到" />
+
     <EditText
         android:id="@+id/edit_pre_tv"
         android:layout_width="match_parent"
+        android:layout_height="80dp"
         android:layout_below="@id/content_tv"
-        android:hint="第一行"
-        android:layout_height="80dp" />
+        android:hint="第一行" />
+
     <EditText
         android:id="@+id/edit_sub_tv"
         android:layout_width="match_parent"
+        android:layout_height="80dp"
         android:layout_below="@id/content_tv"
-        android:hint="第二行"
-        android:layout_height="80dp" />
+        android:hint="第二行" />
+
+    <Button
+        android:id="@+id/camera_bt"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginRight="40dp"
+        android:text="Take Camera" />
 </LinearLayout>

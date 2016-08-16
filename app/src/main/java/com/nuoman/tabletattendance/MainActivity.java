@@ -1,8 +1,9 @@
 package com.nuoman.tabletattendance;
 
-import android.os.Build;
+import android.content.Intent;
 import android.os.Bundle;
-import android.text.InputType;
+import android.util.Log;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -11,13 +12,21 @@ import com.nuoman.tabletattendance.api.NuoManService;
 import com.nuoman.tabletattendance.common.BaseActivity;
 import com.nuoman.tabletattendance.common.CommonPresenter;
 import com.nuoman.tabletattendance.common.ICommonAction;
+import com.nuoman.tabletattendance.common.utils.AppConfig;
+import com.nuoman.tabletattendance.common.utils.CameraNoMarkActivity;
 import com.nuoman.tabletattendance.model.BaseReceivedModel;
 import com.nuoman.tabletattendance.model.BaseTransModel;
+import com.qiniu.android.http.ResponseInfo;
+import com.qiniu.android.storage.UpCompletionHandler;
+import com.qiniu.android.storage.UploadManager;
 
-import java.lang.reflect.Method;
+import org.json.JSONObject;
+
+import java.io.File;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class MainActivity extends BaseActivity implements ICommonAction {
 
@@ -29,6 +38,8 @@ public class MainActivity extends BaseActivity implements ICommonAction {
     EditText editPreTv;
     @Bind(R.id.edit_sub_tv)
     EditText editSubTv;
+    @Bind(R.id.camera_bt)
+    Button cameraBt;
     private CommonPresenter commonPresenter;
 
     private BaseTransModel transModel = new BaseTransModel();
@@ -39,57 +50,71 @@ public class MainActivity extends BaseActivity implements ICommonAction {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
-        disableShowSoftInput(editTv);
-        disableShowSoftInput(editPreTv);
-        disableShowSoftInput(editSubTv);
-
         initData();
 
     }
 
     private void initData() {
         commonPresenter = new CommonPresenter(this);
-        transModel.setTel("18000000000");
-        transModel.setMachineid("123");
-        commonPresenter.invokeInterfaceObtainData(NuoManService.LOGINCONTROLLER, transModel, new TypeToken<BaseReceivedModel>() {
+//        transModel.setTel("02987301181");
+//        transModel.setMachineNo("123");
+//        commonPresenter.invokeInterfaceObtainData(false, "loginCtrl", NuoManService.LOGIN, transModel, new TypeToken<BaseReceivedModel>() {
+//        });
+        commonPresenter.invokeInterfaceObtainData(false, "qiniuCtrl", NuoManService.GETTOKEN, null, new TypeToken<BaseReceivedModel>() {
         });
+
     }
 
     @Override
     public void obtainData(Object data, String methodIndex, int status) {
 
         switch (methodIndex) {
-            case NuoManService.LOGINCONTROLLER:
+            case NuoManService.GETTOKEN:
                 BaseReceivedModel model = (BaseReceivedModel) data;
-                contentTv.setText(model.getRole());
+                contentTv.setText(model.getToken());
+                AppConfig.setStringConfig("token", model.getToken());
                 break;
         }
     }
 
-    /**
-     * 禁止Edittext弹出软件盘，光标依然正常显示。
-     */
-    public void disableShowSoftInput(EditText editTv) {
-        if (Build.VERSION.SDK_INT <= 10) {
-            editTv.setInputType(InputType.TYPE_NULL);
-        } else {
-            Class<EditText> cls = EditText.class;
-            Method method;
-            try {
-                method = cls.getMethod("setShowSoftInputOnFocus", boolean.class);
-                method.setAccessible(true);
-                method.invoke(editTv, false);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
 
-            try {
-                method = cls.getMethod("setSoftInputShownOnFocus", boolean.class);
-                method.setAccessible(true);
-                method.invoke(editTv, false);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+    @OnClick(R.id.camera_bt)
+    public void onClick() {
+
+        startActivityForResult(new Intent(this, CameraNoMarkActivity.class),0x11);
+
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (data != null) {
+            uploadImageToQiNiu(data.getStringExtra("filePath"), AppConfig.getStringConfig("filePath", ""));
         }
+    }
+
+    /**
+     * 上传图片到七牛
+     *
+     * @param filePath 要上传的图片路径
+     * @param token    在七牛官网上注册的token
+     */
+
+    private void uploadImageToQiNiu(String filePath, String token) {
+        UploadManager uploadManager = new UploadManager();
+        // 设置图片名字
+        File file = new File(filePath);
+        if (file.exists()) {
+            uploadManager.put(filePath, file.getName(), token, new UpCompletionHandler() {
+                @Override
+                public void complete(String key, ResponseInfo info, JSONObject res) {
+                    // info.error中包含了错误信息，可打印调试
+                    // 上传成功后将key值上传到自己的服务器
+
+                    Log.d("NuoMan","key: "+key +"\n");
+                }
+            }, null);
+        }
+
     }
 }

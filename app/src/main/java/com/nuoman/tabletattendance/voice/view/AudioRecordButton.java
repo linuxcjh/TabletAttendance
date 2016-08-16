@@ -200,7 +200,6 @@ public class AudioRecordButton extends Button implements AudioManager.AudioStage
      * 回复标志位以及状态
      */
     private void reset() {
-        // TODO Auto-generated method stub
         isRecording = false;
         changeState(STATE_NORMAL);
         mReady = false;
@@ -208,7 +207,6 @@ public class AudioRecordButton extends Button implements AudioManager.AudioStage
     }
 
     private boolean wantToCancel(int x, int y) {
-        // TODO Auto-generated method stub
 
         if (x < 0 || x > getWidth()) {// 判断是否在左边，右边，上边，下边
             return true;
@@ -221,7 +219,6 @@ public class AudioRecordButton extends Button implements AudioManager.AudioStage
     }
 
     private void changeState(int state) {
-        // TODO Auto-generated method stub
         if (mCurrentState != state) {
             mCurrentState = state;
             switch (mCurrentState) {
@@ -253,7 +250,6 @@ public class AudioRecordButton extends Button implements AudioManager.AudioStage
 
     @Override
     public boolean onPreDraw() {
-        // TODO Auto-generated method stub
         return false;
     }
 

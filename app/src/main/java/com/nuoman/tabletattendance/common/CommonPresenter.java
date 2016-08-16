@@ -3,6 +3,8 @@ package com.nuoman.tabletattendance.common;
 import com.google.gson.reflect.TypeToken;
 import com.nuoman.tabletattendance.common.utils.AppTools;
 
+import java.util.HashMap;
+
 /**
  * 【CommonPresenter presenter】
  * AUTHOR: Alex
@@ -18,7 +20,6 @@ public class CommonPresenter extends BasePresenter {
     }
 
 
-
     /**
      * 有参公共方法调用
      *
@@ -26,10 +27,14 @@ public class CommonPresenter extends BasePresenter {
      * @param model
      * @param typeToken
      */
-    public void invokeInterfaceObtainData(String methodName, Object model, TypeToken<?> typeToken) {
-        commonApi(methodName, AppTools.toMap(model), typeToken);
-    }
+    public void invokeInterfaceObtainData(boolean isPost, String part, String methodName, Object model, TypeToken<?> typeToken) {
+        if (model == null) {
+            commonApi(isPost, part, methodName, new HashMap<String, String>(), typeToken);
+        } else {
+            commonApi(isPost, part, methodName, AppTools.toMap(model), typeToken);
 
+        }
+    }
 
 
     @Override
@@ -37,7 +42,7 @@ public class CommonPresenter extends BasePresenter {
 
         switch (methodName) {
             default:
-                iCommonAction.obtainData(object, methodName,status);
+                iCommonAction.obtainData(object, methodName, status);
                 break;
 
         }

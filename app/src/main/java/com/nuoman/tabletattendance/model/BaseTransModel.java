@@ -9,7 +9,7 @@ public class BaseTransModel {
 //    tel=18000000000&machineid=123
 
     private String tel;
-    private String machineid;
+    private String machineNo;
 
     public String getTel() {
         return tel;
@@ -19,12 +19,12 @@ public class BaseTransModel {
         this.tel = tel;
     }
 
-    public String getMachineid() {
-        return machineid;
+    public String getMachineNo() {
+        return machineNo;
     }
 
-    public void setMachineid(String machineid) {
-        this.machineid = machineid;
+    public void setMachineNo(String machineNo) {
+        this.machineNo = machineNo;
     }
 }
 

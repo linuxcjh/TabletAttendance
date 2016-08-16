@@ -79,12 +79,16 @@ public abstract class BasePresenter {
      * @param parameterMap 参数
      * @param typeToken    返回值类型
      */
-    public void commonApi(final String methodName, Map<String, String> parameterMap, final TypeToken<?> typeToken) {
+    public void commonApi(boolean isPost, final String part, final String methodName, Map<String, String> parameterMap, final TypeToken<?> typeToken) {
         isShowFlag = false;
         if (Utils.checkNetworkConnection()) {
             delayDisplayProgress();
-
-            Call<String> call = service.serviceAPI(methodName, parameterMap);
+            Call<String> call;
+            if (isPost) {
+                call = service.serviceAPI(part, methodName, parameterMap);
+            } else {
+                call = service.serviceGetAPI(part, methodName, parameterMap);
+            }
             call.enqueue(new Callback<String>() {
                 @Override
                 public void onResponse(Response<String> response, Retrofit retrofit) {
@@ -125,9 +129,9 @@ public abstract class BasePresenter {
      * @param methodName
      * @param typeToken
      */
-    public void commonApi(final String methodName, final TypeToken<?> typeToken) {
+    public void commonApi(boolean isPost, final String part, final String methodName, final TypeToken<?> typeToken) {
 
-        commonApi(methodName, null, typeToken);
+        commonApi(isPost, part, methodName, null, typeToken);
 
     }
 
@@ -231,9 +235,9 @@ public abstract class BasePresenter {
      * @param methodName
      * @param parameterMap
      */
-    public void commonApi(final String methodName, Map<String, String> parameterMap) {
+    public void commonApi(boolean isPost, final String part, final String methodName, Map<String, String> parameterMap) {
 
-        commonApi(methodName, parameterMap, null);
+        commonApi(isPost, part, methodName, parameterMap, null);
     }
 
 

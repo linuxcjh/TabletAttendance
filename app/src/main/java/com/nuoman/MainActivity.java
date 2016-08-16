@@ -8,13 +8,13 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
 import com.nuoman.syncadapter.pro.NoteProviderMetaData;
 import com.nuoman.tabletattendance.R;
+import com.nuoman.tabletattendance.common.BaseActivity;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends BaseActivity {
 
 
     public static final String ACCOUNT_TYPE = "example.com";
@@ -34,12 +34,12 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_home_layout);
         mAccount = CreateSyncAccount(this);
 
         ContentResolver.setSyncAutomatically(mAccount, NoteProviderMetaData.AUTHORITY, true);
         ContentResolver.addPeriodicSync(mAccount, NoteProviderMetaData.AUTHORITY, Bundle.EMPTY, SYNC_INTERVAL);
-//        requestSync();
+        requestSync();
 //        insert();
 
 //        query();

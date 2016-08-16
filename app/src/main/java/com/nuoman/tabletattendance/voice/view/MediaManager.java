@@ -18,7 +18,6 @@ public class MediaManager {
 
 	public static  void playSound(String filePathString,
 			OnCompletionListener onCompletionListener) {
-		// TODO Auto-generated method stub
 		if (mPlayer==null) {
 			mPlayer=new MediaPlayer();
 			//保险起见，设置报错监听
@@ -26,7 +25,6 @@ public class MediaManager {
 				
 				@Override
 				public boolean onError(MediaPlayer mp, int what, int extra) {
-					// TODO Auto-generated method stub
 					mPlayer.reset();
 					return false;
 				}
@@ -42,16 +40,12 @@ public class MediaManager {
 			mPlayer.prepare();
 			mPlayer.start();
 		} catch (IllegalArgumentException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (SecurityException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IllegalStateException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

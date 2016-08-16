@@ -7,9 +7,11 @@ package com.nuoman.tabletattendance.api;
 public interface NuoManService {
 
 
-    String UPLOADFILE = "searchFlowByAllList";
 
     //登陆
-    String LOGINCONTROLLER="LoginController";
+    String LOGIN="Login";
+
+    //7牛token
+    String GETTOKEN="GetToken";
 
 }

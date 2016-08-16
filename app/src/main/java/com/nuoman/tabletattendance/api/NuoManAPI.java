@@ -7,10 +7,12 @@ import java.util.Map;
 import retrofit.Call;
 import retrofit.http.FieldMap;
 import retrofit.http.FormUrlEncoded;
+import retrofit.http.GET;
 import retrofit.http.Multipart;
 import retrofit.http.POST;
 import retrofit.http.PartMap;
 import retrofit.http.Path;
+import retrofit.http.QueryMap;
 
 /**
  * Total API
@@ -19,7 +21,7 @@ import retrofit.http.Path;
  */
 public interface NuoManAPI {
 
-    String URL ="http://123.57.34.179/attendence_sys/";
+    String URL = "http://120.27.137.6:8080/AttendenceMachineSys/";
 
     /**
      * 通用接口调用
@@ -28,8 +30,13 @@ public interface NuoManAPI {
      * @return
      */
     @FormUrlEncoded
-    @POST("{methodName}")
-    Call<String> serviceAPI(@Path("methodName") String methodName, @FieldMap() Map<String, String> map);
+    @POST("{part}/{methodName}")
+    Call<String> serviceAPI(@Path("part") String part, @Path("methodName") String methodName, @FieldMap() Map<String, String> map);
+
+    @GET("{part}/{methodName}")
+    Call<String> serviceGetAPI(@Path("part") String part, @Path("methodName") String methodName, @QueryMap() Map<String, String> map);
+
+
 
     //图片上传
 

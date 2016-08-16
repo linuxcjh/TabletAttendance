@@ -10,12 +10,9 @@ import android.os.Bundle;
 import android.os.RemoteException;
 import android.util.Log;
 
-import com.google.gson.reflect.TypeToken;
 import com.nuoman.syncadapter.pro.NoteProviderMetaData;
-import com.nuoman.tabletattendance.api.NuoManService;
 import com.nuoman.tabletattendance.common.CommonPresenter;
 import com.nuoman.tabletattendance.common.ICommonAction;
-import com.nuoman.tabletattendance.model.BaseReceivedModel;
 import com.nuoman.tabletattendance.model.BaseTransModel;
 
 /**
@@ -44,27 +41,27 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter implements ICommonA
     public void onPerformSync(Account account, Bundle extras, String authority, ContentProviderClient provider, SyncResult syncResult) {
 
 
-        query(provider);
-        executeTask();
+//        query(provider);
+//        executeTask();
         Log.d("SYNC", "onPerformSync   ---  ");
 
     }
 
     private void executeTask() {
-        transModel.setTel("18000000000");
-        transModel.setMachineid("123");
-        commonPresenter.invokeInterfaceObtainData(NuoManService.LOGINCONTROLLER, transModel, new TypeToken<BaseReceivedModel>() {
-        });
+//        transModel.setTel("18000000000");
+//        transModel.setMachineid("123");
+//        commonPresenter.invokeInterfaceObtainData(NuoManService.LOGINCONTROLLER, transModel, new TypeToken<BaseReceivedModel>() {
+//        });
     }
 
     @Override
     public void obtainData(Object data, String methodIndex, int status) {
 
         switch (methodIndex) {
-            case NuoManService.LOGINCONTROLLER:
-                BaseReceivedModel model = (BaseReceivedModel) data;
-                Log.d("SYNC", "obtainData   ---  "+model.getRole());
-                break;
+//            case NuoManService.LOGINCONTROLLER:
+//                BaseReceivedModel model = (BaseReceivedModel) data;
+//                Log.d("SYNC", "obtainData   ---  "+model.getRole());
+//                break;
         }
     }
 

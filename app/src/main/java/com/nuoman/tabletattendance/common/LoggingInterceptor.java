@@ -24,7 +24,7 @@ public  class LoggingInterceptor implements Interceptor {
                 request.url(), chain.connection(), request.headers());
       if(BuildConfig.DEBUG){
           Log.d("-- NuoMan --",  requestLog);
-          Log.d("-- NuoMan --",  bodyToString(request));
+//          Log.d("-- NuoMan --",  bodyToString(request));
       }
         Response response = chain.proceed(request);
         long t2 = System.nanoTime();
