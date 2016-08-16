@@ -16,109 +16,110 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class VoiceActivity extends Activity {
-	AudioRecordButton button;
 
-	private ListView mlistview;
-	private ArrayAdapter<Recorder> mAdapter;
-	private View viewanim;
-	private List<Recorder> mDatas = new ArrayList<Recorder>();
+    AudioRecordButton button;
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_voice_main);
+    private ListView mlistview;
+    private ArrayAdapter<Recorder> mAdapter;
+    private View viewanim;
+    private List<Recorder> mDatas = new ArrayList<Recorder>();
 
-		mlistview = (ListView) findViewById(R.id.listview);
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_voice_main);
 
-		button = (AudioRecordButton) findViewById(R.id.recordButton);
-		button.setAudioFinishRecorderListener(new AudioRecordButton.AudioFinishRecorderListener() {
+        mlistview = (ListView) findViewById(R.id.listview);
 
-			@Override
-			public void onFinished(float seconds, String filePath) {
-				Recorder recorder = new Recorder(seconds, filePath);
-				mDatas.add(recorder);
-				mAdapter.notifyDataSetChanged();
-				mlistview.setSelection(mDatas.size() - 1);
-			}
-		});
+        button = (AudioRecordButton) findViewById(R.id.recordButton);
+        button.setAudioFinishRecorderListener(new AudioRecordButton.AudioFinishRecorderListener() {
 
-		mAdapter = new RecorderAdapter(this, mDatas);
-		mlistview.setAdapter(mAdapter);
+            @Override
+            public void onFinished(float seconds, String filePath) {
+                Recorder recorder = new Recorder(seconds, filePath);
+                mDatas.add(recorder);
+                mAdapter.notifyDataSetChanged();
+                mlistview.setSelection(mDatas.size() - 1);
+            }
+        });
 
-		mlistview.setOnItemClickListener(new OnItemClickListener() {
+        mAdapter = new RecorderAdapter(this, mDatas);
+        mlistview.setAdapter(mAdapter);
 
-			@Override
-			public void onItemClick(AdapterView<?> parent, View view,
-					int position, long id) {
-				// 播放动画
-				if (viewanim!=null) {//让第二个播放的时候第一个停止播放
-					viewanim.setBackgroundResource(R.drawable.adj);
-					viewanim=null;
-				}
-				viewanim = view.findViewById(R.id.id_recorder_anim);
-				viewanim.setBackgroundResource(R.drawable.play);
-				AnimationDrawable drawable = (AnimationDrawable) viewanim
-						.getBackground();
-				drawable.start();
+        mlistview.setOnItemClickListener(new OnItemClickListener() {
 
-				// 播放音频
-				MediaManager.playSound(mDatas.get(position).filePathString,
-						new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view,
+                                    int position, long id) {
+                // 播放动画
+                if (viewanim != null) {//让第二个播放的时候第一个停止播放
+                    viewanim.setBackgroundResource(R.drawable.adj);
+                    viewanim = null;
+                }
+                viewanim = view.findViewById(R.id.id_recorder_anim);
+                viewanim.setBackgroundResource(R.drawable.play);
+                AnimationDrawable drawable = (AnimationDrawable) viewanim
+                        .getBackground();
+                drawable.start();
 
-							@Override
-							public void onCompletion(MediaPlayer mp) {
-								viewanim.setBackgroundResource(R.drawable.v_anim3);
+                // 播放音频
+                MediaManager.playSound(mDatas.get(position).filePathString,
+                        new MediaPlayer.OnCompletionListener() {
 
-							}
-						});  
-			}
-		});
-	}
-	
-	@Override
-	protected void onPause() {
-		super.onPause();
-		MediaManager.pause();
-	}
-	
-	@Override
-	protected void onResume() {
-		super.onResume();
-		MediaManager.resume();
-	}
-	
-	@Override
-	protected void onDestroy() {
-		super.onDestroy();
-		MediaManager.release();
-	}
+                            @Override
+                            public void onCompletion(MediaPlayer mp) {
+                                viewanim.setBackgroundResource(R.drawable.v_anim3);
 
-	class Recorder {
-		float time;
-		String filePathString;
+                            }
+                        });
+            }
+        });
+    }
 
-		public Recorder(float time, String filePathString) {
-			super();
-			this.time = time;
-			this.filePathString = filePathString;
-		}
+    @Override
+    protected void onPause() {
+        super.onPause();
+        MediaManager.pause();
+    }
 
-		public float getTime() {
-			return time;
-		}
+    @Override
+    protected void onResume() {
+        super.onResume();
+        MediaManager.resume();
+    }
 
-		public void setTime(float time) {
-			this.time = time;
-		}
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        MediaManager.release();
+    }
 
-		public String getFilePathString() {
-			return filePathString;
-		}
+    class Recorder {
+        float time;
+        String filePathString;
 
-		public void setFilePathString(String filePathString) {
-			this.filePathString = filePathString;
-		}
+        public Recorder(float time, String filePathString) {
+            super();
+            this.time = time;
+            this.filePathString = filePathString;
+        }
 
-	}
+        public float getTime() {
+            return time;
+        }
+
+        public void setTime(float time) {
+            this.time = time;
+        }
+
+        public String getFilePathString() {
+            return filePathString;
+        }
+
+        public void setFilePathString(String filePathString) {
+            this.filePathString = filePathString;
+        }
+
+    }
 
 }

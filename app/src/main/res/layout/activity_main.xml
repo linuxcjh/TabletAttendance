@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -7,11 +7,31 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.nuoman.tabletattendance.MainActivity">
+    tools:context="com.nuoman.tabletattendance.MainActivity"
+    android:orientation="vertical">
 
     <TextView
         android:id="@+id/content_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Hello World!" />
-</RelativeLayout>
+    
+    <EditText
+        android:id="@+id/edit_tv"
+        android:layout_width="match_parent"
+        android:layout_below="@id/content_tv"
+        android:text="水电费水电费三分水电费是打发士大夫的发送到发送到"
+        android:layout_height="80dp" />
+    <EditText
+        android:id="@+id/edit_pre_tv"
+        android:layout_width="match_parent"
+        android:layout_below="@id/content_tv"
+        android:hint="第一行"
+        android:layout_height="80dp" />
+    <EditText
+        android:id="@+id/edit_sub_tv"
+        android:layout_width="match_parent"
+        android:layout_below="@id/content_tv"
+        android:hint="第二行"
+        android:layout_height="80dp" />
+</LinearLayout>

@@ -38,7 +38,6 @@ public class AudioRecordButton extends Button implements AudioManager.AudioStage
 
     public AudioRecordButton(Context context) {
         this(context, null);
-        // TODO Auto-generated constructor stub
     }
 
     public AudioRecordButton(Context context, AttributeSet attrs) {
@@ -56,13 +55,11 @@ public class AudioRecordButton extends Button implements AudioManager.AudioStage
 
             @Override
             public boolean onLongClick(View v) {
-                // TODO Auto-generated method
                 mReady = true;
                 mAudioManager.prepareAudio();
                 return false;
             }
         });
-        // TODO Auto-generated constructor stub
     }
 
     /**
