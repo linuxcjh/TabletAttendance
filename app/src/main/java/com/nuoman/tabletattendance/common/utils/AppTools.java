@@ -6,6 +6,11 @@ import android.os.Environment;
 import android.text.InputType;
 import android.widget.EditText;
 
+import com.google.gson.reflect.TypeToken;
+import com.nuoman.tabletattendance.api.NuoManService;
+import com.nuoman.tabletattendance.common.BasePresenter;
+import com.nuoman.tabletattendance.model.LoginInfoModel;
+
 import java.io.File;
 import java.lang.reflect.Method;
 import java.util.IdentityHashMap;
@@ -87,7 +92,7 @@ public class AppTools {
         if (AppTools.getSDPath().equals("")) {
             return context.getFilesDir().getPath();
         }
-        File file = new File(AppTools.getSDPath() + "/nuoman/pictures");
+        File file = new File(AppTools.getSDPath() + "/pictures");
         if (!file.exists()) {
             if (file.mkdirs()) {
                 return file.getPath();
@@ -140,6 +145,18 @@ public class AppTools {
                 e.printStackTrace();
             }
         }
+    }
+
+    /**
+     * 获取登陆信息
+     * @return
+     */
+    public static LoginInfoModel getLogInfo() {
+
+        LoginInfoModel model = BasePresenter.gson.fromJson(AppConfig.getStringConfig(NuoManService.LOGIN, ""), new TypeToken<LoginInfoModel>() {
+        }.getType());
+
+        return model;
     }
 
 

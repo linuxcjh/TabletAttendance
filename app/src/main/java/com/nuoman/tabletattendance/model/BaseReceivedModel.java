@@ -6,13 +6,35 @@ package com.nuoman.tabletattendance.model;
  */
 public class BaseReceivedModel {
 
-//    {"role":"1","schoolId":"2","schoolname":"和安全","superpass":"0612141732211"}
-    private String role;
-    private String schoolId;
-    private String schoolname;
-    private String superpass;
-
+//    [{"msg":"success","obj":null,"success":true}]
     private String token;
+    private boolean success;
+    private String msg;
+    private String obj;
+
+    public boolean isSuccess() {
+        return success;
+    }
+
+    public void setSuccess(boolean success) {
+        this.success = success;
+    }
+
+    public String getMsg() {
+        return msg;
+    }
+
+    public void setMsg(String msg) {
+        this.msg = msg;
+    }
+
+    public String getObj() {
+        return obj;
+    }
+
+    public void setObj(String obj) {
+        this.obj = obj;
+    }
 
     public String getToken() {
         return token;
@@ -20,38 +42,6 @@ public class BaseReceivedModel {
 
     public void setToken(String token) {
         this.token = token;
-    }
-
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
-    }
-
-    public String getSchoolId() {
-        return schoolId;
-    }
-
-    public void setSchoolId(String schoolId) {
-        this.schoolId = schoolId;
-    }
-
-    public String getSchoolname() {
-        return schoolname;
-    }
-
-    public void setSchoolname(String schoolname) {
-        this.schoolname = schoolname;
-    }
-
-    public String getSuperpass() {
-        return superpass;
-    }
-
-    public void setSuperpass(String superpass) {
-        this.superpass = superpass;
     }
 }
 

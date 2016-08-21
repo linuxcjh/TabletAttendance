@@ -14,4 +14,10 @@ public interface NuoManService {
     //7牛token
     String GETTOKEN="GetToken";
 
+    //获取天气
+    String GETWEATHERFORONEDAY="GetWeatherForOneDay";
+
+    //上传打卡信息
+    String WRITEATTLOG = "WriteAttLog";
+
 }

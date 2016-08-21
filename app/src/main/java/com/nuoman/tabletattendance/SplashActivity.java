@@ -26,14 +26,14 @@ public class SplashActivity extends BaseActivity {
             public void run() {
                 checkUserName();
             }
-        }, 2 * 1000);
+        }, 1 * 1000);
     }
 
 
     private void checkUserName() {
 
         if (!AppConfig.getBooleanConfig(NuoManConstant.IS_LOGIN, false)) {
-            startActivity(new Intent(this, MainActivity.class));
+            startActivity(new Intent(this, LoginActivity.class));
         } else {
             startActivity(new Intent(this, MainActivity.class));
         }

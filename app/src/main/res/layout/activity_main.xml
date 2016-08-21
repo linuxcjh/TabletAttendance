@@ -8,7 +8,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.nuoman.tabletattendance.MainActivity">
+    tools:context=".TestMainActivity">
 
     <TextView
         android:id="@+id/content_tv"
@@ -21,7 +21,7 @@
         android:layout_width="match_parent"
         android:layout_height="80dp"
         android:layout_below="@id/content_tv"
-        android:text="水电费水电费三分水电费是打发士大夫的发送到发送到" />
+        android:text="STONE304" />
 
     <EditText
         android:id="@+id/edit_pre_tv"
