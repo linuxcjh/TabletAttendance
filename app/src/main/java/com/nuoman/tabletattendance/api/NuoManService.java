@@ -20,4 +20,7 @@ public interface NuoManService {
     //上传打卡信息
     String WRITEATTLOG = "WriteAttLog";
 
+    //获取未读消息
+    String GETUNREADMSG="GetUnReadMsg";
+
 }

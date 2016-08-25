@@ -1,5 +1,6 @@
 package com.nuoman.tabletattendance;
 
+import android.content.Intent;
 import android.inputmethodservice.Keyboard;
 import android.inputmethodservice.KeyboardView;
 import android.os.Bundle;
@@ -25,6 +26,7 @@ import com.nuoman.tabletattendance.common.NuoManConstant;
 import com.nuoman.tabletattendance.common.utils.AppConfig;
 import com.nuoman.tabletattendance.common.utils.AppTools;
 import com.nuoman.tabletattendance.common.utils.BaseUtil;
+import com.nuoman.tabletattendance.information.InformationActivity;
 import com.nuoman.tabletattendance.model.BaseReceivedModel;
 import com.nuoman.tabletattendance.model.BaseTransModel;
 import com.nuoman.tabletattendance.model.LoginInfoModel;
@@ -272,6 +274,7 @@ public class MainActivity extends BaseActivity implements ICommonAction, CameraF
             case R.id.h_homework_iv:
                 break;
             case R.id.h_info_iv:
+                startActivity(new Intent(this, InformationActivity.class));
                 break;
             case R.id.h_voice_iv:
                 break;

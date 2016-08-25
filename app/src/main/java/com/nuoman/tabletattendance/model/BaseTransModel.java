@@ -16,6 +16,16 @@ public class BaseTransModel {
     private String attDate;
     private String attPicUrl;
 
+    private String classId;
+
+    public String getClassId() {
+        return classId;
+    }
+
+    public void setClassId(String classId) {
+        this.classId = classId;
+    }
+
     public String getMachineId() {
         return machineId;
     }
