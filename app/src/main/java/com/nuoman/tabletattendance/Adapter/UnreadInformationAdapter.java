@@ -1,7 +1,10 @@
 package com.nuoman.tabletattendance.Adapter;
 
 import android.content.Context;
+import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
+import com.nuoman.tabletattendance.R;
 import com.nuoman.tabletattendance.common.BaseAdapterHelper;
 import com.nuoman.tabletattendance.common.QuickAdapter;
 import com.nuoman.tabletattendance.model.ReceivedUnreadInforModel;
@@ -19,5 +22,9 @@ public class UnreadInformationAdapter extends QuickAdapter<ReceivedUnreadInforMo
 
     @Override
     protected void convert(BaseAdapterHelper helper, ReceivedUnreadInforModel item, int position) {
+
+        ImageView imageView = helper.getView(R.id.item_icon);
+        Glide.with(context).load(item.getHeadPicUrl()).error(R.drawable.icon).placeholder(R.drawable.icon).into(imageView);
+        helper.setText(R.id.name_tv,item.getStudentName());
     }
 }

@@ -128,9 +128,14 @@ public class AudioManager {
     // 释放资源
     public void release() {
         // 严格按照api流程进行
-        mRecorder.stop();
-        mRecorder.release();
-        mRecorder = null;
+        try {
+            mRecorder.stop();
+            mRecorder.release();
+            mRecorder = null;
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
 
     }
 

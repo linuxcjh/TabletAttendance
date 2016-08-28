@@ -1,13 +1,11 @@
 package com.nuoman.tabletattendance.information;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.view.KeyEvent;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.widget.Button;
-import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.GridView;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.gson.reflect.TypeToken;
 import com.nuoman.tabletattendance.Adapter.UnreadInformationAdapter;
@@ -30,18 +28,19 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 /**
- * 消息
+ * 语音对话
  * Created by Alex on 2016/5/17.
  */
-public class InformationActivity extends BaseActivity implements ICommonAction {
+public class InterVoiceActivity extends BaseActivity implements ICommonAction {
 
 
-    @Bind(R.id.edit_input_et)
-    EditText editInputEt;
-    @Bind(R.id.grid_view)
-    GridView gridView;
     @Bind(R.id.back_bt)
     Button backBt;
+    @Bind(R.id.container_layout)
+    FrameLayout containerLayout;
+    @Bind(R.id.grid_view)
+    GridView gridView;
+
 
     private CommonPresenter commonPresenter;
 
@@ -52,36 +51,45 @@ public class InformationActivity extends BaseActivity implements ICommonAction {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_information_layout);
+        setContentView(R.layout.activity_voice_inter_main);
         ButterKnife.bind(this);
-        initData();
+        initView();
+
     }
 
-    private void initData() {
+    private void initView() {
         commonPresenter = new CommonPresenter(this);
-        transModel.setClassId(AppConfig.getStringConfig(NuoManConstant.CLASS_ID, ""));
-
+        transModel.setCardNo(AppConfig.getStringConfig(NuoManConstant.CARD_ID, ""));
+        CardNo cardNo =new CardNo();
+        cardNo.setCardNo(AppConfig.getStringConfig(NuoManConstant.CARD_ID, ""));
         adapter = new UnreadInformationAdapter(this, R.layout.infor_item_layout, data);
         gridView.setAdapter(adapter);
-        editInputEt.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                Toast.makeText(AppConfig.getContext(), v.getText().toString(), Toast.LENGTH_SHORT).show();
-                String cardId = v.getText().toString().replace("\n", "");
-                editInputEt.setText("");
-                startActivity(new Intent(InformationActivity.this, InterVoiceActivity.class));
-                return false;
-            }
+        commonPresenter.invokeInterfaceObtainData(false, "voiceCtrl", NuoManService.GETPARENTSBYCARDNO, cardNo, new TypeToken<ReceivedCommonResultModel>() {
         });
-        commonPresenter.invokeInterfaceObtainData(false, "voiceCtrl", NuoManService.GETUNREADMSG, transModel, new TypeToken<ReceivedCommonResultModel>() {
-        });
+
+        InterVoiceFragment fragment = new InterVoiceFragment();
+        FragmentManager manager = getSupportFragmentManager();
+        FragmentTransaction transaction = manager.beginTransaction();
+        transaction.add(R.id.container_layout, fragment);
+        transaction.commit();
+    }
+
+    class CardNo{
+        String cardNo;
+
+        public String getCardNo() {
+            return cardNo;
+        }
+
+        public void setCardNo(String cardNo) {
+            this.cardNo = cardNo;
+        }
     }
 
     @Override
     public void obtainData(Object data, String methodIndex, int status) {
-
         switch (methodIndex) {
-            case NuoManService.GETUNREADMSG:
+            case NuoManService.GETPARENTSBYCARDNO:
                 ReceivedCommonResultModel model = (ReceivedCommonResultModel) data;
                 List<ReceivedUnreadInforModel> list = new ArrayList<>();
                 list.addAll(model.getObj());
@@ -91,8 +99,8 @@ public class InformationActivity extends BaseActivity implements ICommonAction {
 
                 break;
         }
-
     }
+
 
     @OnClick(R.id.back_bt)
     public void onClick() {

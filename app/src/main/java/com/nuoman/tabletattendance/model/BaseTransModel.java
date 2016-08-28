@@ -18,6 +18,26 @@ public class BaseTransModel {
 
     private String classId;
 
+    private String userId;
+    private String kindId;//发起方类型   0：学生向家长发送     1：家长向学生发送    2：教师向家长发送
+
+
+    public String getKindId() {
+        return kindId;
+    }
+
+    public void setKindId(String kindId) {
+        this.kindId = kindId;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
     public String getClassId() {
         return classId;
     }

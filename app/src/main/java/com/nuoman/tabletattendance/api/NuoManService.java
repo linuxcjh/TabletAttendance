@@ -23,4 +23,7 @@ public interface NuoManService {
     //获取未读消息
     String GETUNREADMSG="GetUnReadMsg";
 
+    //获取家长列表
+    String GETPARENTSBYCARDNO="GetParentsByCardNo";
+
 }

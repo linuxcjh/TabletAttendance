@@ -21,7 +21,7 @@
         android:layout_width="match_parent"
         android:layout_height="80dp"
         android:layout_below="@id/content_tv"
-        android:text="STONE304" />
+        android:text="你是王八蛋" />
 
     <EditText
         android:id="@+id/edit_pre_tv"

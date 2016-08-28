@@ -1,7 +1,9 @@
 package com.nuoman.tabletattendance;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
+import android.text.InputType;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
@@ -23,6 +25,7 @@ import com.qiniu.android.storage.UploadManager;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.lang.reflect.Method;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -113,5 +116,34 @@ public class TestMainActivity extends BaseActivity implements ICommonAction {
             }, null);
         }
 
+    }
+
+
+
+    /**
+     * 禁止Edittext弹出软件盘，光标依然正常显示。
+     */
+    public void disableShowSoftInput(EditText editTv) {
+        if (Build.VERSION.SDK_INT <= 10) {
+            editTv.setInputType(InputType.TYPE_NULL);
+        } else {
+            Class<EditText> cls = EditText.class;
+            Method method;
+            try {
+                method = cls.getMethod("setShowSoftInputOnFocus", boolean.class);
+                method.setAccessible(true);
+                method.invoke(editTv, false);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            try {
+                method = cls.getMethod("setSoftInputShownOnFocus", boolean.class);
+                method.setAccessible(true);
+                method.invoke(editTv, false);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

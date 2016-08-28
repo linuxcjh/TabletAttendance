@@ -1,4 +1,4 @@
-package com.nuoman.tabletattendance.voice.view;
+package com.nuoman.tabletattendance.information;
 
 import android.content.Context;
 import android.util.DisplayMetrics;
@@ -13,7 +13,7 @@ import com.nuoman.tabletattendance.R;
 
 import java.util.List;
 
-public class RecorderAdapter extends ArrayAdapter<VoiceActivity.Recorder> {
+public class RecorderVoiceAdapter extends ArrayAdapter<Recorder> {
 
 
 	private LayoutInflater inflater;
@@ -21,7 +21,7 @@ public class RecorderAdapter extends ArrayAdapter<VoiceActivity.Recorder> {
 	private int mMinItemWith;// 设置对话框的最大宽度和最小宽度
 	private int mMaxItemWith;
 
-	public RecorderAdapter(Context context, List<VoiceActivity.Recorder> dataList) {
+	public RecorderVoiceAdapter(Context context, List<Recorder> dataList) {
 		super(context, -1, dataList);
 		inflater = LayoutInflater.from(context);
 

@@ -163,9 +163,16 @@ public class MainActivity extends BaseActivity implements ICommonAction, CameraF
                 int start = noCardEt.getSelectionStart();
                 if (primaryCode == Keyboard.KEYCODE_DONE) {//TODO 需要验证卡号是否有效
                     mHandler.removeMessages(BACK_INDEX);
-                    Toast.makeText(AppConfig.getContext(), noCardEt.getText().toString(), Toast.LENGTH_SHORT).show();
-                    AppConfig.setStringConfig(NuoManConstant.CARD_ID, noCardEt.getText().toString());
-                    cameraFragment.takePicture();
+
+                    if (noCardEt.getText().toString().equals("666")) {
+                        startActivity(new Intent(MainActivity.this,SetInfoActivity.class));
+
+                    } else {
+                        Toast.makeText(AppConfig.getContext(), noCardEt.getText().toString(), Toast.LENGTH_SHORT).show();
+                        AppConfig.setStringConfig(NuoManConstant.CARD_ID, noCardEt.getText().toString());
+                        cameraFragment.takePicture();
+                    }
+
 
                 } else if (primaryCode == Keyboard.KEYCODE_DELETE) {// 回退
                     if (mEditable != null && mEditable.length() > 0) {

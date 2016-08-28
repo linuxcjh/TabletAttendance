@@ -29,6 +29,7 @@ public class DialogManager {
 	public void showRecordingDialog() {
 
 		mDialog = new Dialog(mContext, R.style.Theme_audioDialog);
+		mDialog.getWindow().getDecorView().setSystemUiVisibility(8);
 		LayoutInflater inflater = LayoutInflater.from(mContext);
 		View view = inflater.inflate(R.layout.dialog_manager, null);
 		mDialog.setContentView(view);

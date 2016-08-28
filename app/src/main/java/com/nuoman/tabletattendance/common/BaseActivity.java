@@ -6,6 +6,8 @@ import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,16 +16,21 @@ import java.util.List;
  * AUTHOR: Alex
  * DATE: 21/10/2015 18:55
  */
-public class BaseActivity extends FragmentActivity  {
+public class BaseActivity extends FragmentActivity {
 
     public static List<Activity> activityList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //去除title
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+//去掉Activity上面的状态栏
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+//去掉虚拟按键全屏显示
+        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
         activityList.add(0, this);
     }
-
 
 
     /**
@@ -39,6 +46,7 @@ public class BaseActivity extends FragmentActivity  {
         res.updateConfiguration(config, res.getDisplayMetrics());
         return res;
     }
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -51,12 +59,12 @@ public class BaseActivity extends FragmentActivity  {
                 View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION;
         decorView.setSystemUiVisibility(uiOptions);
     }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
         activityList.remove(this);
     }
-
 
 
 }
