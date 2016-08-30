@@ -49,6 +49,11 @@ public class NuoManConstant {
      */
     public static String CARD_NAME = "card_name";
 
+    /**
+     * 编辑后的学校名字
+     */
+    public static String SCHOOL_NAME = "school_name";
+
 
     /**
      * 对话框确定

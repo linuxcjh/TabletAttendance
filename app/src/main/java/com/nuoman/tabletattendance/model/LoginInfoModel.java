@@ -1,10 +1,10 @@
 package com.nuoman.tabletattendance.model;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class LoginInfoModel {
 	
-    private ArrayList<GradeExtends> gradeExtends;
+    private List<GradeExtends> gradeExtends;
     private String machineId;
     private PeopleMap peopleMap;
     private String schoolName;
@@ -24,11 +24,11 @@ public class LoginInfoModel {
         this.areaId = areaId;
     }
 
-    public ArrayList<GradeExtends> getGradeExtends() {
+    public List<GradeExtends> getGradeExtends() {
         return this.gradeExtends;
     }
 
-    public void setGradeExtends(ArrayList<GradeExtends> gradeExtends) {
+    public void setGradeExtends(List<GradeExtends> gradeExtends) {
         this.gradeExtends = gradeExtends;
     }
 

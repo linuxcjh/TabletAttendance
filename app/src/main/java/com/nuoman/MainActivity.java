@@ -41,7 +41,6 @@ public class MainActivity extends BaseActivity {
         ContentResolver.addPeriodicSync(mAccount, NoteProviderMetaData.AUTHORITY, Bundle.EMPTY, SYNC_INTERVAL);
         requestSync();
 //        insert();
-
 //        query();
 //        update();
     }

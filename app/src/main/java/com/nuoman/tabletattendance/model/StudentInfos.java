@@ -1,14 +1,15 @@
 package com.nuoman.tabletattendance.model;
 
-import java.util.ArrayList;
+import java.io.Serializable;
+import java.util.List;
 
-public class StudentInfos {
+public class StudentInfos implements Serializable{
 	
     private String studentId;
     private String className;
     private String studentName;
     private String gradeName;
-    private ArrayList<CardNoModel> cardNoList;
+    private List<CardNoModel> cardNoList;
     
     
 	public StudentInfos () {
@@ -48,11 +49,11 @@ public class StudentInfos {
         this.gradeName = gradeName;
     }
 
-    public ArrayList<CardNoModel> getCardNoList() {
+    public List<CardNoModel> getCardNoList() {
         return cardNoList;
     }
 
-    public void setCardNoList(ArrayList<CardNoModel> cardNoList) {
+    public void setCardNoList(List<CardNoModel> cardNoList) {
         this.cardNoList = cardNoList;
     }
 }

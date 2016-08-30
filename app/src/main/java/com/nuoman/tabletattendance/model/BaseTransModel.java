@@ -6,7 +6,7 @@ package com.nuoman.tabletattendance.model;
  */
 public class BaseTransModel {
 
-//    {"machineId":"1","cardNo":"0008124733","attDate":"2016-08-16 11:25:02","attPicUrl":"aaaaaaa.jpg"}
+    //    {"machineId":"1","cardNo":"0008124733","attDate":"2016-08-16 11:25:02","attPicUrl":"aaaaaaa.jpg"}
     private String tel;
     private String machineNo;
     private String area;
@@ -21,6 +21,27 @@ public class BaseTransModel {
     private String userId;
     private String kindId;//发起方类型   0：学生向家长发送     1：家长向学生发送    2：教师向家长发送
 
+
+    //发作业
+    private String teacherId;
+    private String homeworkPic;
+
+
+    public String getTeacherId() {
+        return teacherId;
+    }
+
+    public void setTeacherId(String teacherId) {
+        this.teacherId = teacherId;
+    }
+
+    public String getHomeworkPic() {
+        return homeworkPic;
+    }
+
+    public void setHomeworkPic(String homeworkPic) {
+        this.homeworkPic = homeworkPic;
+    }
 
     public String getKindId() {
         return kindId;

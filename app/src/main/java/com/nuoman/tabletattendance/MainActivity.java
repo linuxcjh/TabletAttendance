@@ -1,5 +1,9 @@
 package com.nuoman.tabletattendance;
 
+import android.accounts.Account;
+import android.accounts.AccountManager;
+import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
 import android.inputmethodservice.Keyboard;
 import android.inputmethodservice.KeyboardView;
@@ -7,6 +11,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.text.Editable;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.EditText;
@@ -18,6 +24,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.google.gson.reflect.TypeToken;
+import com.nuoman.syncadapter.pro.NoteProviderMetaData;
 import com.nuoman.tabletattendance.api.NuoManService;
 import com.nuoman.tabletattendance.common.BaseActivity;
 import com.nuoman.tabletattendance.common.CommonPresenter;
@@ -29,8 +36,11 @@ import com.nuoman.tabletattendance.common.utils.BaseUtil;
 import com.nuoman.tabletattendance.information.InformationActivity;
 import com.nuoman.tabletattendance.model.BaseReceivedModel;
 import com.nuoman.tabletattendance.model.BaseTransModel;
+import com.nuoman.tabletattendance.model.CardNoModel;
 import com.nuoman.tabletattendance.model.LoginInfoModel;
 import com.nuoman.tabletattendance.model.ReceivedWeatherModel;
+
+import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -40,6 +50,23 @@ import butterknife.OnClick;
  * 首页
  */
 public class MainActivity extends BaseActivity implements ICommonAction, CameraFragment.ObtainPictureListener {
+
+
+    /* ------Sync START ------ */
+    public static final String ACCOUNT_TYPE = "example.com";
+
+    public static final String ACCOUNT = "dummyaccount";
+
+
+    public static final long SECONDS_PER_MINUTE = 60L;
+    public static final long SYNC_INTERVAL_IN_MINUTES = 1L;
+    public static final long SYNC_INTERVAL =
+            SYNC_INTERVAL_IN_MINUTES *
+                    SECONDS_PER_MINUTE;
+
+    private Account mAccount;
+
+    /* ------Sync END ------ */
 
 
     //当前时间
@@ -53,6 +80,10 @@ public class MainActivity extends BaseActivity implements ICommonAction, CameraF
 
     //打卡成功后延迟回到主页面
     private static final int REBACK_TIME_INDEX = 2000;
+
+
+    //设置页面返回
+    private static final int SET_REBACK_INDEX = 0x110;
 
 
     @Bind(R.id.h_time_tv)
@@ -105,9 +136,20 @@ public class MainActivity extends BaseActivity implements ICommonAction, CameraF
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_layout);
         ButterKnife.bind(this);
-
+        initSyncAdapter();
         initView();
         initData();
+
+    }
+
+    /**
+     * 同步适配器
+     */
+    private void initSyncAdapter() {
+        mAccount = CreateSyncAccount(this);
+        ContentResolver.setSyncAutomatically(mAccount, NoteProviderMetaData.AUTHORITY, true);
+        ContentResolver.addPeriodicSync(mAccount, NoteProviderMetaData.AUTHORITY, Bundle.EMPTY, SYNC_INTERVAL);
+        requestSync();
 
     }
 
@@ -129,7 +171,7 @@ public class MainActivity extends BaseActivity implements ICommonAction, CameraF
     private void initView() {
 
         cameraFragment = (CameraFragment) getSupportFragmentManager().findFragmentById(R.id.camera_fragment);
-        hSchoolNameTv.setText(logInfo.getSchoolName());
+        hSchoolNameTv.setText(AppConfig.getStringConfig(NuoManConstant.SCHOOL_NAME,AppTools.getLogInfo().getSchoolName()));
         hTimeTv.setText(BaseUtil.getTime(BaseUtil.YYYY_MM_DD_HH_MM) + "   " + BaseUtil.getTime(BaseUtil.HH_MM_SS) + "    " + BaseUtil.getDayOfWeek());
         mHandler.sendEmptyMessageDelayed(CURRENT_TIME_INDEX, REFRESH_TIME_INDEX);
 
@@ -137,10 +179,10 @@ public class MainActivity extends BaseActivity implements ICommonAction, CameraF
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 mHandler.removeMessages(BACK_INDEX);
-                Toast.makeText(AppConfig.getContext(), v.getText().toString(), Toast.LENGTH_SHORT).show();
                 AppConfig.setStringConfig(NuoManConstant.CARD_ID, v.getText().toString().replace("\n", ""));
                 cameraFragment.takePicture();
                 editInputEt.setText("");
+
                 return false;
             }
         });
@@ -161,16 +203,21 @@ public class MainActivity extends BaseActivity implements ICommonAction, CameraF
             public void onKey(int primaryCode, int[] keyCodes) {
                 Editable mEditable = noCardEt.getText();
                 int start = noCardEt.getSelectionStart();
-                if (primaryCode == Keyboard.KEYCODE_DONE) {//TODO 需要验证卡号是否有效
+                if (primaryCode == Keyboard.KEYCODE_DONE) {
                     mHandler.removeMessages(BACK_INDEX);
 
-                    if (noCardEt.getText().toString().equals("666")) {
-                        startActivity(new Intent(MainActivity.this,SetInfoActivity.class));
+                    if (noCardEt.getText().toString().equals("666")) { //进设置页面
+                        setIniMainPage();
+                        startActivityForResult(new Intent(MainActivity.this, SetInfoActivity.class), SET_REBACK_INDEX);
 
                     } else {
-                        Toast.makeText(AppConfig.getContext(), noCardEt.getText().toString(), Toast.LENGTH_SHORT).show();
-                        AppConfig.setStringConfig(NuoManConstant.CARD_ID, noCardEt.getText().toString());
-                        cameraFragment.takePicture();
+                        AppConfig.setStringConfig(NuoManConstant.CARD_ID, noCardEt.getText().toString().replace("\n", ""));
+                        if (!TextUtils.isEmpty(obtainCardInfo())) {//判断输入的卡号是否有效
+                            cameraFragment.takePicture();
+
+                        } else {
+                            Toast.makeText(MainActivity.this, "输入的卡号不存在", Toast.LENGTH_SHORT).show();
+                        }
                     }
 
 
@@ -179,6 +226,9 @@ public class MainActivity extends BaseActivity implements ICommonAction, CameraF
                         if (start > 0) {
                             mEditable.delete(start - 1, start);
                         }
+                    } else {
+                        mHandler.removeMessages(BACK_INDEX);
+                        setIniMainPage();
                     }
                 } else {
                     mEditable.insert(start, Character.toString((char) primaryCode));
@@ -220,34 +270,42 @@ public class MainActivity extends BaseActivity implements ICommonAction, CameraF
      */
     @Override
     public void onChangeArticle(String pictureId) {
-        transModel.setMachineNo(logInfo.getMachineId());
-        transModel.setMachineId(logInfo.getMachineId());
-        transModel.setTel(AppConfig.getStringConfig(NuoManConstant.USER_NAME, ""));
-        transModel.setCardNo(AppConfig.getStringConfig(NuoManConstant.CARD_ID, ""));
-        transModel.setAttDate(BaseUtil.getTime(BaseUtil.YYYY_MM_DD_HH_MM_SS));
-        transModel.setAttPicUrl(pictureId);
-        commonPresenter.invokeInterfaceObtainData(true, "attDataCtrl", NuoManService.WRITEATTLOG, transModel, new TypeToken<BaseReceivedModel>() {
-        });
+        punchCardSuccess();
+//        transModel.setMachineNo(logInfo.getMachineId());
+//        transModel.setMachineId(logInfo.getMachineId());
+//        transModel.setTel(AppConfig.getStringConfig(NuoManConstant.USER_NAME, ""));
+//        transModel.setCardNo(AppConfig.getStringConfig(NuoManConstant.CARD_ID, ""));
+//        transModel.setAttDate(BaseUtil.getTime(BaseUtil.YYYY_MM_DD_HH_MM_SS));
+//        transModel.setAttPicUrl(pictureId);
+//        commonPresenter.invokeInterfaceObtainData(true, "attDataCtrl", NuoManService.WRITEATTLOG, transModel, new TypeToken<BaseReceivedModel>() {
+//        });
     }
 
     @Override
     public void obtainData(Object data, String methodIndex, int status) {
 
-        switch (methodIndex) {
-            case NuoManService.GETWEATHERFORONEDAY:
-                ReceivedWeatherModel model = (ReceivedWeatherModel) data;
-                hWeatherDetailTv.setText(model.getTime());
+        if (data != null) {
+            switch (methodIndex) {
+                case NuoManService.GETWEATHERFORONEDAY:
+                    ReceivedWeatherModel model = (ReceivedWeatherModel) data;
+                    hWeatherDetailTv.setText(model.getTime());
 
-                break;
-            case NuoManService.WRITEATTLOG:
-                BaseReceivedModel m = (BaseReceivedModel) data;
-                if (m.isSuccess()) {
-                    Toast.makeText(this, "打卡成功", Toast.LENGTH_SHORT).show();
-                    punchCardSuccess();
-                }
+                    if (!TextUtils.isEmpty(model.getNightShape())) {
+                        hWeatherIv.setImageDrawable(AppTools.loadImageFromAsserts(this, "WeatherIcon/Day/" + model.getNightShape().split("&")[0] + ".png"));
+                    }
 
-                break;
+                    break;
+                case NuoManService.WRITEATTLOG:
+                    BaseReceivedModel m = (BaseReceivedModel) data;
+                    if (m.isSuccess()) {
+                        Toast.makeText(this, "打卡成功", Toast.LENGTH_SHORT).show();
+                        punchCardSuccess();
+                    }
+
+                    break;
+            }
         }
+
     }
 
 
@@ -261,13 +319,7 @@ public class MainActivity extends BaseActivity implements ICommonAction, CameraF
                     mHandler.sendEmptyMessageDelayed(CURRENT_TIME_INDEX, REFRESH_TIME_INDEX);
                     break;
                 case BACK_INDEX://返回主页
-                    hSloganTv.setVisibility(View.VISIBLE);
-                    hOperationLayout.setVisibility(View.VISIBLE);
-                    hTitleTv.setVisibility(View.GONE);
-                    hImageIv.setVisibility(View.GONE);
-                    hPunchCardSuccessTv.setVisibility(View.GONE);
-                    weatherOperationLayout.setVisibility(View.VISIBLE);
-                    noCardLayout.setVisibility(View.GONE);
+                    setIniMainPage();
 
                     break;
             }
@@ -275,10 +327,26 @@ public class MainActivity extends BaseActivity implements ICommonAction, CameraF
         }
     };
 
+    /**
+     * 初始化主页
+     */
+    private void setIniMainPage() {
+        hSloganTv.setVisibility(View.VISIBLE);
+        hOperationLayout.setVisibility(View.VISIBLE);
+        hTitleTv.setVisibility(View.GONE);
+        hImageIv.setVisibility(View.GONE);
+        hPunchCardSuccessTv.setVisibility(View.GONE);
+        weatherOperationLayout.setVisibility(View.VISIBLE);
+        noCardLayout.setVisibility(View.GONE);
+
+    }
+
     @OnClick({R.id.h_homework_iv, R.id.h_info_iv, R.id.h_voice_iv, R.id.h_no_card_iv})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.h_homework_iv:
+                cameraFragment.surfaceDestroyed(cameraFragment.surfaceHolder);//关闭摄像头
+                startActivity(new Intent(this, SendHomeworkActivity.class));
                 break;
             case R.id.h_info_iv:
                 startActivity(new Intent(this, InformationActivity.class));
@@ -289,6 +357,7 @@ public class MainActivity extends BaseActivity implements ICommonAction, CameraF
                 noCardEt.setText("");
                 weatherOperationLayout.setVisibility(View.GONE);
                 noCardLayout.setVisibility(View.VISIBLE);
+                mHandler.sendEmptyMessageDelayed(BACK_INDEX, 20000);
                 break;
         }
     }
@@ -299,9 +368,11 @@ public class MainActivity extends BaseActivity implements ICommonAction, CameraF
      */
     private void punchCardSuccess() {
 
+        String tutelage = obtainCardInfo();
+
         String info = "年      级：" + AppConfig.getStringConfig(NuoManConstant.GRADE_NAME, "") + System.getProperty("line.separator")
                 + "班      级：" + AppConfig.getStringConfig(NuoManConstant.CLASS_NAME, "") + System.getProperty("line.separator")
-                + "监 护 人：" + "" + System.getProperty("line.separator")
+                + "监 护 人：" + tutelage + System.getProperty("line.separator")
                 + "卡      号：" + AppConfig.getStringConfig(NuoManConstant.CARD_ID, "") + System.getProperty("line.separator")
                 + "签到时间：" + BaseUtil.getTime("HH:mm:ss");
 
@@ -323,4 +394,74 @@ public class MainActivity extends BaseActivity implements ICommonAction, CameraF
         super.onDestroy();
         mHandler.removeMessages(CURRENT_TIME_INDEX);
     }
+
+    /**
+     * 根据卡号获取信息
+     */
+    private String obtainCardInfo() {
+
+        LoginInfoModel m = AppTools.getLogInfo();
+
+        String currentCardNo = AppConfig.getStringConfig(NuoManConstant.CARD_ID, "");
+
+        for (int i = 0; i < m.getPeopleMap().getStudentInfos().size(); i++) {
+            List<CardNoModel> cardNoList = m.getPeopleMap().getStudentInfos().get(i).getCardNoList();
+
+            for (int j = 0; j < cardNoList.size(); j++) {
+
+                if (currentCardNo.equals(cardNoList.get(j).getCardNo())) {
+
+                    hTitleTv.setText(m.getPeopleMap().getStudentInfos().get(i).getStudentName());
+                    return cardNoList.get(j).getCardRole();//返回监护人
+                }
+
+            }
+
+        }
+        return "";
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (data != null) {
+            switch (requestCode) {
+                case SET_REBACK_INDEX:
+                    hSchoolNameTv.setText(AppConfig.getStringConfig(NuoManConstant.SCHOOL_NAME,AppTools.getLogInfo().getSchoolName()));
+                    break;
+            }
+
+        }
+    }
+
+    /* ------Sync START ------------------------------------------------------------------------- */
+
+
+    public static Account CreateSyncAccount(Context context) {
+
+        Account newAccount = new Account(ACCOUNT, ACCOUNT_TYPE);
+
+        AccountManager accountManager = (AccountManager) context.getSystemService(ACCOUNT_SERVICE);
+
+        if (accountManager.addAccountExplicitly(newAccount, null, null)) {
+            Log.d("SYNC", "--SUCCESS--");
+        } else {
+            Log.d("SYNC", "--ERROR--");
+        }
+
+        return newAccount;
+    }
+
+
+    /**
+     * 手动触发
+     */
+    private void requestSync() {
+        Bundle b = new Bundle();
+        b.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
+        b.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
+        ContentResolver.requestSync(mAccount, NoteProviderMetaData.AUTHORITY, b);
+    }
+
+    /* ------Sync END ------------------------------------------------------------------------- */
 }

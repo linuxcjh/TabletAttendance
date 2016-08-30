@@ -93,7 +93,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="40dp"
                         android:layout_marginTop="20dp"
-                        android:text="张老师"
+                        android:text=""
                         android:textColor="@android:color/white"
                         android:textSize="30sp"
                         android:visibility="gone" />
@@ -137,7 +137,7 @@
                         android:layout_height="170dp"
                         android:layout_marginRight="30dp"
                         android:layout_toLeftOf="@+id/h_weather_detail_tv"
-                        android:src="@drawable/main_weather_default" />
+                        android:src="@drawable/weather_default" />
 
                     <TextView
                         android:id="@+id/h_weather_detail_tv"

@@ -1,6 +1,7 @@
 package com.nuoman.tabletattendance.common.utils;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Environment;
 import android.text.InputType;
@@ -12,6 +13,8 @@ import com.nuoman.tabletattendance.common.BasePresenter;
 import com.nuoman.tabletattendance.model.LoginInfoModel;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.util.IdentityHashMap;
 import java.util.Map;
@@ -158,6 +161,25 @@ public class AppTools {
 
         return model;
     }
-
+    /** 从assets 文件夹中读取图片 */
+    public static Drawable loadImageFromAsserts(final Context ctx, String fileName) {
+        try {
+            InputStream is = ctx.getResources().getAssets().open(fileName);
+            return Drawable.createFromStream(is, null);
+        } catch (IOException e) {
+            if (e != null) {
+                e.printStackTrace();
+            }
+        } catch (OutOfMemoryError e) {
+            if (e != null) {
+                e.printStackTrace();
+            }
+        } catch (Exception e) {
+            if (e != null) {
+                e.printStackTrace();
+            }
+        }
+        return null;
+    }
 
 }

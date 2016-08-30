@@ -1,5 +1,6 @@
 package com.nuoman.tabletattendance;
 
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.InputType;
@@ -7,12 +8,18 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Toast;
 
+import com.google.gson.reflect.TypeToken;
+import com.nuoman.tabletattendance.api.NuoManService;
 import com.nuoman.tabletattendance.common.BaseActivity;
 import com.nuoman.tabletattendance.common.CommonPresenter;
 import com.nuoman.tabletattendance.common.ICommonAction;
-import com.nuoman.tabletattendance.model.BaseReceivedModel;
+import com.nuoman.tabletattendance.common.NuoManConstant;
+import com.nuoman.tabletattendance.common.utils.AppConfig;
+import com.nuoman.tabletattendance.common.utils.AppTools;
 import com.nuoman.tabletattendance.model.BaseTransModel;
+import com.nuoman.tabletattendance.model.LoginInfoModel;
 
 import java.lang.reflect.Method;
 
@@ -42,6 +49,8 @@ public class SetInfoActivity extends BaseActivity implements ICommonAction {
     Button changeLoginBt;
     @Bind(R.id.exit_bt)
     Button exitBt;
+    @Bind(R.id.save_bt)
+    Button saveBt;
     private CommonPresenter commonPresenter = new CommonPresenter(this);
 
     private BaseTransModel transModel = new BaseTransModel();
@@ -53,6 +62,8 @@ public class SetInfoActivity extends BaseActivity implements ICommonAction {
         ButterKnife.bind(this);
         disableShowSoftInput(editTv);
         disableShowSoftInput(editPreTv);
+        editTv.setText(AppTools.getLogInfo().getSchoolName());
+        editPreTv.setText(AppTools.getLogInfo().getSchoolName());
 
 
     }
@@ -60,25 +71,51 @@ public class SetInfoActivity extends BaseActivity implements ICommonAction {
     @Override
     public void obtainData(Object data, String methodIndex, int status) {
 
-        BaseReceivedModel model = (BaseReceivedModel) data;
+        switch (methodIndex) {
+            case NuoManService.LOGIN:
+
+                if (data != null) {
+                    LoginInfoModel model = (LoginInfoModel) data;
+                    Toast.makeText(this, "数据更新成功", Toast.LENGTH_SHORT).show();
+
+                } else {
+                    Toast.makeText(this, "数据更新失败", Toast.LENGTH_SHORT).show();
+
+                }
+
+                break;
+        }
 
 
     }
 
-    @OnClick({R.id.select_class_bt, R.id.data_refresh_bt, R.id.update_version_bt, R.id.set_bt, R.id.change_login_bt, R.id.exit_bt})
+    @OnClick({R.id.select_class_bt, R.id.data_refresh_bt, R.id.update_version_bt, R.id.set_bt, R.id.change_login_bt, R.id.exit_bt,R.id.save_bt})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.select_class_bt:
                 break;
             case R.id.data_refresh_bt:
+                transModel.setTel(AppConfig.getStringConfig(NuoManConstant.USER_NAME, ""));
+                transModel.setMachineNo(AppConfig.getStringConfig(NuoManConstant.USER_MAC, ""));
+                commonPresenter.invokeInterfaceObtainData(false, "loginCtrl", NuoManService.LOGIN, transModel, new TypeToken<LoginInfoModel>() {
+                });
                 break;
             case R.id.update_version_bt:
+
                 break;
             case R.id.set_bt:
+
                 break;
             case R.id.change_login_bt:
+                startActivity(new Intent(this, LoginActivity.class));
                 break;
             case R.id.exit_bt:
+                finish();
+                break;
+            case R.id.save_bt:
+                AppConfig.setStringConfig(NuoManConstant.SCHOOL_NAME, editTv.getText().toString() + "\n" + editPreTv.getText().toString());
+                Toast.makeText(this,"保存成功",Toast.LENGTH_SHORT).show();
+                setResult(RESULT_OK,new Intent());
                 finish();
                 break;
         }

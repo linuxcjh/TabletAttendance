@@ -1,11 +1,12 @@
 package com.nuoman.tabletattendance.model;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class PeopleMap {
 	
-    private ArrayList<StudentInfos> studentInfos;
-    private ArrayList<TeacherInfos> teacherInfos;
+    private List<StudentInfos> studentInfos;
+    private List<TeacherInfos> teacherInfos;
     
     
 	public PeopleMap () {
@@ -13,15 +14,15 @@ public class PeopleMap {
 	}	
         
 
-    public ArrayList<StudentInfos> getStudentInfos() {
+    public List<StudentInfos> getStudentInfos() {
         return this.studentInfos;
     }
 
-    public void setStudentInfos(ArrayList<StudentInfos> studentInfos) {
+    public void setStudentInfos(List<StudentInfos> studentInfos) {
         this.studentInfos = studentInfos;
     }
 
-    public ArrayList<TeacherInfos> getTeacherInfos() {
+    public List<TeacherInfos> getTeacherInfos() {
         return this.teacherInfos;
     }
 

@@ -15,9 +15,8 @@ import android.widget.TextView;
 
 import com.nuoman.tabletattendance.R;
 import com.nuoman.tabletattendance.voice.view.AudioManager;
-import com.nuoman.tabletattendance.voice.view.DialogManager;
 
-public class AudioRecordLayout extends LinearLayout implements AudioManager.AudioStageListener {
+public class AudioRecordViewLayout extends LinearLayout implements AudioManager.AudioStageListener {
 
     private static final int STATE_NORMAL = 1;
     private static final int STATE_RECORDING = 2;
@@ -33,7 +32,7 @@ public class AudioRecordLayout extends LinearLayout implements AudioManager.Audi
     // 已经开始录音
     private boolean isRecording = false;
 
-    private DialogManager mDialogManager;
+    private IDialogViewManager mDialogManager;
 
     private AudioManager mAudioManager;
 
@@ -45,11 +44,11 @@ public class AudioRecordLayout extends LinearLayout implements AudioManager.Audi
      * 先实现两个参数的构造方法，布局会默认引用这个构造方法， 用一个 构造参数的构造方法来引用这个方法 * @param context
      */
 
-    public AudioRecordLayout(Context context) {
+    public AudioRecordViewLayout(Context context) {
         this(context, null);
     }
 
-    public AudioRecordLayout(Context context, AttributeSet attrs) {
+    public AudioRecordViewLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
 
 
@@ -59,7 +58,7 @@ public class AudioRecordLayout extends LinearLayout implements AudioManager.Audi
         itemIcon = (Button) findViewById(R.id.item_icon);
         nameTv = (TextView) findViewById(R.id.name_tv);
 
-        mDialogManager = new DialogManager(getContext());
+//        mDialogManager = new DialogViewManager(getContext());
 
         // 这里没有判断储存卡是否存在，有空要判断
         String dir = Environment.getExternalStorageDirectory()
@@ -79,6 +78,10 @@ public class AudioRecordLayout extends LinearLayout implements AudioManager.Audi
         });
     }
 
+
+    public void setDialogManager(IDialogViewManager dialogManager) {
+        this.mDialogManager = dialogManager;
+    }
 
     /**
      * 录音完成后的回调，回调给activiy，可以获得mtime和文件的路径
@@ -187,7 +190,7 @@ public class AudioRecordLayout extends LinearLayout implements AudioManager.Audi
                 if (!isRecording || mTime < 0.6f) {
                     mDialogManager.tooShort();
                     mAudioManager.cancel();
-                    mhandler.sendEmptyMessageDelayed(MSG_DIALOG_DIMISS, 1000);// 持续1s
+                    mhandler.sendEmptyMessageDelayed(MSG_DIALOG_DIMISS,200);// 持续1s
                 } else if (mCurrentState == STATE_RECORDING) {//正常录制结束
 
                     mDialogManager.dimissDialog();

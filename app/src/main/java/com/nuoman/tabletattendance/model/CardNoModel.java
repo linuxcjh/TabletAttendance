@@ -1,10 +1,12 @@
 package com.nuoman.tabletattendance.model;
 
+import java.io.Serializable;
+
 /**
  * AUTHOR: Alex
  * DATE: 20/8/2016 16:03
  */
-public class CardNoModel {
+public class CardNoModel implements Serializable{
 
 //    "cardNo":"0087301181",
 //            "cardRole":"家长"

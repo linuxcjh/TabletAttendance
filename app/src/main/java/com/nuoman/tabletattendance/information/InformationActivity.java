@@ -18,9 +18,13 @@ import com.nuoman.tabletattendance.common.CommonPresenter;
 import com.nuoman.tabletattendance.common.ICommonAction;
 import com.nuoman.tabletattendance.common.NuoManConstant;
 import com.nuoman.tabletattendance.common.utils.AppConfig;
+import com.nuoman.tabletattendance.common.utils.AppTools;
 import com.nuoman.tabletattendance.model.BaseTransModel;
+import com.nuoman.tabletattendance.model.CardNoModel;
+import com.nuoman.tabletattendance.model.LoginInfoModel;
 import com.nuoman.tabletattendance.model.ReceivedCommonResultModel;
 import com.nuoman.tabletattendance.model.ReceivedUnreadInforModel;
+import com.nuoman.tabletattendance.model.StudentInfos;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -66,10 +70,15 @@ public class InformationActivity extends BaseActivity implements ICommonAction {
         editInputEt.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                Toast.makeText(AppConfig.getContext(), v.getText().toString(), Toast.LENGTH_SHORT).show();
                 String cardId = v.getText().toString().replace("\n", "");
+                StudentInfos info = obtainCardInfo(cardId);
                 editInputEt.setText("");
-                startActivity(new Intent(InformationActivity.this, InterVoiceActivity.class));
+                if (info == null) {
+                    Toast.makeText(InformationActivity.this, "没有对应的信息", Toast.LENGTH_SHORT).show();
+                } else {
+                    startActivity(new Intent(InformationActivity.this, InterVoiceActivity.class).putExtra("cardNo", cardId).putExtra("model", info));
+                }
+
                 return false;
             }
         });
@@ -97,5 +106,28 @@ public class InformationActivity extends BaseActivity implements ICommonAction {
     @OnClick(R.id.back_bt)
     public void onClick() {
         finish();
+    }
+
+    /**
+     * 根据卡号获取信息
+     */
+    private StudentInfos obtainCardInfo(String cardId) {
+
+        LoginInfoModel m = AppTools.getLogInfo();
+
+        for (int i = 0; i < m.getPeopleMap().getStudentInfos().size(); i++) {
+            List<CardNoModel> cardNoList = m.getPeopleMap().getStudentInfos().get(i).getCardNoList();
+
+            for (int j = 0; j < cardNoList.size(); j++) {
+
+                if (cardId.equals(cardNoList.get(j).getCardNo())) {
+
+                    return m.getPeopleMap().getStudentInfos().get(i);//返回学生姓名
+                }
+
+            }
+
+        }
+        return null;
     }
 }

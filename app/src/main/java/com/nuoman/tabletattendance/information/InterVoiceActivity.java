@@ -6,19 +6,20 @@ import android.support.v4.app.FragmentTransaction;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.GridView;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.google.gson.reflect.TypeToken;
-import com.nuoman.tabletattendance.Adapter.UnreadInformationAdapter;
+import com.nuoman.tabletattendance.Adapter.ParentInformationAdapter;
 import com.nuoman.tabletattendance.R;
 import com.nuoman.tabletattendance.api.NuoManService;
 import com.nuoman.tabletattendance.common.BaseActivity;
 import com.nuoman.tabletattendance.common.CommonPresenter;
 import com.nuoman.tabletattendance.common.ICommonAction;
-import com.nuoman.tabletattendance.common.NuoManConstant;
-import com.nuoman.tabletattendance.common.utils.AppConfig;
 import com.nuoman.tabletattendance.model.BaseTransModel;
-import com.nuoman.tabletattendance.model.ReceivedCommonResultModel;
-import com.nuoman.tabletattendance.model.ReceivedUnreadInforModel;
+import com.nuoman.tabletattendance.model.ParentInfo;
+import com.nuoman.tabletattendance.model.ReceivedParentInfoModel;
+import com.nuoman.tabletattendance.model.StudentInfos;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,13 +41,21 @@ public class InterVoiceActivity extends BaseActivity implements ICommonAction {
     FrameLayout containerLayout;
     @Bind(R.id.grid_view)
     GridView gridView;
+    @Bind(R.id.item_icon)
+    ImageView itemIcon;
+    @Bind(R.id.name_tv)
+    TextView nameTv;
 
 
     private CommonPresenter commonPresenter;
 
     private BaseTransModel transModel = new BaseTransModel();
-    private UnreadInformationAdapter adapter;
-    private List<ReceivedUnreadInforModel> data;
+    private ParentInformationAdapter adapter;
+    private List<ParentInfo> data;
+
+    private StudentInfos infos = new StudentInfos();
+
+    private String cardNo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,14 +67,18 @@ public class InterVoiceActivity extends BaseActivity implements ICommonAction {
     }
 
     private void initView() {
+        infos = (StudentInfos) getIntent().getSerializableExtra("model");
+        cardNo = getIntent().getStringExtra("cardNo");
+//        Glide.with(this).load(infos.getStudentName())
+        nameTv.setText(infos.getStudentName());
+
         commonPresenter = new CommonPresenter(this);
-        transModel.setCardNo(AppConfig.getStringConfig(NuoManConstant.CARD_ID, ""));
-        CardNo cardNo =new CardNo();
-        cardNo.setCardNo(AppConfig.getStringConfig(NuoManConstant.CARD_ID, ""));
-        adapter = new UnreadInformationAdapter(this, R.layout.infor_item_layout, data);
-        gridView.setAdapter(adapter);
-        commonPresenter.invokeInterfaceObtainData(false, "voiceCtrl", NuoManService.GETPARENTSBYCARDNO, cardNo, new TypeToken<ReceivedCommonResultModel>() {
+        transModel.setCardNo(cardNo);
+        commonPresenter.invokeInterfaceObtainData(false, "voiceCtrl", NuoManService.GETPARENTSBYCARDNO, transModel, new TypeToken<ReceivedParentInfoModel>() {
         });
+        adapter = new ParentInformationAdapter(this, R.layout.infor_item_layout, data);
+        gridView.setAdapter(adapter);
+
 
         InterVoiceFragment fragment = new InterVoiceFragment();
         FragmentManager manager = getSupportFragmentManager();
@@ -74,26 +87,14 @@ public class InterVoiceActivity extends BaseActivity implements ICommonAction {
         transaction.commit();
     }
 
-    class CardNo{
-        String cardNo;
-
-        public String getCardNo() {
-            return cardNo;
-        }
-
-        public void setCardNo(String cardNo) {
-            this.cardNo = cardNo;
-        }
-    }
 
     @Override
     public void obtainData(Object data, String methodIndex, int status) {
         switch (methodIndex) {
             case NuoManService.GETPARENTSBYCARDNO:
-                ReceivedCommonResultModel model = (ReceivedCommonResultModel) data;
-                List<ReceivedUnreadInforModel> list = new ArrayList<>();
+                ReceivedParentInfoModel model = (ReceivedParentInfoModel) data;
+                List<ParentInfo> list = new ArrayList<>();
                 list.addAll(model.getObj());
-
                 adapter.setData(list);
 
 

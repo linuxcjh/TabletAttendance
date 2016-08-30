@@ -26,4 +26,10 @@ public interface NuoManService {
     //获取家长列表
     String GETPARENTSBYCARDNO="GetParentsByCardNo";
 
+    //上传作业
+    String SAVEHOMEWORK= "SaveHomework";
+
+    //发作业鉴权
+    String  GETTEACHERID="GetTeacherId";
+
 }

@@ -1,10 +1,10 @@
 package com.nuoman.tabletattendance.model;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class TeacherInfos {
 
-    private ArrayList<CardNoModel> cardNoList;
+    private List<CardNoModel> cardNoList;
     private String teacherName;
     private String teacherId;
     
@@ -14,11 +14,11 @@ public class TeacherInfos {
 	}
 
 
-    public ArrayList<CardNoModel> getCardNoList() {
+    public List<CardNoModel> getCardNoList() {
         return cardNoList;
     }
 
-    public void setCardNoList(ArrayList<CardNoModel> cardNoList) {
+    public void setCardNoList(List<CardNoModel> cardNoList) {
         this.cardNoList = cardNoList;
     }
 

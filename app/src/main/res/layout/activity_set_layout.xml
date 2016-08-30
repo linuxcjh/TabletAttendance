@@ -15,7 +15,7 @@
         android:gravity="center"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
-        android:text="高新区罗曼幼儿园" />
+        android:text="" />
 
 
     <EditText
@@ -26,7 +26,7 @@
         android:layout_marginTop="20dp"
         android:background="@android:color/white"
         android:gravity="center"
-        android:text="高新区罗曼幼儿园"
+        android:text=""
         android:paddingLeft="10dp"
         android:paddingRight="10dp" />
 
@@ -96,7 +96,18 @@
             android:textColor="#252525"
             android:textSize="14sp" />
 
-
+        <Button
+            android:id="@+id/save_bt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/set_bt"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="15dp"
+            android:background="@drawable/lupai_02_03"
+            android:gravity="center"
+            android:text="保存学校名称"
+            android:textColor="#252525"
+            android:textSize="14sp" />
     </RelativeLayout>
 
     <RelativeLayout

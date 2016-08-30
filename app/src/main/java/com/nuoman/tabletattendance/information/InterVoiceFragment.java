@@ -1,5 +1,6 @@
 package com.nuoman.tabletattendance.information;
 
+import android.graphics.Color;
 import android.graphics.drawable.AnimationDrawable;
 import android.media.MediaPlayer;
 import android.os.Bundle;
@@ -10,7 +11,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.nuoman.tabletattendance.R;
 import com.nuoman.tabletattendance.common.ICommonAction;
@@ -26,13 +30,25 @@ import butterknife.ButterKnife;
  * 语音对话
  * Created by Alex on 2016/5/17.
  */
-public class InterVoiceFragment extends Fragment implements ICommonAction ,AdapterView.OnItemClickListener{
+public class InterVoiceFragment extends Fragment implements ICommonAction, AdapterView.OnItemClickListener, IDialogViewManager {
 
+ /*-----------------------------------------------录音控件-------------------------------------------------------*/
+
+    private ImageView mIcon;
+    private ImageView mVoice;
+
+    private TextView mLable;
+
+
+    public View view;
+ /*-------------------------------------------------------------------------------------------------------------*/
 
     @Bind(R.id.listview)
     ListView listview;
     @Bind(R.id.recordButton)
-    AudioRecordLayout recordButton;
+    AudioRecordViewLayout recordButton;
+    @Bind(R.id.container_layout)
+    LinearLayout containerLayout;
 
     private ArrayAdapter<Recorder> mAdapter;
     private View viewanim;
@@ -43,15 +59,16 @@ public class InterVoiceFragment extends Fragment implements ICommonAction ,Adapt
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.activity_inter_voice_main, container,false);
+        View view = inflater.inflate(R.layout.activity_inter_voice_main, container, false);
         ButterKnife.bind(this, view);
         initView();
         return view;
     }
 
 
-    private void initView(){
-        recordButton.setAudioFinishRecorderListener(new AudioRecordLayout.AudioFinishRecorderListener() {
+    private void initView() {
+        recordButton.setDialogManager(this);
+        recordButton.setAudioFinishRecorderListener(new AudioRecordViewLayout.AudioFinishRecorderListener() {
 
             @Override
             public void onFinished(float seconds, String filePath) {
@@ -124,4 +141,85 @@ public class InterVoiceFragment extends Fragment implements ICommonAction ,Adapt
         super.onDestroyView();
         ButterKnife.unbind(this);
     }
+
+    /*-----------------------------------------------录音控制--------------------------------------------------------*/
+
+    @Override
+    public void showRecordingDialog() {
+        containerLayout.removeAllViews();
+        LayoutInflater inflater = LayoutInflater.from(getActivity());
+        view = inflater.inflate(R.layout.dialog_manager, null);
+        mIcon = (ImageView) view.findViewById(R.id.dialog_icon);
+        mVoice = (ImageView) view.findViewById(R.id.dialog_voice);
+        mLable = (TextView) view.findViewById(R.id.recorder_dialogtext);
+
+        containerLayout.addView(view);
+    }
+
+    @Override
+    public void recording() {
+        if (view != null && (view.getVisibility() == View.VISIBLE)) {
+            mIcon.setVisibility(View.VISIBLE);
+            mVoice.setVisibility(View.VISIBLE);
+            mLable.setVisibility(View.VISIBLE);
+
+            mIcon.setImageResource(R.drawable.recorder);
+            mLable.setText(R.string.shouzhishanghua);
+            mLable.setBackgroundColor(Color.TRANSPARENT);
+
+        }
+    }
+
+    @Override
+    public void wantToCancel() {
+
+        if (view != null && (view.getVisibility() == View.VISIBLE)) {
+            mIcon.setVisibility(View.VISIBLE);
+            mVoice.setVisibility(View.GONE);
+            mLable.setVisibility(View.VISIBLE);
+
+            mIcon.setImageResource(R.drawable.cancel);
+            mLable.setText(R.string.want_to_cancle);
+            mLable.setBackgroundColor(Color.RED);
+        }
+    }
+
+    @Override
+    public void tooShort() {
+        if (view != null && (view.getVisibility() == View.VISIBLE)) {
+            mIcon.setVisibility(View.VISIBLE);
+            mVoice.setVisibility(View.GONE);
+            mLable.setVisibility(View.VISIBLE);
+
+            mIcon.setImageResource(R.drawable.voice_to_short);
+            mLable.setText(R.string.tooshort);
+
+
+        }
+    }
+
+    @Override
+    public void dimissDialog() {
+        containerLayout.removeAllViews();
+
+    }
+
+    @Override
+    public void updateVoiceLevel(int level) {
+        if (view != null && (view.getVisibility() == View.VISIBLE)) {
+
+            //先不改变它的默认状态
+//			mIcon.setVisibility(View.VISIBLE);
+//			mVoice.setVisibility(View.VISIBLE);
+//			mLable.setVisibility(View.VISIBLE);
+
+            //通过level来找到图片的id，也可以用switch来寻址，但是代码可能会比较长
+            int resId = getActivity().getResources().getIdentifier("v" + level,
+                    "drawable", getActivity().getPackageName());
+
+            mVoice.setImageResource(resId);
+        }
+    }
+     /*-------------------------------------------------------------------------------------------------------------*/
+
 }
