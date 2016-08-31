@@ -4,6 +4,7 @@ import com.google.gson.reflect.TypeToken;
 import com.nuoman.tabletattendance.common.utils.AppTools;
 
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 【CommonPresenter presenter】
@@ -36,16 +37,16 @@ public class CommonPresenter extends BasePresenter {
         }
     }
 
-
     @Override
-    public void onResponse(String methodName, Object object, int status) {
+    public void onResponse(String methodName, Object object, int status, Map<String, String> parameterMap) {
 
         switch (methodName) {
             default:
-                iCommonAction.obtainData(object, methodName, status);
+                iCommonAction.obtainData(object, methodName, status, parameterMap);
                 break;
 
         }
+
     }
 
 

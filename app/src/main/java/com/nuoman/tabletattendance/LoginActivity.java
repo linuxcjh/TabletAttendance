@@ -26,6 +26,8 @@ import com.nuoman.tabletattendance.components.CustomDialog;
 import com.nuoman.tabletattendance.model.BaseTransModel;
 import com.nuoman.tabletattendance.model.LoginInfoModel;
 
+import java.util.Map;
+
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -128,8 +130,7 @@ public class LoginActivity extends BaseActivity implements ICommonAction {
     }
 
     @Override
-    public void obtainData(Object data, String methodIndex, int status) {
-
+    public void obtainData(Object data, String methodIndex, int status, Map<String, String> parameterMap) {
         switch (methodIndex) {
             case NuoManService.LOGIN:
                 LoginInfoModel model = (LoginInfoModel) data;
@@ -142,8 +143,8 @@ public class LoginActivity extends BaseActivity implements ICommonAction {
 
                 break;
         }
-
     }
+
 
 
     @OnClick({R.id.login_bt, R.id.cancel_bt})

@@ -101,9 +101,7 @@ public class SendHomeworkActivity extends BaseActivity implements ICommonAction 
     }
 
     @Override
-    public void obtainData(Object data, String methodIndex, int status) {
-
-
+    public void obtainData(Object data, String methodIndex, int status, Map<String, String> parameterMap) {
         if (data != null) {
             BaseReceivedModel model = (BaseReceivedModel) data;
 
@@ -127,8 +125,8 @@ public class SendHomeworkActivity extends BaseActivity implements ICommonAction 
             }
 
         }
-
     }
+
 
     @OnClick({R.id.image_first_iv, R.id.image_second_iv, R.id.image_third_iv, R.id.cancel_bt, R.id.commit_bt, R.id.tip_layout})
     public void onClick(View view) {

@@ -45,6 +45,9 @@ public class NoteContentProvider extends ContentProvider {
         sNotesProjectionMap.put(NoteProviderMetaData.NoteTableMetaData.NOTE_TITLE, NoteProviderMetaData.NoteTableMetaData.NOTE_TITLE);
         sNotesProjectionMap.put(NoteProviderMetaData.NoteTableMetaData.NOTE_CONTENT, NoteProviderMetaData.NoteTableMetaData.NOTE_CONTENT);
         sNotesProjectionMap.put(NoteProviderMetaData.NoteTableMetaData.CREATE_DATE, NoteProviderMetaData.NoteTableMetaData.CREATE_DATE);
+        sNotesProjectionMap.put(NoteProviderMetaData.NoteTableMetaData.PUNCH_CARD_NO, NoteProviderMetaData.NoteTableMetaData.PUNCH_CARD_NO);
+        sNotesProjectionMap.put(NoteProviderMetaData.NoteTableMetaData.PUNCH_IMAGE_PATH, NoteProviderMetaData.NoteTableMetaData.PUNCH_IMAGE_PATH);
+        sNotesProjectionMap.put(NoteProviderMetaData.NoteTableMetaData.PUNCH_TIME, NoteProviderMetaData.NoteTableMetaData.PUNCH_TIME);
 
 
     }

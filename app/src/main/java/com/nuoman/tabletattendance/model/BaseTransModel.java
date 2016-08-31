@@ -13,6 +13,7 @@ public class BaseTransModel {
     private String machineId;
     private String cardNo;
     private String imagePath;//应用内使用
+    private String unique_id;//内部使用
 
     private String attDate;
     private String attPicUrl;
@@ -30,6 +31,13 @@ public class BaseTransModel {
     //版本更新
     private String type;//type取值范围: 1: 大蓝 2：小蓝  3：大黑
 
+    public String getUnique_id() {
+        return unique_id;
+    }
+
+    public void setUnique_id(String unique_id) {
+        this.unique_id = unique_id;
+    }
 
     public String getImagePath() {
         return imagePath;

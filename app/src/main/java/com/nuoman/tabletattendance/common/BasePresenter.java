@@ -11,13 +11,8 @@ import com.google.gson.reflect.TypeToken;
 import com.nuoman.tabletattendance.api.NuoManAPI;
 import com.nuoman.tabletattendance.common.utils.AppConfig;
 import com.nuoman.tabletattendance.common.utils.Utils;
-import com.squareup.okhttp.MediaType;
 import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.RequestBody;
 
-import java.io.File;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import retrofit.Call;
@@ -79,42 +74,43 @@ public abstract class BasePresenter {
      * @param parameterMap 参数
      * @param typeToken    返回值类型
      */
-    public void commonApi(boolean isPost, final String part, final String methodName, Map<String, String> parameterMap, final TypeToken<?> typeToken) {
+    public void commonApi(boolean isPost, final String part, final String methodName, final Map<String, String> parameterMap, final TypeToken<?> typeToken) {
         isShowFlag = false;
         if (Utils.checkNetworkConnection()) {
-            delayDisplayProgress();
-            Call<String> call;
-            if (isPost) {
-                call = service.serviceAPI(part, methodName, parameterMap);
-            } else {
-                call = service.serviceGetAPI(part, methodName, parameterMap);
+        delayDisplayProgress();
+        Call<String> call;
+        if (isPost) {
+            call = service.serviceAPI(part, methodName, parameterMap);
+        } else {
+            call = service.serviceGetAPI(part, methodName, parameterMap);
+        }
+        call.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Response<String> response, Retrofit retrofit) {
+                dialogDismiss();
+                isShowFlag = true;
+                Object object = null;
+                if (typeToken != null) {
+                    object = ParseResult.instance().requestServer(methodName, response.body(), typeToken);
+                }
+                if (object == null) {
+                    BasePresenter.this.onResponse(methodName, object, REQUEST_FAILURE, parameterMap);
+
+
+                } else {
+                    BasePresenter.this.onResponse(methodName, object, REQUEST_SUCCESS, parameterMap);
+
+                }
             }
-            call.enqueue(new Callback<String>() {
-                @Override
-                public void onResponse(Response<String> response, Retrofit retrofit) {
-                    dialogDismiss();
-                    isShowFlag = true;
-                    Object object = null;
-                    if (typeToken != null) {
-                        object = ParseResult.instance().requestServer(methodName, response.body(), typeToken);
-                    }
-                    if (object == null) {
-                        BasePresenter.this.onResponse(methodName, object, REQUEST_FAILURE);
 
-                    } else {
-                        BasePresenter.this.onResponse(methodName, object, REQUEST_SUCCESS);
-
-                    }
-                }
-
-                @Override
-                public void onFailure(Throwable t) {
-                    dialogDismiss();
-                    BasePresenter.this.onFailure(methodName);
-                    isShowFlag = true;
-                    Toast.makeText(AppConfig.getContext(), "数据加载异常！", Toast.LENGTH_SHORT).show();
-                }
-            });
+            @Override
+            public void onFailure(Throwable t) {
+                dialogDismiss();
+                BasePresenter.this.onResponse(methodName, null, REQUEST_FAILURE, parameterMap);
+                isShowFlag = true;
+//                Toast.makeText(AppConfig.getContext(), "数据加载异常！", Toast.LENGTH_SHORT).show();
+            }
+        });
 
         } else {
             Toast.makeText(AppConfig.getContext(), "网络不给力，请稍后重试！", Toast.LENGTH_SHORT).show();
@@ -135,78 +131,6 @@ public abstract class BasePresenter {
 
     }
 
-    /**
-     * 图片上传
-     *
-     * @param paths
-     */
-    int i = 0;
-
-    public void uploadFile(final List<String> paths) {
-        dialogShow();
-        for (String path : paths) {
-            i++;
-            File file = new File(path);
-            Map<String, RequestBody> map = new HashMap<>();
-            RequestBody userId = null;
-            RequestBody tenementId = null;
-            RequestBody appVersion = null;
-            RequestBody osVersion = null;
-            RequestBody imei = null;
-            RequestBody osType = null;
-            RequestBody schemaFlag = null;
-            try {
-                osType = RequestBody.create(MediaType.parse("text/plain"), "0");
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-            RequestBody fileBody = RequestBody.create(MediaType.parse("image/png"), file);
-
-            String fileName = file.getName();
-            if (file.getName().length() >= 10) {
-                fileName = file.getName().substring(file.getName().length() - 10, file.getName().length());
-            }
-            map.put("image\"; filename=\"" + fileName + "", fileBody);
-            map.put("userId", userId);
-            map.put("tenementId", tenementId);
-            map.put("appVersion", appVersion);
-            map.put("osVersion", osVersion);
-            map.put("imei", imei);
-            map.put("osType", osType);
-            map.put("schemaFlag", schemaFlag);
-            Call<String> call = service.uploadFile(map);
-
-            call.enqueue(new Callback<String>() {
-                @Override
-                public void onResponse(Response<String> response, Retrofit retrofit) {
-                    if (i == paths.size()) {
-                        dialogDismiss();
-                        i = 0;
-                    }
-                    Object object = ParseResult.instance().requestServer("uploadFile", response.body(), new TypeToken<PicInfoModel>() {
-                    });
-                    if (object == null) {
-                        BasePresenter.this.onResponse("uploadFile", object, REQUEST_FAILURE);
-
-                    } else {
-                        BasePresenter.this.onResponse("uploadFile", object, REQUEST_SUCCESS);
-
-                    }
-                }
-
-
-                @Override
-                public void onFailure(Throwable t) {
-                    if (i == paths.size()) {
-                        dialogDismiss();
-                        i = 0;
-                    }
-                }
-            });
-        }
-
-    }
 
     protected void dialogShow() {
         if (isShowProgressDialog && progressDialog != null && !progressDialog.isShowing()) {
@@ -248,7 +172,8 @@ public abstract class BasePresenter {
      * @param object     返回数据对象
      * @param status     是否成功标识
      */
-    public abstract void onResponse(String methodName, Object object, int status);
+
+    public abstract void onResponse(String methodName, Object object, int status, Map<String, String> parameterMap);
 
     public void onFailure(String methodName) {
     }

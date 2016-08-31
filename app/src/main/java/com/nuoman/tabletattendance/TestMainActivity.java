@@ -26,6 +26,7 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.lang.reflect.Method;
+import java.util.Map;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -66,7 +67,7 @@ public class TestMainActivity extends BaseActivity implements ICommonAction {
     }
 
     @Override
-    public void obtainData(Object data, String methodIndex, int status) {
+    public void obtainData(Object data, String methodIndex, int status, Map<String, String> parameterMap) {
 
         switch (methodIndex) {
             case NuoManService.GETTOKEN:

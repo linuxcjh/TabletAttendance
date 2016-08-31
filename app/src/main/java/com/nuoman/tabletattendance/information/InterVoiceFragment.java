@@ -22,6 +22,7 @@ import com.nuoman.tabletattendance.voice.view.MediaManager;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -46,7 +47,7 @@ public class InterVoiceFragment extends Fragment implements ICommonAction, Adapt
     @Bind(R.id.listview)
     ListView listview;
     @Bind(R.id.recordButton)
-    AudioRecordViewLayout recordButton;
+    public AudioRecordViewLayout recordButton;
     @Bind(R.id.container_layout)
     LinearLayout containerLayout;
 
@@ -88,7 +89,7 @@ public class InterVoiceFragment extends Fragment implements ICommonAction, Adapt
 
 
     @Override
-    public void obtainData(Object data, String methodIndex, int status) {
+    public void obtainData(Object data, String methodIndex, int status, Map<String, String> parameterMap) {
 
     }
 
@@ -146,61 +147,81 @@ public class InterVoiceFragment extends Fragment implements ICommonAction, Adapt
 
     @Override
     public void showRecordingDialog() {
-        containerLayout.removeAllViews();
-        LayoutInflater inflater = LayoutInflater.from(getActivity());
-        view = inflater.inflate(R.layout.dialog_manager, null);
-        mIcon = (ImageView) view.findViewById(R.id.dialog_icon);
-        mVoice = (ImageView) view.findViewById(R.id.dialog_voice);
-        mLable = (TextView) view.findViewById(R.id.recorder_dialogtext);
+        try {
+            containerLayout.removeAllViews();
+            LayoutInflater inflater = LayoutInflater.from(getActivity());
+            view = inflater.inflate(R.layout.dialog_manager, null);
+            mIcon = (ImageView) view.findViewById(R.id.dialog_icon);
+            mVoice = (ImageView) view.findViewById(R.id.dialog_voice);
+            mLable = (TextView) view.findViewById(R.id.recorder_dialogtext);
 
-        containerLayout.addView(view);
+            containerLayout.addView(view);        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
     @Override
     public void recording() {
-        if (view != null && (view.getVisibility() == View.VISIBLE)) {
-            mIcon.setVisibility(View.VISIBLE);
-            mVoice.setVisibility(View.VISIBLE);
-            mLable.setVisibility(View.VISIBLE);
+        try {
+            if (view != null && (view.getVisibility() == View.VISIBLE)) {
+                mIcon.setVisibility(View.VISIBLE);
+                mVoice.setVisibility(View.VISIBLE);
+                mLable.setVisibility(View.VISIBLE);
 
-            mIcon.setImageResource(R.drawable.recorder);
-            mLable.setText(R.string.shouzhishanghua);
-            mLable.setBackgroundColor(Color.TRANSPARENT);
+                mIcon.setImageResource(R.drawable.recorder);
+                mLable.setText(R.string.shouzhishanghua);
+                mLable.setBackgroundColor(Color.TRANSPARENT);
 
+            }        } catch (Exception e) {
+            e.printStackTrace();
         }
+
     }
 
     @Override
     public void wantToCancel() {
+        try {
+            if (view != null && (view.getVisibility() == View.VISIBLE)) {
+                mIcon.setVisibility(View.VISIBLE);
+                mVoice.setVisibility(View.GONE);
+                mLable.setVisibility(View.VISIBLE);
 
-        if (view != null && (view.getVisibility() == View.VISIBLE)) {
-            mIcon.setVisibility(View.VISIBLE);
-            mVoice.setVisibility(View.GONE);
-            mLable.setVisibility(View.VISIBLE);
-
-            mIcon.setImageResource(R.drawable.cancel);
-            mLable.setText(R.string.want_to_cancle);
-            mLable.setBackgroundColor(Color.RED);
+                mIcon.setImageResource(R.drawable.cancel);
+                mLable.setText(R.string.want_to_cancle);
+                mLable.setBackgroundColor(Color.RED);
+            }        } catch (Exception e) {
+            e.printStackTrace();
         }
+
     }
 
     @Override
     public void tooShort() {
-        if (view != null && (view.getVisibility() == View.VISIBLE)) {
-            mIcon.setVisibility(View.VISIBLE);
-            mVoice.setVisibility(View.GONE);
-            mLable.setVisibility(View.VISIBLE);
+        try {
+            if (view != null && (view.getVisibility() == View.VISIBLE)) {
+                mIcon.setVisibility(View.VISIBLE);
+                mVoice.setVisibility(View.GONE);
+                mLable.setVisibility(View.VISIBLE);
 
-            mIcon.setImageResource(R.drawable.voice_to_short);
-            mLable.setText(R.string.tooshort);
+                mIcon.setImageResource(R.drawable.voice_to_short);
+                mLable.setText(R.string.tooshort);
 
 
+            }        } catch (Exception e) {
+            e.printStackTrace();
         }
+
     }
 
     @Override
     public void dimissDialog() {
-        containerLayout.removeAllViews();
+        try {
+            containerLayout.removeAllViews();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
 
     }
 
@@ -213,11 +234,15 @@ public class InterVoiceFragment extends Fragment implements ICommonAction, Adapt
 //			mVoice.setVisibility(View.VISIBLE);
 //			mLable.setVisibility(View.VISIBLE);
 
-            //通过level来找到图片的id，也可以用switch来寻址，但是代码可能会比较长
-            int resId = getActivity().getResources().getIdentifier("v" + level,
-                    "drawable", getActivity().getPackageName());
+            try {
+                //通过level来找到图片的id，也可以用switch来寻址，但是代码可能会比较长
+                int resId = getActivity().getResources().getIdentifier("v" + level,
+                        "drawable", getActivity().getPackageName());
 
-            mVoice.setImageResource(resId);
+                mVoice.setImageResource(resId);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
      /*-------------------------------------------------------------------------------------------------------------*/

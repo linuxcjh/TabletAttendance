@@ -23,6 +23,7 @@ import com.nuoman.tabletattendance.model.StudentInfos;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -56,6 +57,8 @@ public class InterVoiceActivity extends BaseActivity implements ICommonAction {
     private StudentInfos infos = new StudentInfos();
 
     private String cardNo;
+    InterVoiceFragment fragment;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,7 +83,7 @@ public class InterVoiceActivity extends BaseActivity implements ICommonAction {
         gridView.setAdapter(adapter);
 
 
-        InterVoiceFragment fragment = new InterVoiceFragment();
+        fragment = new InterVoiceFragment();
         FragmentManager manager = getSupportFragmentManager();
         FragmentTransaction transaction = manager.beginTransaction();
         transaction.add(R.id.container_layout, fragment);
@@ -89,7 +92,7 @@ public class InterVoiceActivity extends BaseActivity implements ICommonAction {
 
 
     @Override
-    public void obtainData(Object data, String methodIndex, int status) {
+    public void obtainData(Object data, String methodIndex, int status, Map<String, String> parameterMap) {
         switch (methodIndex) {
             case NuoManService.GETPARENTSBYCARDNO:
                 ReceivedParentInfoModel model = (ReceivedParentInfoModel) data;

@@ -26,6 +26,7 @@ import com.nuoman.tabletattendance.model.DownloadModel;
 import com.nuoman.tabletattendance.model.LoginInfoModel;
 
 import java.lang.reflect.Method;
+import java.util.Map;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -79,8 +80,7 @@ public class SetInfoActivity extends BaseActivity implements ICommonAction {
     }
 
     @Override
-    public void obtainData(Object data, String methodIndex, int status) {
-
+    public void obtainData(Object data, String methodIndex, int status, Map<String, String> parameterMap) {
         switch (methodIndex) {
             case NuoManService.LOGIN:
 
@@ -113,9 +113,8 @@ public class SetInfoActivity extends BaseActivity implements ICommonAction {
 
                 break;
         }
-
-
     }
+
 
     @OnClick({R.id.select_class_bt, R.id.data_refresh_bt, R.id.update_version_bt, R.id.set_bt, R.id.change_login_bt, R.id.exit_bt, R.id.save_bt, R.id.confirm_bt, R.id.cancel_bt})
     public void onClick(View view) {

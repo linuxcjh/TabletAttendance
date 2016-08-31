@@ -24,6 +24,7 @@
     <uses-permission android:name="android.permission.VIBRATE" />
     <!-- 开机启动 -->
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.WRITE_SETTINGS" />
 
     <application
         android:name="com.nuoman.NuoManApplication"

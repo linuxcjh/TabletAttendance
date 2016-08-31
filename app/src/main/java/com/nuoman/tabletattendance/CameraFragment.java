@@ -17,22 +17,11 @@ import android.view.SurfaceHolder.Callback;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
-import com.google.gson.reflect.TypeToken;
-import com.nuoman.tabletattendance.api.NuoManService;
 import com.nuoman.tabletattendance.common.CommonPresenter;
-import com.nuoman.tabletattendance.common.ICommonAction;
 import com.nuoman.tabletattendance.common.utils.AppConfig;
 import com.nuoman.tabletattendance.common.utils.AppTools;
-import com.nuoman.tabletattendance.model.BaseReceivedModel;
-import com.qiniu.android.http.ResponseInfo;
-import com.qiniu.android.storage.UpCompletionHandler;
-import com.qiniu.android.storage.UploadManager;
 
-import org.json.JSONObject;
-
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Method;
@@ -43,7 +32,7 @@ import butterknife.ButterKnife;
 /**
  * 相机
  */
-public class CameraFragment extends Fragment implements Callback, ICommonAction {
+public class CameraFragment extends Fragment implements Callback {
 
 
     public interface ObtainPictureListener {
@@ -85,9 +74,6 @@ public class CameraFragment extends Fragment implements Callback, ICommonAction 
 
 
     private void init() {
-        commonPresenter = new CommonPresenter(this);
-        commonPresenter.invokeInterfaceObtainData(false, "qiniuCtrl", NuoManService.GETTOKEN, null, new TypeToken<BaseReceivedModel>() {
-        });
         surfaceView.setFocusable(true);
         surfaceHolder = surfaceView.getHolder();
         surfaceHolder.addCallback(this);
@@ -96,18 +82,7 @@ public class CameraFragment extends Fragment implements Callback, ICommonAction 
 
     }
 
-    @Override
-    public void obtainData(Object data, String methodIndex, int status) {
 
-        switch (methodIndex) {
-            case NuoManService.GETTOKEN:
-                BaseReceivedModel model = (BaseReceivedModel) data;
-                AppConfig.setStringConfig("token", model.getToken());
-
-                Toast.makeText(getActivity(),model.getToken(),Toast.LENGTH_SHORT).show();
-                break;
-        }
-    }
 
     @Override
     public void surfaceChanged(SurfaceHolder arg0, int arg1, int arg2, int arg3) {
@@ -164,44 +139,15 @@ public class CameraFragment extends Fragment implements Callback, ICommonAction 
                 bm = Bitmap.createBitmap(bm, 0, 0, bm.getWidth(), bm.getHeight(),
                         matrix, true);
 
-                String  dirPath = AppTools.getFileSavePath(AppConfig.getContext());
+                String dirPath = AppTools.getFileSavePath(AppConfig.getContext());
                 filePath = dirPath + "/" + System.currentTimeMillis() + ".jpg";
                 savePicture(bm, filePath);
-//                setResult(RESULT_OK, new Intent().putExtra("filePath", filePath));
-//                finish();
-                obtainPictureListener.onChangeArticle("");
+                obtainPictureListener.onChangeArticle(filePath);
 
-//                uploadImageToQiNiu(filePath, AppConfig.getStringConfig("token", ""));
             }
         });
     }
 
-    /**
-     * 上传图片到七牛
-     *
-     * @param filePath 要上传的图片路径
-     * @param token    在七牛官网上注册的token
-     */
-
-    private void uploadImageToQiNiu(String filePath, String token) {
-        UploadManager uploadManager = new UploadManager();
-        // 设置图片名字
-        File file = new File(filePath);
-
-        if (file.exists()) {
-            uploadManager.put(filePath, file.getName(), token, new UpCompletionHandler() {
-                @Override
-                public void complete(String key, ResponseInfo info, JSONObject res) {
-                    // info.error中包含了错误信息，可打印调试
-                    // 上传成功后将key值上传到自己的服务器
-                    obtainPictureListener.onChangeArticle(key);
-
-                    Log.d("NuoMan", "key: " + key + "\n");
-                }
-            }, null);
-        }
-
-    }
 
     public void savePicture(Bitmap bm, String pathName) {
         FileOutputStream stream = null;

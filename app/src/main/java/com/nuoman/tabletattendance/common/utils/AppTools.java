@@ -198,7 +198,7 @@ public class AppTools {
     }
 
     //获取当前亮度 并设置最大的亮度保存
-    public static void saveBrightness(Context context,int brightValue) {
+    public static void saveBrightness(Context context, int brightValue) {
         int screenBrightness = BrightnessTools.getScreenBrightness(context);
         BrightnessTools.saveBrightness(context.getContentResolver(), brightValue);
     }
@@ -212,6 +212,7 @@ public class AppTools {
             BrightnessTools.startAutoBrightness(context);
         }
     }
+
     /**
      * 方法名: getVersionCode
      * <p>
@@ -228,6 +229,32 @@ public class AppTools {
         } catch (PackageManager.NameNotFoundException e) {
         }
         return verCode;
+    }
+
+    /*
+    删除目录下的所有文件
+     */
+
+    public static void deleteAllFiles(File root) {
+        File files[] = root.listFiles();
+        if (files != null)
+            for (File f : files) {
+                if (f.isDirectory()) { // 判断是否为文件夹
+                    deleteAllFiles(f);
+                    try {
+                        f.delete();
+                    } catch (Exception e) {
+                    }
+                } else {
+                    if (f.exists()) { // 判断是否存在
+                        deleteAllFiles(f);
+                        try {
+                            f.delete();
+                        } catch (Exception e) {
+                        }
+                    }
+                }
+            }
     }
 
 }

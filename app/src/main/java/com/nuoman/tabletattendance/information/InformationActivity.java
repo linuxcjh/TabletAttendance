@@ -28,6 +28,7 @@ import com.nuoman.tabletattendance.model.StudentInfos;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -87,7 +88,7 @@ public class InformationActivity extends BaseActivity implements ICommonAction {
     }
 
     @Override
-    public void obtainData(Object data, String methodIndex, int status) {
+    public void obtainData(Object data, String methodIndex, int status, Map<String, String> parameterMap) {
 
         switch (methodIndex) {
             case NuoManService.GETUNREADMSG:

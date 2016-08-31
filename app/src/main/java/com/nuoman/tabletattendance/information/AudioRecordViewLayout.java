@@ -116,11 +116,11 @@ public class AudioRecordViewLayout extends LinearLayout implements AudioManager.
     };
 
     // 准备三个常量
-    private static final int MSG_AUDIO_PREPARED = 0X110;
-    private static final int MSG_VOICE_CHANGE = 0X111;
-    private static final int MSG_DIALOG_DIMISS = 0X112;
+    public static final int MSG_AUDIO_PREPARED = 0X110;
+    public static final int MSG_VOICE_CHANGE = 0X111;
+    public static final int MSG_DIALOG_DIMISS = 0X112;
 
-    private Handler mhandler = new Handler() {
+    public Handler mhandler = new Handler() {
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case MSG_AUDIO_PREPARED:

@@ -3,10 +3,13 @@ package com.nuoman.tabletattendance;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.inputmethodservice.Keyboard;
 import android.inputmethodservice.KeyboardView;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -22,7 +25,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
 import com.google.gson.reflect.TypeToken;
 import com.nuoman.syncadapter.pro.NoteProviderMetaData;
 import com.nuoman.tabletattendance.api.NuoManService;
@@ -33,14 +35,23 @@ import com.nuoman.tabletattendance.common.NuoManConstant;
 import com.nuoman.tabletattendance.common.utils.AppConfig;
 import com.nuoman.tabletattendance.common.utils.AppTools;
 import com.nuoman.tabletattendance.common.utils.BaseUtil;
+import com.nuoman.tabletattendance.common.utils.BrightnessTools;
+import com.nuoman.tabletattendance.common.utils.Utils;
 import com.nuoman.tabletattendance.information.InformationActivity;
 import com.nuoman.tabletattendance.model.BaseReceivedModel;
 import com.nuoman.tabletattendance.model.BaseTransModel;
 import com.nuoman.tabletattendance.model.CardNoModel;
 import com.nuoman.tabletattendance.model.LoginInfoModel;
 import com.nuoman.tabletattendance.model.ReceivedWeatherModel;
+import com.qiniu.android.http.ResponseInfo;
+import com.qiniu.android.storage.UpCompletionHandler;
+import com.qiniu.android.storage.UploadManager;
 
+import org.json.JSONObject;
+
+import java.io.File;
 import java.util.List;
+import java.util.Map;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -126,7 +137,6 @@ public class MainActivity extends BaseActivity implements ICommonAction, CameraF
     LinearLayout noCardLayout;
     private CommonPresenter commonPresenter;
 
-    private BaseTransModel transModel = new BaseTransModel();
 
     private CameraFragment cameraFragment;
     LoginInfoModel logInfo = AppTools.getLogInfo();
@@ -157,8 +167,11 @@ public class MainActivity extends BaseActivity implements ICommonAction, CameraF
      * 获取天气
      */
     private void initData() {
+        BaseTransModel transModel = new BaseTransModel();
         commonPresenter = new CommonPresenter(this);
         transModel.setArea(AppTools.getLogInfo().getAreaId());
+        commonPresenter.invokeInterfaceObtainData(false, "qiniuCtrl", NuoManService.GETTOKEN, null, new TypeToken<BaseReceivedModel>() {
+        });
         commonPresenter.invokeInterfaceObtainData(false, "weatherCtrl", NuoManService.GETWEATHERFORONEDAY, transModel, new TypeToken<ReceivedWeatherModel>() {
         });
 
@@ -177,6 +190,9 @@ public class MainActivity extends BaseActivity implements ICommonAction, CameraF
         editInputEt.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (BrightnessTools.getScreenBrightness(MainActivity.this) != 255) { //打卡时提升屏幕亮度
+                    AppTools.saveBrightness(MainActivity.this, 255);
+                }
                 mHandler.removeMessages(BACK_INDEX);
                 AppConfig.setStringConfig(NuoManConstant.CARD_ID, v.getText().toString().replace("\n", ""));
                 cameraFragment.takePicture();
@@ -263,57 +279,95 @@ public class MainActivity extends BaseActivity implements ICommonAction, CameraF
 
 
     /**
-     * 上传打卡信息
+     * 上传图片
      *
-     * @param pictureId
+     * @param filePath
      */
     @Override
-    public void onChangeArticle(String pictureId) {
-//        punchCardSuccess();
-        transModel.setMachineNo(logInfo.getMachineId());
-        transModel.setMachineId(logInfo.getMachineId());
-        transModel.setTel(AppConfig.getStringConfig(NuoManConstant.USER_NAME, ""));
-        transModel.setCardNo(AppConfig.getStringConfig(NuoManConstant.CARD_ID, ""));
-        transModel.setAttDate(BaseUtil.getTime(BaseUtil.YYYY_MM_DD_HH_MM_SS));
-        transModel.setAttPicUrl(pictureId);
-        transModel.setImagePath(cameraFragment.filePath);
-        commonPresenter.invokeInterfaceObtainData(true, "attDataCtrl", NuoManService.WRITEATTLOG, transModel, new TypeToken<BaseReceivedModel>() {
-        });
+    public void onChangeArticle(String filePath) {
+
+        if (Utils.checkNetworkConnection()) {//有网
+            uploadImageToQiNiu(filePath, AppConfig.getStringConfig("token", ""));
+
+        } else { //没网
+            punchCardSuccess(filePath);
+            BaseTransModel m = new BaseTransModel();
+            m.setCardNo(AppConfig.getStringConfig(NuoManConstant.CARD_ID, ""));
+            m.setAttDate(BaseUtil.getTime(BaseUtil.YYYY_MM_DD_HH_MM_SS));
+            m.setImagePath(filePath);
+            insert(m);
+        }
     }
 
     @Override
-    public void obtainData(Object data, String methodIndex, int status) {
+    public void obtainData(Object data, String methodIndex, int status, Map<String, String> parameterMap) {
 
-        if (data != null) {
-            switch (methodIndex) {
-                case NuoManService.GETWEATHERFORONEDAY:
+        switch (methodIndex) {
+            case NuoManService.GETTOKEN:
+                if (data != null) {
+                    BaseReceivedModel model = (BaseReceivedModel) data;
+                    AppConfig.setStringConfig("token", model.getToken());
+//                    Toast.makeText(this, model.getToken(), Toast.LENGTH_SHORT).show();
+
+                }
+                break;
+            case NuoManService.GETWEATHERFORONEDAY:
+                if (data != null) {
                     ReceivedWeatherModel model = (ReceivedWeatherModel) data;
                     hWeatherDetailTv.setText(model.getTime());
 
                     if (!TextUtils.isEmpty(model.getNightShape())) {
                         hWeatherIv.setImageDrawable(AppTools.loadImageFromAsserts(this, "WeatherIcon/Day/" + model.getNightShape().split("&")[0] + ".png"));
                     }
+                }
 
-                    break;
-                case NuoManService.WRITEATTLOG:
+                break;
+            case NuoManService.WRITEATTLOG:
+
+                BaseTransModel mTrans = new BaseTransModel();
+                for (String key : parameterMap.keySet()) {
+                    if (key.equals("cardNo")) {
+                        mTrans.setCardNo(parameterMap.get(key));
+                    } else if (key.equals("imagePath")) {
+                        mTrans.setImagePath(parameterMap.get(key));
+                    } else if (key.equals("attDate")) {
+                        mTrans.setAttDate(parameterMap.get(key));
+                    }
+
+                    Log.d("SYNC", "parameterMap   ---  " + "key= " + key + " and value= " + parameterMap.get(key));
+                }
+                if (data != null) {
                     BaseReceivedModel m = (BaseReceivedModel) data;
                     if (m.isSuccess()) {
                         Toast.makeText(this, "打卡成功", Toast.LENGTH_SHORT).show();
-                        punchCardSuccess();
+                        punchCardSuccess(mTrans.getImagePath());
+
                     } else { //保存未成功上传的打卡信息
-
-
-
+                        insert(mTrans);
                     }
+                } else {
+                    insert(mTrans);
+                }
 
-                    break;
-            }
-        } else { //保存未成功上传的打卡信息
-
+                break;
         }
-
     }
 
+    /**
+     * 保存未提交的打卡
+     */
+    private void insert(BaseTransModel transModel) {
+
+        ContentValues values = new ContentValues();
+        values.put(NoteProviderMetaData.NoteTableMetaData.PUNCH_CARD_NO, transModel.getCardNo());
+        values.put(NoteProviderMetaData.NoteTableMetaData.PUNCH_TIME, transModel.getAttDate());
+        values.put(NoteProviderMetaData.NoteTableMetaData.PUNCH_IMAGE_PATH, transModel.getImagePath());
+        Uri uri = this.getContentResolver().insert(NoteProviderMetaData.NoteTableMetaData.CONTENT_URI, values);
+
+        Log.d("SYNC", uri.toString());
+        punchCardSuccess(transModel.getImagePath());
+
+    }
 
     Handler mHandler = new Handler() {
         @Override
@@ -372,7 +426,7 @@ public class MainActivity extends BaseActivity implements ICommonAction, CameraF
     /**
      * 打卡成功
      */
-    private void punchCardSuccess() {
+    private void punchCardSuccess(String filePath) {
 
         String tutelage = obtainCardInfo();
 
@@ -388,7 +442,9 @@ public class MainActivity extends BaseActivity implements ICommonAction, CameraF
         hOperationLayout.setVisibility(View.GONE);
         hTitleTv.setVisibility(View.VISIBLE);
         hImageIv.setVisibility(View.VISIBLE);
-        Glide.with(this).load(cameraFragment.filePath).into(hImageIv);
+//        Glide.with(this).load(filePath).into(hImageIv);
+
+        hImageIv.setImageBitmap(BitmapFactory.decodeFile(filePath));
         hPunchCardSuccessTv.setVisibility(View.VISIBLE);
         hPunchCardSuccessTv.setText(info);
 
@@ -438,6 +494,39 @@ public class MainActivity extends BaseActivity implements ICommonAction, CameraF
             }
 
         }
+    }
+
+    /**
+     * 上传图片到七牛成功后上传打卡信息
+     *
+     * @param filePath 要上传的图片路径
+     * @param token    在七牛官网上注册的token
+     */
+
+    private void uploadImageToQiNiu(final String filePath, String token) {
+        UploadManager uploadManager = new UploadManager();
+        // 设置图片名字
+        File file = new File(filePath);
+
+        if (file.exists()) {
+            uploadManager.put(filePath, file.getName(), token, new UpCompletionHandler() {
+                @Override
+                public void complete(String key, ResponseInfo info, JSONObject res) {
+                    BaseTransModel transModel = new BaseTransModel();
+                    transModel.setMachineNo(logInfo.getMachineId());
+                    transModel.setMachineId(logInfo.getMachineId());
+                    transModel.setTel(AppConfig.getStringConfig(NuoManConstant.USER_NAME, ""));
+                    transModel.setCardNo(AppConfig.getStringConfig(NuoManConstant.CARD_ID, ""));
+                    transModel.setAttDate(BaseUtil.getTime(BaseUtil.YYYY_MM_DD_HH_MM_SS));
+                    transModel.setAttPicUrl(key);
+                    transModel.setImagePath(filePath);
+                    commonPresenter.invokeInterfaceObtainData(true, "attDataCtrl", NuoManService.WRITEATTLOG, transModel, new TypeToken<BaseReceivedModel>() {
+                    });
+                    Log.d("NuoMan", "key: " + key + "\n");
+                }
+            }, null);
+        }
+
     }
 
     /* ------Sync START ------------------------------------------------------------------------- */

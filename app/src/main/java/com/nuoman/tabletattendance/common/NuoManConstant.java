@@ -65,4 +65,19 @@ public class NuoManConstant {
      */
     public static final int CONFIRMDIALOG = 0x33;
 
+    /**
+     * 降低屏幕亮度  定时
+     */
+    public static String DOWN_SCREEN_LIGHT = "22:00";
+
+    /**
+     * 恢复屏幕亮度  定时
+     */
+    public static String REBACK_SCREEN_LIGHT = "07:00";
+
+    /**
+     * 定时清理图片缓存并更新数据
+     */
+    public static String CLEAR_PICTHRE_CACHE = "00:00";
+
 }

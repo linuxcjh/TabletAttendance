@@ -6,22 +6,33 @@ import android.content.ContentProviderClient;
 import android.content.Context;
 import android.content.SyncResult;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.RemoteException;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.google.gson.reflect.TypeToken;
 import com.nuoman.syncadapter.pro.NoteProviderMetaData;
 import com.nuoman.tabletattendance.api.NuoManService;
 import com.nuoman.tabletattendance.common.CommonPresenter;
 import com.nuoman.tabletattendance.common.ICommonAction;
+import com.nuoman.tabletattendance.common.NuoManConstant;
 import com.nuoman.tabletattendance.common.utils.AppConfig;
 import com.nuoman.tabletattendance.common.utils.AppTools;
 import com.nuoman.tabletattendance.common.utils.BaseUtil;
 import com.nuoman.tabletattendance.model.BaseReceivedModel;
 import com.nuoman.tabletattendance.model.BaseTransModel;
 import com.nuoman.tabletattendance.model.LoginInfoModel;
+import com.qiniu.android.http.ResponseInfo;
+import com.qiniu.android.storage.UpCompletionHandler;
+import com.qiniu.android.storage.UploadManager;
+
+import org.json.JSONObject;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * AUTHOR: Alex
@@ -30,7 +41,8 @@ import com.nuoman.tabletattendance.model.LoginInfoModel;
 public class SyncAdapter extends AbstractThreadedSyncAdapter implements ICommonAction {
 
     private CommonPresenter commonPresenter;
-    private BaseTransModel transModel = new BaseTransModel();
+
+    private ContentProviderClient provider;
 
     public SyncAdapter(Context context, boolean autoInitialize) {
         super(context, autoInitialize);
@@ -47,68 +59,158 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter implements ICommonA
 
     @Override
     public void onPerformSync(Account account, Bundle extras, String authority, ContentProviderClient provider, SyncResult syncResult) {
+        this.provider = provider;
 
-        if (BaseUtil.getTime(BaseUtil.HH_MM).equals("12:00")) {//定时任务
-            AppTools.saveBrightness(getContext(), 50);
-            Log.d("SYNC", "50   ---  " + BaseUtil.getTime(BaseUtil.HH_MM));
-
+        //定时任务 降低屏幕亮度
+        if (BaseUtil.getTime(BaseUtil.HH_MM).equals(NuoManConstant.DOWN_SCREEN_LIGHT)) {
+            AppTools.saveBrightness(getContext(), 30);
         }
-//        query(provider);
-//        executeTask();
+
+        //定时任务 恢复屏幕亮度
+        if (BaseUtil.getTime(BaseUtil.HH_MM).equals(NuoManConstant.REBACK_SCREEN_LIGHT)) {
+            AppTools.saveBrightness(getContext(), 255);
+        }
+
+        //查询是否有未上传的打卡记录
+        List<BaseTransModel> transModels = query(provider);
+
+        //上传未上传的数据
+        upLoadPunchCardInfo(transModels);
+
+        //定时任务 清空图片缓存
+        if (BaseUtil.getTime(BaseUtil.HH_MM).equals(NuoManConstant.CLEAR_PICTHRE_CACHE)) {
+
+            //判断是否有未上传的图片
+            if (transModels.size() == 0) {
+                AppTools.deleteAllFiles(new File(AppTools.getFileSavePath(AppConfig.getContext())));
+            }
+
+            //更新数据
+            BaseTransModel refreshModel = new BaseTransModel();
+            refreshModel.setTel(AppConfig.getStringConfig(NuoManConstant.USER_NAME, ""));
+            refreshModel.setMachineNo(AppConfig.getStringConfig(NuoManConstant.USER_MAC, ""));
+            commonPresenter.invokeInterfaceObtainData(false, "loginCtrl", NuoManService.LOGIN, refreshModel, new TypeToken<LoginInfoModel>() {
+            });
+        }
         Log.d("SYNC", "onPerformSync   ---  " + BaseUtil.getTime(BaseUtil.HH_MM));
+
     }
 
-    private void executeTask() {
-        LoginInfoModel loginInfo = AppTools.getLogInfo();
-//        transModel.setMachineNo(loginInfo.getMachineId());
-//        transModel.setMachineId(loginInfo.getMachineId());
-//        transModel.setTel(AppConfig.getStringConfig(NuoManConstant.USER_NAME, ""));
-//        transModel.setCardNo(AppConfig.getStringConfig(NuoManConstant.CARD_ID, ""));
-//        transModel.setAttDate(BaseUtil.getTime(BaseUtil.YYYY_MM_DD_HH_MM_SS));
-//        transModel.setAttPicUrl(pictureId);
-        commonPresenter.invokeInterfaceObtainData(true, "attDataCtrl", NuoManService.WRITEATTLOG, transModel, new TypeToken<BaseReceivedModel>() {
-        });
-    }
 
     @Override
-    public void obtainData(Object data, String methodIndex, int status) {
+    public void obtainData(Object data, String methodIndex, int status, Map<String, String> parameterMap) {
 
         switch (methodIndex) {
             case NuoManService.WRITEATTLOG:
                 BaseReceivedModel m = (BaseReceivedModel) data;
                 if (m.isSuccess()) {
-                    Toast.makeText(AppConfig.getContext(), "打卡成功", Toast.LENGTH_SHORT).show();
-                }
+                    String id = "";
+                    for (String key : parameterMap.keySet()) {
+                        if (key.equals("unique_id")) {
+                            id = parameterMap.get(key);
+                        }
+                        Log.d("SYNC", "parameterMap   ---  " + "key= " + key + " and value= " + parameterMap.get(key));
+                    }
 
+                    Log.d("SYNC", "obtainData   ---  id :" + id + " ====== " + BaseUtil.getTime(BaseUtil.HH_MM));
+                    try {
+                        provider.delete(Uri.parse("content://" + NoteProviderMetaData.AUTHORITY + "/notes" + "/" + id), null, null);
+
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                    }
+
+                }
                 break;
         }
     }
 
 
-    private void query(ContentProviderClient provider) {
-
+    private List<BaseTransModel> query(ContentProviderClient provider) {
+        List<BaseTransModel> transModels = new ArrayList<>();
+        LoginInfoModel loginInfo = AppTools.getLogInfo();
         Cursor cursor = null;
         try {
             cursor = provider.query(NoteProviderMetaData.NoteTableMetaData.CONTENT_URI, null, null, null, null);
             cursor.moveToFirst();
             while (!cursor.isAfterLast()) {
                 String id = cursor.getString(cursor.getColumnIndex(NoteProviderMetaData.NoteTableMetaData._ID));
-
-                String title = cursor.getString(cursor.getColumnIndex(NoteProviderMetaData.NoteTableMetaData.NOTE_TITLE));
-                String content = cursor.getString(cursor.getColumnIndex(NoteProviderMetaData.NoteTableMetaData.NOTE_CONTENT));
-                long createDate = cursor.getLong(cursor.getColumnIndex(NoteProviderMetaData.NoteTableMetaData.CREATE_DATE));
+                String punchCardNo = cursor.getString(cursor.getColumnIndex(NoteProviderMetaData.NoteTableMetaData.PUNCH_CARD_NO));
+                String punchTime = cursor.getString(cursor.getColumnIndex(NoteProviderMetaData.NoteTableMetaData.PUNCH_TIME));
+                String punchImagePath = cursor.getString(cursor.getColumnIndex(NoteProviderMetaData.NoteTableMetaData.PUNCH_IMAGE_PATH));
 
                 Log.d("SYNC", "id: " + id);
-                Log.d("SYNC", "title: " + title);
-                Log.d("SYNC", "content: " + content);
-                Log.d("SYNC", "createDate: " + createDate);
+                Log.d("SYNC", "punchCardNo: " + punchCardNo);
+                Log.d("SYNC", "punchTime: " + punchTime);
+                Log.d("SYNC", "punchImagePath: " + punchImagePath);
+
+                BaseTransModel transModel = new BaseTransModel();
+
+                transModel.setUnique_id(id);
+                transModel.setMachineNo(loginInfo.getMachineId());
+                transModel.setMachineId(loginInfo.getMachineId());
+                transModel.setTel(AppConfig.getStringConfig(NuoManConstant.USER_NAME, ""));
+                transModel.setCardNo(punchCardNo);
+                transModel.setAttDate(punchTime);
+                transModel.setUnique_id(id);
+                transModel.setImagePath(punchImagePath);
 
 
+                transModels.add(transModel);
                 cursor.moveToNext();
             }
 
             cursor.close();
         } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+        return transModels;
+    }
+
+
+    /**
+     * 上传打卡信息
+     */
+    private void upLoadPunchCardInfo(List<BaseTransModel> transModels) {
+
+
+        for (int i = 0; i < transModels.size(); i++) {
+
+            uploadImageToQiNiu(transModels.get(i).getImagePath(), AppConfig.getStringConfig("token", ""), transModels.get(i));
+
+        }
+
+    }
+
+    /**
+     * 上传图片到七牛
+     *
+     * @param filePath 要上传的图片路径
+     * @param token    在七牛官网上注册的token
+     */
+
+    private void uploadImageToQiNiu(String filePath, String token, final BaseTransModel model) {
+
+        try {
+            UploadManager uploadManager = new UploadManager();
+            File file = new File(filePath);
+            if (file.exists()) {
+
+                uploadManager.put(filePath, file.getName(), token, new UpCompletionHandler() {
+                    @Override
+                    public void complete(String key, ResponseInfo info, JSONObject res) {
+                        // info.error中包含了错误信息，可打印调试
+                        // 上传成功后将key值上传到自己的服务器
+
+                        model.setAttPicUrl(key);
+                        commonPresenter.invokeInterfaceObtainData(true, "attDataCtrl", NuoManService.WRITEATTLOG, model, new TypeToken<BaseReceivedModel>() {
+                        });
+
+                        Log.d("NuoMan", "key: " + key + "\n");
+                    }
+                }, null);
+            }
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
