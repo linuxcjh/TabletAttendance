@@ -1,6 +1,8 @@
 package com.nuoman.tabletattendance.common.utils;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Environment;
@@ -152,6 +154,7 @@ public class AppTools {
 
     /**
      * 获取登陆信息
+     *
      * @return
      */
     public static LoginInfoModel getLogInfo() {
@@ -161,7 +164,10 @@ public class AppTools {
 
         return model;
     }
-    /** 从assets 文件夹中读取图片 */
+
+    /**
+     * 从assets 文件夹中读取图片
+     */
     public static Drawable loadImageFromAsserts(final Context ctx, String fileName) {
         try {
             InputStream is = ctx.getResources().getAssets().open(fileName);
@@ -180,6 +186,48 @@ public class AppTools {
             }
         }
         return null;
+    }
+
+    //设置应用中的亮度 不保存
+    public static void Brightness(Activity context) {
+        boolean autoBrightness = BrightnessTools.isAutoBrightness(context.getContentResolver());
+        if (autoBrightness) {
+            BrightnessTools.stopAutoBrightness(context);
+        }
+        BrightnessTools.setBrightness(context, 255);
+    }
+
+    //获取当前亮度 并设置最大的亮度保存
+    public static void saveBrightness(Context context,int brightValue) {
+        int screenBrightness = BrightnessTools.getScreenBrightness(context);
+        BrightnessTools.saveBrightness(context.getContentResolver(), brightValue);
+    }
+
+    //开启关闭自动调节亮度
+    public static void offAuto(Activity context) {
+        boolean autoBrightness = BrightnessTools.isAutoBrightness(context.getContentResolver());
+        if (autoBrightness) {
+            BrightnessTools.stopAutoBrightness(context);
+        } else {
+            BrightnessTools.startAutoBrightness(context);
+        }
+    }
+    /**
+     * 方法名: getVersionCode
+     * <p>
+     * 功能说明： 返回当前应用的版本号
+     * </p>
+     *
+     * @return
+     */
+    public static int getVersionCode() {
+        int verCode = 0;
+        try {
+            verCode = AppConfig.getContext().getPackageManager()
+                    .getPackageInfo(AppConfig.getContext().getPackageName(), 0).versionCode;
+        } catch (PackageManager.NameNotFoundException e) {
+        }
+        return verCode;
     }
 
 }

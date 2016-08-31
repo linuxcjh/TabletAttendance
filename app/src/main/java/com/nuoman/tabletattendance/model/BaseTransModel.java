@@ -12,6 +12,7 @@ public class BaseTransModel {
     private String area;
     private String machineId;
     private String cardNo;
+    private String imagePath;//应用内使用
 
     private String attDate;
     private String attPicUrl;
@@ -26,6 +27,25 @@ public class BaseTransModel {
     private String teacherId;
     private String homeworkPic;
 
+    //版本更新
+    private String type;//type取值范围: 1: 大蓝 2：小蓝  3：大黑
+
+
+    public String getImagePath() {
+        return imagePath;
+    }
+
+    public void setImagePath(String imagePath) {
+        this.imagePath = imagePath;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
 
     public String getTeacherId() {
         return teacherId;

@@ -157,7 +157,6 @@ public class MainActivity extends BaseActivity implements ICommonAction, CameraF
      * 获取天气
      */
     private void initData() {
-
         commonPresenter = new CommonPresenter(this);
         transModel.setArea(AppTools.getLogInfo().getAreaId());
         commonPresenter.invokeInterfaceObtainData(false, "weatherCtrl", NuoManService.GETWEATHERFORONEDAY, transModel, new TypeToken<ReceivedWeatherModel>() {
@@ -171,7 +170,7 @@ public class MainActivity extends BaseActivity implements ICommonAction, CameraF
     private void initView() {
 
         cameraFragment = (CameraFragment) getSupportFragmentManager().findFragmentById(R.id.camera_fragment);
-        hSchoolNameTv.setText(AppConfig.getStringConfig(NuoManConstant.SCHOOL_NAME,AppTools.getLogInfo().getSchoolName()));
+        hSchoolNameTv.setText(AppConfig.getStringConfig(NuoManConstant.SCHOOL_NAME, AppTools.getLogInfo().getSchoolName()));
         hTimeTv.setText(BaseUtil.getTime(BaseUtil.YYYY_MM_DD_HH_MM) + "   " + BaseUtil.getTime(BaseUtil.HH_MM_SS) + "    " + BaseUtil.getDayOfWeek());
         mHandler.sendEmptyMessageDelayed(CURRENT_TIME_INDEX, REFRESH_TIME_INDEX);
 
@@ -270,15 +269,16 @@ public class MainActivity extends BaseActivity implements ICommonAction, CameraF
      */
     @Override
     public void onChangeArticle(String pictureId) {
-        punchCardSuccess();
-//        transModel.setMachineNo(logInfo.getMachineId());
-//        transModel.setMachineId(logInfo.getMachineId());
-//        transModel.setTel(AppConfig.getStringConfig(NuoManConstant.USER_NAME, ""));
-//        transModel.setCardNo(AppConfig.getStringConfig(NuoManConstant.CARD_ID, ""));
-//        transModel.setAttDate(BaseUtil.getTime(BaseUtil.YYYY_MM_DD_HH_MM_SS));
-//        transModel.setAttPicUrl(pictureId);
-//        commonPresenter.invokeInterfaceObtainData(true, "attDataCtrl", NuoManService.WRITEATTLOG, transModel, new TypeToken<BaseReceivedModel>() {
-//        });
+//        punchCardSuccess();
+        transModel.setMachineNo(logInfo.getMachineId());
+        transModel.setMachineId(logInfo.getMachineId());
+        transModel.setTel(AppConfig.getStringConfig(NuoManConstant.USER_NAME, ""));
+        transModel.setCardNo(AppConfig.getStringConfig(NuoManConstant.CARD_ID, ""));
+        transModel.setAttDate(BaseUtil.getTime(BaseUtil.YYYY_MM_DD_HH_MM_SS));
+        transModel.setAttPicUrl(pictureId);
+        transModel.setImagePath(cameraFragment.filePath);
+        commonPresenter.invokeInterfaceObtainData(true, "attDataCtrl", NuoManService.WRITEATTLOG, transModel, new TypeToken<BaseReceivedModel>() {
+        });
     }
 
     @Override
@@ -300,10 +300,16 @@ public class MainActivity extends BaseActivity implements ICommonAction, CameraF
                     if (m.isSuccess()) {
                         Toast.makeText(this, "打卡成功", Toast.LENGTH_SHORT).show();
                         punchCardSuccess();
+                    } else { //保存未成功上传的打卡信息
+
+
+
                     }
 
                     break;
             }
+        } else { //保存未成功上传的打卡信息
+
         }
 
     }
@@ -427,7 +433,7 @@ public class MainActivity extends BaseActivity implements ICommonAction, CameraF
         if (data != null) {
             switch (requestCode) {
                 case SET_REBACK_INDEX:
-                    hSchoolNameTv.setText(AppConfig.getStringConfig(NuoManConstant.SCHOOL_NAME,AppTools.getLogInfo().getSchoolName()));
+                    hSchoolNameTv.setText(AppConfig.getStringConfig(NuoManConstant.SCHOOL_NAME, AppTools.getLogInfo().getSchoolName()));
                     break;
             }
 

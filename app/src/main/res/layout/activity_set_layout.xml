@@ -2,156 +2,217 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/bg"
-    android:paddingLeft="30dp">
-
-
-    <EditText
-        android:id="@+id/edit_tv"
-        android:layout_width="300dp"
-        android:layout_height="60dp"
-        android:layout_marginTop="30dp"
-        android:background="@android:color/white"
-        android:gravity="center"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
-        android:text="" />
-
-
-    <EditText
-        android:id="@+id/edit_pre_tv"
-        android:layout_width="300dp"
-        android:layout_height="60dp"
-        android:layout_below="@+id/edit_tv"
-        android:layout_marginTop="20dp"
-        android:background="@android:color/white"
-        android:gravity="center"
-        android:text=""
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp" />
+    android:background="@drawable/bg">
 
     <RelativeLayout
-        android:layout_width="200dp"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:layout_marginBottom="80dp"
-        android:layout_marginRight="290dp">
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingLeft="30dp">
 
-        <ImageView
-            android:id="@+id/left_layout"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:src="@drawable/left_03" />
 
-        <Button
-            android:id="@+id/select_class_bt"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
+        <EditText
+            android:id="@+id/edit_tv"
+            android:layout_width="300dp"
+            android:layout_height="60dp"
+            android:layout_marginTop="30dp"
+            android:background="@android:color/white"
+            android:gravity="center"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:text="" />
+
+
+        <EditText
+            android:id="@+id/edit_pre_tv"
+            android:layout_width="300dp"
+            android:layout_height="60dp"
+            android:layout_below="@+id/edit_tv"
             android:layout_marginTop="20dp"
-            android:background="@drawable/lupai_02_03"
+            android:background="@android:color/white"
             android:gravity="center"
-            android:text="学前班一班"
-            android:textColor="#252525"
-            android:textSize="14sp" />
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:text="" />
 
-        <Button
-            android:id="@+id/data_refresh_bt"
-            android:layout_width="wrap_content"
+        <RelativeLayout
+            android:layout_width="200dp"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/select_class_bt"
-            android:layout_marginLeft="60dp"
-            android:layout_marginTop="15dp"
-            android:background="@drawable/lupai_01_03"
-            android:gravity="center"
-            android:text="数据更新"
-            android:textColor="#252525"
-            android:textSize="14sp" />
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginBottom="80dp"
+            android:layout_marginRight="290dp">
 
-        <Button
-            android:id="@+id/update_version_bt"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/data_refresh_bt"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="15dp"
-            android:background="@drawable/lupai_02_03"
-            android:gravity="center"
-            android:text="版本更新"
-            android:textColor="#252525"
-            android:textSize="14sp" />
+            <ImageView
+                android:id="@+id/left_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:src="@drawable/left_03" />
 
-        <Button
-            android:id="@+id/set_bt"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/update_version_bt"
-            android:layout_marginLeft="60dp"
-            android:layout_marginTop="15dp"
-            android:background="@drawable/lupai_01_03"
-            android:gravity="center"
-            android:text="系统设置"
-            android:textColor="#252525"
-            android:textSize="14sp" />
+            <Button
+                android:id="@+id/select_class_bt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="20dp"
+                android:background="@drawable/lupai_02_03"
+                android:gravity="center"
+                android:text="学前班一班"
+                android:textColor="#252525"
+                android:textSize="14sp" />
 
-        <Button
-            android:id="@+id/save_bt"
-            android:layout_width="wrap_content"
+            <Button
+                android:id="@+id/data_refresh_bt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/select_class_bt"
+                android:layout_marginLeft="60dp"
+                android:layout_marginTop="15dp"
+                android:background="@drawable/lupai_01_03"
+                android:gravity="center"
+                android:text="数据更新"
+                android:textColor="#252525"
+                android:textSize="14sp" />
+
+            <Button
+                android:id="@+id/update_version_bt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/data_refresh_bt"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="15dp"
+                android:background="@drawable/lupai_02_03"
+                android:gravity="center"
+                android:text="版本更新"
+                android:textColor="#252525"
+                android:textSize="14sp" />
+
+            <Button
+                android:id="@+id/set_bt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/update_version_bt"
+                android:layout_marginLeft="60dp"
+                android:layout_marginTop="15dp"
+                android:background="@drawable/lupai_01_03"
+                android:gravity="center"
+                android:text="系统设置"
+                android:textColor="#252525"
+                android:textSize="14sp" />
+
+            <Button
+                android:id="@+id/save_bt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/set_bt"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="15dp"
+                android:background="@drawable/lupai_02_03"
+                android:gravity="center"
+                android:text="保存学校名称"
+                android:textColor="#252525"
+                android:textSize="14sp" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="200dp"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/set_bt"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="15dp"
-            android:background="@drawable/lupai_02_03"
-            android:gravity="center"
-            android:text="保存学校名称"
-            android:textColor="#252525"
-            android:textSize="14sp" />
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginBottom="80dp"
+            android:layout_marginRight="80dp">
+
+            <ImageView
+                android:id="@+id/right_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:src="@drawable/right_03" />
+
+            <Button
+                android:id="@+id/change_login_bt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="40dp"
+                android:layout_marginTop="20dp"
+                android:background="@drawable/lupai_01_03"
+                android:gravity="center"
+                android:text="更换登陆"
+                android:textColor="#252525"
+                android:textSize="14sp" />
+
+            <Button
+                android:id="@+id/exit_bt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/change_login_bt"
+                android:layout_marginLeft="60dp"
+                android:layout_marginTop="20dp"
+                android:background="@drawable/lupai_01_03"
+                android:gravity="center"
+                android:text="退出"
+                android:textColor="#252525"
+                android:textSize="14sp" />
+
+        </RelativeLayout>
+
+
     </RelativeLayout>
 
     <RelativeLayout
-        android:layout_width="200dp"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:layout_marginBottom="80dp"
-        android:layout_marginRight="80dp">
+        android:id="@+id/update_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/colorTranBg"
+        android:visibility="gone">
 
-        <ImageView
-            android:id="@+id/right_layout"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:src="@drawable/right_03" />
+        <RelativeLayout
+            android:layout_width="400dp"
+            android:layout_height="240dp"
+            android:layout_centerInParent="true"
+            android:layout_margin="30dp"
+            android:background="@drawable/approval_item_bg"
+            android:gravity="center_horizontal"
+            android:padding="30dp">
 
-        <Button
-            android:id="@+id/change_login_bt"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="40dp"
-            android:layout_marginTop="20dp"
-            android:background="@drawable/lupai_01_03"
-            android:gravity="center"
-            android:text="更换登陆"
-            android:textColor="#252525"
-            android:textSize="14sp" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="20dp"
+                android:text="发现新版本,是否立即更新?"
+                android:textSize="24sp" />
 
-        <Button
-            android:id="@+id/exit_bt"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="60dp"
-            android:layout_marginTop="20dp"
-            android:layout_below="@+id/change_login_bt"
-            android:background="@drawable/lupai_01_03"
-            android:gravity="center"
-            android:text="退出"
-            android:textColor="#252525"
-            android:textSize="14sp" />
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:orientation="horizontal">
 
+                <Button
+                    android:id="@+id/confirm_bt"
+                    android:layout_width="120dp"
+                    android:layout_height="60dp"
+                    android:background="@drawable/dialog_confirm_bt_bg"
+                    android:text="立即更新"
+
+                    android:textColor="@android:color/white"
+                    android:textSize="22sp" />
+
+                <Button
+                    android:id="@+id/cancel_bt"
+                    android:layout_width="120dp"
+                    android:layout_height="60dp"
+                    android:layout_alignParentRight="true"
+                    android:background="@drawable/dialog_confirm_bt_bg"
+                    android:text="取消"
+                    android:textColor="@android:color/white"
+                    android:textSize="22sp" />
+            </RelativeLayout>
+
+
+        </RelativeLayout>
     </RelativeLayout>
-
-
-
 </RelativeLayout>

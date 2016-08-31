@@ -3,11 +3,13 @@ package com.nuoman.tabletattendance;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.text.InputType;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.google.gson.reflect.TypeToken;
@@ -18,7 +20,9 @@ import com.nuoman.tabletattendance.common.ICommonAction;
 import com.nuoman.tabletattendance.common.NuoManConstant;
 import com.nuoman.tabletattendance.common.utils.AppConfig;
 import com.nuoman.tabletattendance.common.utils.AppTools;
+import com.nuoman.tabletattendance.common.utils.DownloadService;
 import com.nuoman.tabletattendance.model.BaseTransModel;
+import com.nuoman.tabletattendance.model.DownloadModel;
 import com.nuoman.tabletattendance.model.LoginInfoModel;
 
 import java.lang.reflect.Method;
@@ -51,6 +55,12 @@ public class SetInfoActivity extends BaseActivity implements ICommonAction {
     Button exitBt;
     @Bind(R.id.save_bt)
     Button saveBt;
+    @Bind(R.id.confirm_bt)
+    Button confirmBt;
+    @Bind(R.id.cancel_bt)
+    Button cancelBt;
+    @Bind(R.id.update_layout)
+    RelativeLayout updateLayout;
     private CommonPresenter commonPresenter = new CommonPresenter(this);
 
     private BaseTransModel transModel = new BaseTransModel();
@@ -84,12 +94,30 @@ public class SetInfoActivity extends BaseActivity implements ICommonAction {
                 }
 
                 break;
+            case NuoManService.GETUPDATEINFO:
+
+                if (data != null) {
+                    DownloadModel model = (DownloadModel) data;
+
+                    if (Integer.parseInt(model.getVersion()) > AppTools.getVersionCode()) {
+                        AppConfig.setStringConfig(NuoManConstant.DOWNLOAD_URL, model.getDurl());
+                        updateLayout.setVisibility(View.VISIBLE);
+                    } else {
+                        Toast.makeText(this, "已是最新版本", Toast.LENGTH_SHORT).show();
+                    }
+
+                } else {
+                    Toast.makeText(this, "版本数据错误", Toast.LENGTH_SHORT).show();
+
+                }
+
+                break;
         }
 
 
     }
 
-    @OnClick({R.id.select_class_bt, R.id.data_refresh_bt, R.id.update_version_bt, R.id.set_bt, R.id.change_login_bt, R.id.exit_bt,R.id.save_bt})
+    @OnClick({R.id.select_class_bt, R.id.data_refresh_bt, R.id.update_version_bt, R.id.set_bt, R.id.change_login_bt, R.id.exit_bt, R.id.save_bt, R.id.confirm_bt, R.id.cancel_bt})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.select_class_bt:
@@ -101,10 +129,14 @@ public class SetInfoActivity extends BaseActivity implements ICommonAction {
                 });
                 break;
             case R.id.update_version_bt:
-
+                BaseTransModel model = new BaseTransModel();
+                model.setType("2");
+                commonPresenter.invokeInterfaceObtainData(false, "updateCtrl", NuoManService.GETUPDATEINFO, model, new TypeToken<DownloadModel>() {
+                });
                 break;
             case R.id.set_bt:
-
+                Intent intent =  new Intent(Settings.ACTION_WIFI_SETTINGS);
+                startActivity(intent);
                 break;
             case R.id.change_login_bt:
                 startActivity(new Intent(this, LoginActivity.class));
@@ -114,9 +146,18 @@ public class SetInfoActivity extends BaseActivity implements ICommonAction {
                 break;
             case R.id.save_bt:
                 AppConfig.setStringConfig(NuoManConstant.SCHOOL_NAME, editTv.getText().toString() + "\n" + editPreTv.getText().toString());
-                Toast.makeText(this,"保存成功",Toast.LENGTH_SHORT).show();
-                setResult(RESULT_OK,new Intent());
+                Toast.makeText(this, "保存成功", Toast.LENGTH_SHORT).show();
+                setResult(RESULT_OK, new Intent());
                 finish();
+                break;
+            case R.id.confirm_bt:
+                startService(new Intent(SetInfoActivity.this, DownloadService.class));
+                updateLayout.setVisibility(View.GONE);
+                Toast.makeText(this, "正在后台下载……", Toast.LENGTH_SHORT).show();
+
+                break;
+            case R.id.cancel_bt:
+                updateLayout.setVisibility(View.GONE);
                 break;
         }
     }
@@ -147,4 +188,5 @@ public class SetInfoActivity extends BaseActivity implements ICommonAction {
             }
         }
     }
+
 }

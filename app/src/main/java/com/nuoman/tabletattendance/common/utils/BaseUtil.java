@@ -17,6 +17,8 @@ public class BaseUtil {
 
     public static String HH_MM_SS = "HH:mm:ss";
 
+    public static String HH_MM = "HH:mm";
+
     /**
      * 获取蓝牙地址
      *

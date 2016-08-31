@@ -54,6 +54,11 @@ public class NuoManConstant {
      */
     public static String SCHOOL_NAME = "school_name";
 
+    /**
+     * 下载链接
+     */
+    public static String DOWNLOAD_URL = "download_url";
+
 
     /**
      * 对话框确定

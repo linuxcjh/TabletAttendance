@@ -72,9 +72,7 @@ public class SendHomeworkActivity extends BaseActivity implements ICommonAction 
     /**
      * 图片id
      */
-//    private List<String> picIds = new ArrayList<>();
     private Map<Integer, String> pics = new HashMap<>();
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,8 +81,6 @@ public class SendHomeworkActivity extends BaseActivity implements ICommonAction 
         ButterKnife.bind(this);
 
         initView();
-
-
     }
 
     private void initView() {
@@ -94,7 +90,7 @@ public class SendHomeworkActivity extends BaseActivity implements ICommonAction 
                 String cardId = v.getText().toString().replace("\n", "");
                 editInputEt.setText("");
 //                transModel.setTeacherId("0087301181");
-                transModel.setTeacherId("cardId");
+                transModel.setTeacherId(cardId);
 
                 commonPresenter.invokeInterfaceObtainData(false, "homeworkCtrl", NuoManService.GETTEACHERID, transModel, new TypeToken<BaseReceivedModel>() {
                 });
@@ -253,7 +249,6 @@ public class SendHomeworkActivity extends BaseActivity implements ICommonAction 
                 public void complete(String key, ResponseInfo info, JSONObject res) {
                     // info.error中包含了错误信息，可打印调试
                     // 上传成功后将key值上传到自己的服务器
-//                    picIds.add(requestCode, key);
                     pics.put(requestCode, key);
 
                     Log.d("NuoMan", "key: " + key + "\n");

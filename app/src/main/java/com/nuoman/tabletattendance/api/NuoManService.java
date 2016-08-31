@@ -32,4 +32,7 @@ public interface NuoManService {
     //发作业鉴权
     String  GETTEACHERID="GetTeacherId";
 
+    //版本更新
+    String GETUPDATEINFO="GetUpdateInfo";
+
 }
