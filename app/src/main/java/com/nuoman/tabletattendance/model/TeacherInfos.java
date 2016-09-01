@@ -1,8 +1,9 @@
 package com.nuoman.tabletattendance.model;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class TeacherInfos {
+public class TeacherInfos implements Serializable{
 
     private List<CardNoModel> cardNoList;
     private String teacherName;

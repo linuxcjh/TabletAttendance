@@ -31,6 +31,16 @@ public class BaseTransModel {
     //版本更新
     private String type;//type取值范围: 1: 大蓝 2：小蓝  3：大黑
 
+    private String kind;
+
+    public String getKind() {
+        return kind;
+    }
+
+    public void setKind(String kind) {
+        this.kind = kind;
+    }
+
     public String getUnique_id() {
         return unique_id;
     }

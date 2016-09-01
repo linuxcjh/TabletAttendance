@@ -26,6 +26,9 @@ public interface NuoManService {
     //获取家长列表
     String GETPARENTSBYCARDNO="GetParentsByCardNo";
 
+    //老师获取班级列表
+    String GETCLASSESBYTEACHERID="GetClassesByTeacherId";
+
     //上传作业
     String SAVEHOMEWORK= "SaveHomework";
 
@@ -34,5 +37,8 @@ public interface NuoManService {
 
     //版本更新
     String GETUPDATEINFO="GetUpdateInfo";
+
+    //上传音频文件
+    String SAVEVOICEMSG="SaveVoiceMsg";
 
 }

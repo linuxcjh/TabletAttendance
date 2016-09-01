@@ -10,10 +10,11 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import com.nuoman.tabletattendance.R;
+import com.nuoman.tabletattendance.model.VoiceReceiveModel;
 
 import java.util.List;
 
-public class RecorderVoiceAdapter extends ArrayAdapter<Recorder> {
+public class RecorderVoiceAdapter extends ArrayAdapter<VoiceReceiveModel.VoiceItemModel> {
 
 
 	private LayoutInflater inflater;
@@ -21,7 +22,7 @@ public class RecorderVoiceAdapter extends ArrayAdapter<Recorder> {
 	private int mMinItemWith;// 设置对话框的最大宽度和最小宽度
 	private int mMaxItemWith;
 
-	public RecorderVoiceAdapter(Context context, List<Recorder> dataList) {
+	public RecorderVoiceAdapter(Context context, List<VoiceReceiveModel.VoiceItemModel> dataList) {
 		super(context, -1, dataList);
 		inflater = LayoutInflater.from(context);
 
@@ -50,9 +51,9 @@ public class RecorderVoiceAdapter extends ArrayAdapter<Recorder> {
 		}
 		
 		
-		viewHolder.seconds.setText(Math.round(getItem(position).time)+"\"");
+		viewHolder.seconds.setText(Math.round(getItem(position).getTime())+"\"");
 		ViewGroup.LayoutParams lParams=viewHolder.length.getLayoutParams();
-		lParams.width=(int) (mMinItemWith+mMaxItemWith/60f*getItem(position).time);
+		lParams.width=(int) (mMinItemWith+mMaxItemWith/60f*getItem(position).getTime());
 		viewHolder.length.setLayoutParams(lParams);
 		
 		return convertView;

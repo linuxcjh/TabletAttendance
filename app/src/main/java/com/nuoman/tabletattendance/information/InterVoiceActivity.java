@@ -8,6 +8,7 @@ import android.widget.FrameLayout;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.gson.reflect.TypeToken;
 import com.nuoman.tabletattendance.Adapter.ParentInformationAdapter;
@@ -20,6 +21,7 @@ import com.nuoman.tabletattendance.model.BaseTransModel;
 import com.nuoman.tabletattendance.model.ParentInfo;
 import com.nuoman.tabletattendance.model.ReceivedParentInfoModel;
 import com.nuoman.tabletattendance.model.StudentInfos;
+import com.nuoman.tabletattendance.model.TeacherInfos;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,12 +54,15 @@ public class InterVoiceActivity extends BaseActivity implements ICommonAction {
 
     private BaseTransModel transModel = new BaseTransModel();
     private ParentInformationAdapter adapter;
-    private List<ParentInfo> data;
+    private List<ParentInfo> dataList = new ArrayList<>();
 
     private StudentInfos infos = new StudentInfos();
+    private TeacherInfos teacherInfos = new TeacherInfos();
 
     private String cardNo;
-    InterVoiceFragment fragment;
+    private InterVoiceFragment fragment;
+
+    private boolean isTeacher; //true :Teacher, false: Student
 
 
     @Override
@@ -70,20 +75,45 @@ public class InterVoiceActivity extends BaseActivity implements ICommonAction {
     }
 
     private void initView() {
-        infos = (StudentInfos) getIntent().getSerializableExtra("model");
-        cardNo = getIntent().getStringExtra("cardNo");
-//        Glide.with(this).load(infos.getStudentName())
-        nameTv.setText(infos.getStudentName());
-
         commonPresenter = new CommonPresenter(this);
-        transModel.setCardNo(cardNo);
-        commonPresenter.invokeInterfaceObtainData(false, "voiceCtrl", NuoManService.GETPARENTSBYCARDNO, transModel, new TypeToken<ReceivedParentInfoModel>() {
-        });
-        adapter = new ParentInformationAdapter(this, R.layout.infor_item_layout, data);
+        fragment = new InterVoiceFragment();
+
+        cardNo = getIntent().getStringExtra("cardNo");
+
+
+        isTeacher = getIntent().getBooleanExtra("isTeacher", false);
+        if (isTeacher) {
+            teacherInfos = (TeacherInfos) getIntent().getSerializableExtra("model");
+            //        Glide.with(this).load(infos.getStudentName())
+            nameTv.setText(teacherInfos.getTeacherName());
+            fragment.setSendTeacherInfo(teacherInfos);
+
+        } else {
+            transModel.setCardNo(cardNo);
+            fragment.setSendStudentInfo(infos);
+            infos = (StudentInfos) getIntent().getSerializableExtra("model");
+            //        Glide.with(this).load(infos.getStudentName())
+            nameTv.setText(infos.getStudentName());
+            ParentInfo m = new ParentInfo();
+            m.setDataName("群发");
+            dataList.add(m);
+        }
+
+        if (isTeacher) {
+            transModel.setTeacherId(teacherInfos.getTeacherId());
+            transModel.setKind("2");
+            commonPresenter.invokeInterfaceObtainData(false, "voiceCtrl", NuoManService.GETCLASSESBYTEACHERID, transModel, new TypeToken<ReceivedParentInfoModel>() {
+            });
+        } else {
+            commonPresenter.invokeInterfaceObtainData(false, "voiceCtrl", NuoManService.GETPARENTSBYCARDNO, transModel, new TypeToken<ReceivedParentInfoModel>() {
+            });
+        }
+
+
+        adapter = new ParentInformationAdapter(this, R.layout.infor_item_layout, dataList, isTeacher);
         gridView.setAdapter(adapter);
 
 
-        fragment = new InterVoiceFragment();
         FragmentManager manager = getSupportFragmentManager();
         FragmentTransaction transaction = manager.beginTransaction();
         transaction.add(R.id.container_layout, fragment);
@@ -93,15 +123,27 @@ public class InterVoiceActivity extends BaseActivity implements ICommonAction {
 
     @Override
     public void obtainData(Object data, String methodIndex, int status, Map<String, String> parameterMap) {
-        switch (methodIndex) {
-            case NuoManService.GETPARENTSBYCARDNO:
-                ReceivedParentInfoModel model = (ReceivedParentInfoModel) data;
-                List<ParentInfo> list = new ArrayList<>();
-                list.addAll(model.getObj());
-                adapter.setData(list);
-
-
-                break;
+        if (data != null) {
+            switch (methodIndex) {
+                case NuoManService.GETPARENTSBYCARDNO:
+                    ReceivedParentInfoModel model = (ReceivedParentInfoModel) data;
+                    dataList.addAll(model.getObj());
+                    adapter.setData(dataList);
+                    if (model.getObj().size() > 0) {
+                        fragment.setSendStudentGroupId(model.getObj().get(0).getUserIds());
+                    }
+                    break;
+                case NuoManService.GETCLASSESBYTEACHERID:
+//                    ReceivedParentInfoModel modelReslut = (ReceivedParentInfoModel) data;
+//                    dataList.addAll(modelReslut.getObj());
+//                    adapter.setData(dataList);
+//                    if (modelReslut.getObj().size() > 0) {
+//                        fragment.setSendStudentGroupId(modelReslut.getObj().get(0).getUserIds());
+//                    }
+                    break;
+            }
+        } else {
+            Toast.makeText(InterVoiceActivity.this, "返回空数据", Toast.LENGTH_SHORT).show();
         }
     }
 

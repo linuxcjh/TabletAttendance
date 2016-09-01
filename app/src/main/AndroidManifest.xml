@@ -91,9 +91,7 @@
         <!-- 屏幕亮度控制-->
         <receiver android:name=".alarm.RemindAlarmReceiver"></receiver>
 
-        <receiver
-            android:name=".alarm.RemindBootReceiver"
-            android:enabled="false">
+        <receiver android:name=".alarm.RemindBootReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED"></action>
             </intent-filter>
@@ -116,6 +114,9 @@
             android:screenOrientation="landscape" />
         <activity
             android:name=".ImageActivity"
+            android:screenOrientation="landscape" />
+        <activity
+            android:name=".HomeVoiceActivity"
             android:screenOrientation="landscape" />
     </application>
 

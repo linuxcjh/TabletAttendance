@@ -418,6 +418,7 @@ public class MainActivity extends BaseActivity implements ICommonAction, CameraF
                 startActivity(new Intent(this, InformationActivity.class));
                 break;
             case R.id.h_voice_iv:
+                startActivity(new Intent(this, HomeVoiceActivity.class));
                 break;
             case R.id.h_no_card_iv:
                 noCardEt.setText("");

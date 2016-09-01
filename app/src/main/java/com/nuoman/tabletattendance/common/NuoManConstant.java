@@ -77,17 +77,17 @@ public class NuoManConstant {
     /**
      * 降低屏幕亮度  定时
      */
-    public static String DOWN_SCREEN_LIGHT_TIME = "10:00";
+    public static String DOWN_SCREEN_LIGHT_TIME = "22:00";
 
     /**
      * 恢复屏幕亮度  定时
      */
-    public static String REBACK_SCREEN_LIGHT_TIME = "14:00";
+    public static String REBACK_SCREEN_LIGHT_TIME = "06:00";
 
     /**
      * 定时清理图片缓存并更新数据
      */
-    public static String CLEAR_PICTHRE_CACHE_TIME = "18:00";
+    public static String CLEAR_PICTHRE_CACHE_TIME = "23:00";
 
 
 

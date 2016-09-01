@@ -22,6 +22,7 @@ import com.nuoman.tabletattendance.common.NuoManConstant;
 import com.nuoman.tabletattendance.common.utils.AppConfig;
 import com.nuoman.tabletattendance.model.BaseReceivedModel;
 import com.nuoman.tabletattendance.model.BaseTransModel;
+import com.nuoman.tabletattendance.model.HomeWorkReceiveModel;
 import com.qiniu.android.http.ResponseInfo;
 import com.qiniu.android.storage.UpCompletionHandler;
 import com.qiniu.android.storage.UploadManager;
@@ -89,10 +90,8 @@ public class SendHomeworkActivity extends BaseActivity implements ICommonAction 
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 String cardId = v.getText().toString().replace("\n", "");
                 editInputEt.setText("");
-//                transModel.setTeacherId("0087301181");
-                transModel.setTeacherId(cardId);
-
-                commonPresenter.invokeInterfaceObtainData(false, "homeworkCtrl", NuoManService.GETTEACHERID, transModel, new TypeToken<BaseReceivedModel>() {
+                transModel.setCardNo("0087301181");
+                commonPresenter.invokeInterfaceObtainData(false, "homeworkCtrl", NuoManService.GETTEACHERID, transModel, new TypeToken<HomeWorkReceiveModel>() {
                 });
 
                 return false;
@@ -103,11 +102,12 @@ public class SendHomeworkActivity extends BaseActivity implements ICommonAction 
     @Override
     public void obtainData(Object data, String methodIndex, int status, Map<String, String> parameterMap) {
         if (data != null) {
-            BaseReceivedModel model = (BaseReceivedModel) data;
 
             switch (methodIndex) {
                 case NuoManService.GETTEACHERID:
-                    if (model.isSuccess()) {
+                    HomeWorkReceiveModel m = (HomeWorkReceiveModel) data;
+                    if (m.isSuccess()) {
+                        transModel.setTeacherId(m.getObj().getTeacherId());
                         Toast.makeText(SendHomeworkActivity.this, "授权成功", Toast.LENGTH_SHORT).show();
                         tipLayout.setVisibility(View.GONE);
                     } else {
@@ -115,6 +115,8 @@ public class SendHomeworkActivity extends BaseActivity implements ICommonAction 
                     }
                     break;
                 case NuoManService.SAVEHOMEWORK:
+                    BaseReceivedModel model = (BaseReceivedModel) data;
+
                     if (model.isSuccess()) {
                         Toast.makeText(SendHomeworkActivity.this, "作业发送成功", Toast.LENGTH_SHORT).show();
                         finish();
