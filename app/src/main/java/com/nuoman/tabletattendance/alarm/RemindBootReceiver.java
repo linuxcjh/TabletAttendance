@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
+import com.nuoman.tabletattendance.SplashActivity;
 import com.nuoman.tabletattendance.common.utils.AppTools;
 
 
@@ -18,7 +19,10 @@ public class RemindBootReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         if (intent.getAction().equals("android.intent.action.BOOT_COMPLETED")) {
-            AppTools.setAlertInit();
+            AppTools.setAlertInit();//设置屏幕亮度定时任务
+            Intent startIntent = new Intent(context, SplashActivity.class);
+            startIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            context.startActivity(startIntent);
         }
     }
 }

@@ -286,10 +286,16 @@ public class MainActivity extends BaseActivity implements ICommonAction, CameraF
     @Override
     public void onChangeArticle(String filePath) {
 
-        if (Utils.checkNetworkConnection()) {//有网
-            uploadImageToQiNiu(filePath, AppConfig.getStringConfig("token", ""));
+        if (Utils.checkNetworkConnection()) {//有网直接上传
+            if (!TextUtils.isEmpty(AppConfig.getStringConfig("token", ""))) {
+                uploadImageToQiNiu(filePath, AppConfig.getStringConfig("token", ""));
+            } else { //重新请求token
+                commonPresenter.invokeInterfaceObtainData(false, "qiniuCtrl", NuoManService.GETTOKEN, null, new TypeToken<BaseReceivedModel>() {
+                });
+                Toast.makeText(MainActivity.this, "重新获取Token信息", Toast.LENGTH_SHORT).show();
+            }
 
-        } else { //没网
+        } else { //没网存在本地
             punchCardSuccess(filePath);
             BaseTransModel m = new BaseTransModel();
             m.setCardNo(AppConfig.getStringConfig(NuoManConstant.CARD_ID, ""));
@@ -505,7 +511,6 @@ public class MainActivity extends BaseActivity implements ICommonAction, CameraF
 
     private void uploadImageToQiNiu(final String filePath, String token) {
         UploadManager uploadManager = new UploadManager();
-        // 设置图片名字
         File file = new File(filePath);
 
         if (file.exists()) {
@@ -529,7 +534,7 @@ public class MainActivity extends BaseActivity implements ICommonAction, CameraF
 
     }
 
-    /* ------Sync START ------------------------------------------------------------------------- */
+    /* ------------------------------------------Sync START ------------------------------------------------------------------------- */
 
 
     public static Account CreateSyncAccount(Context context) {
@@ -549,7 +554,7 @@ public class MainActivity extends BaseActivity implements ICommonAction, CameraF
 
 
     /**
-     * 手动触发
+     * 手动触发同步
      */
     private void requestSync() {
         Bundle b = new Bundle();
@@ -558,5 +563,5 @@ public class MainActivity extends BaseActivity implements ICommonAction, CameraF
         ContentResolver.requestSync(mAccount, NoteProviderMetaData.AUTHORITY, b);
     }
 
-    /* ------Sync END ------------------------------------------------------------------------- */
+    /* ------------------------------------------Sync END ------------------------------------------------------------------------- */
 }

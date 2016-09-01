@@ -9,6 +9,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.RemoteException;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.google.gson.reflect.TypeToken;
@@ -111,6 +112,12 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter implements ICommonA
     public void obtainData(Object data, String methodIndex, int status, Map<String, String> parameterMap) {
 
         switch (methodIndex) {
+            case NuoManService.GETTOKEN:
+                if (data != null) {
+                    BaseReceivedModel model = (BaseReceivedModel) data;
+                    AppConfig.setStringConfig("token", model.getToken());
+                }
+                break;
             case NuoManService.WRITEATTLOG:
                 BaseReceivedModel m = (BaseReceivedModel) data;
                 if (m.isSuccess()) {
@@ -186,7 +193,12 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter implements ICommonA
 
         for (int i = 0; i < transModels.size(); i++) {
 
-            uploadImageToQiNiu(transModels.get(i).getImagePath(), AppConfig.getStringConfig("token", ""), transModels.get(i));
+            if (!TextUtils.isEmpty(AppConfig.getStringConfig("token", ""))) {
+                uploadImageToQiNiu(transModels.get(i).getImagePath(), AppConfig.getStringConfig("token", ""), transModels.get(i));
+            } else { //重新请求token
+                commonPresenter.invokeInterfaceObtainData(false, "qiniuCtrl", NuoManService.GETTOKEN, null, new TypeToken<BaseReceivedModel>() {
+                });
+            }
 
         }
 
