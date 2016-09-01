@@ -88,6 +88,17 @@
 
         <service android:name=".common.utils.DownloadService" />
 
+        <!-- 屏幕亮度控制-->
+        <receiver android:name=".alarm.RemindAlarmReceiver"></receiver>
+
+        <receiver
+            android:name=".alarm.RemindBootReceiver"
+            android:enabled="false">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED"></action>
+            </intent-filter>
+        </receiver>
+
         <activity
             android:name=".information.InformationActivity"
             android:screenOrientation="landscape" />

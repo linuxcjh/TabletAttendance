@@ -64,20 +64,32 @@ public class NuoManConstant {
      * 对话框确定
      */
     public static final int CONFIRMDIALOG = 0x33;
-
     /**
      * 降低屏幕亮度  定时
      */
-    public static String DOWN_SCREEN_LIGHT = "22:00";
+    public static final String DOWN_SCREEN_LIGHT = "down_screen_light";
 
     /**
      * 恢复屏幕亮度  定时
      */
-    public static String REBACK_SCREEN_LIGHT = "07:00";
+    public static final String REBACK_SCREEN_LIGHT= "reback_screen_light";
+
+    /**
+     * 降低屏幕亮度  定时
+     */
+    public static String DOWN_SCREEN_LIGHT_TIME = "10:00";
+
+    /**
+     * 恢复屏幕亮度  定时
+     */
+    public static String REBACK_SCREEN_LIGHT_TIME = "14:00";
 
     /**
      * 定时清理图片缓存并更新数据
      */
-    public static String CLEAR_PICTHRE_CACHE = "00:00";
+    public static String CLEAR_PICTHRE_CACHE_TIME = "18:00";
+
+
+
 
 }

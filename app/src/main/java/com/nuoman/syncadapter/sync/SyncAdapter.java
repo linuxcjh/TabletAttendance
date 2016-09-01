@@ -44,6 +44,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter implements ICommonA
 
     private ContentProviderClient provider;
 
+    private int i = 0;
+
     public SyncAdapter(Context context, boolean autoInitialize) {
         super(context, autoInitialize);
         commonPresenter = new CommonPresenter(this);
@@ -62,13 +64,17 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter implements ICommonA
         this.provider = provider;
 
         //定时任务 降低屏幕亮度
-        if (BaseUtil.getTime(BaseUtil.HH_MM).equals(NuoManConstant.DOWN_SCREEN_LIGHT)) {
+        if (BaseUtil.getTime(BaseUtil.HH_MM).equals(NuoManConstant.DOWN_SCREEN_LIGHT_TIME)) {
             AppTools.saveBrightness(getContext(), 30);
+            Log.d("SYNC", "DOWN_SCREEN_LIGHT  30   ---  " + BaseUtil.getTime(BaseUtil.HH_MM));
+
         }
 
         //定时任务 恢复屏幕亮度
-        if (BaseUtil.getTime(BaseUtil.HH_MM).equals(NuoManConstant.REBACK_SCREEN_LIGHT)) {
+        if (BaseUtil.getTime(BaseUtil.HH_MM).equals(NuoManConstant.REBACK_SCREEN_LIGHT_TIME)) {
             AppTools.saveBrightness(getContext(), 255);
+            Log.d("SYNC", "REBACK_SCREEN_LIGHT  255   ---  " + BaseUtil.getTime(BaseUtil.HH_MM));
+
         }
 
         //查询是否有未上传的打卡记录
@@ -78,11 +84,13 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter implements ICommonA
         upLoadPunchCardInfo(transModels);
 
         //定时任务 清空图片缓存
-        if (BaseUtil.getTime(BaseUtil.HH_MM).equals(NuoManConstant.CLEAR_PICTHRE_CACHE)) {
+        if (BaseUtil.getTime(BaseUtil.HH_MM).equals(NuoManConstant.CLEAR_PICTHRE_CACHE_TIME)) {
 
             //判断是否有未上传的图片
             if (transModels.size() == 0) {
                 AppTools.deleteAllFiles(new File(AppTools.getFileSavePath(AppConfig.getContext())));
+                Log.d("SYNC", "CLEAR_PICTHRE_CACHE Picture   ---  " + BaseUtil.getTime(BaseUtil.HH_MM));
+
             }
 
             //更新数据
@@ -91,6 +99,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter implements ICommonA
             refreshModel.setMachineNo(AppConfig.getStringConfig(NuoManConstant.USER_MAC, ""));
             commonPresenter.invokeInterfaceObtainData(false, "loginCtrl", NuoManService.LOGIN, refreshModel, new TypeToken<LoginInfoModel>() {
             });
+            Log.d("SYNC", "CLEAR_PICTURE_CACHE UPDATA   ---  " + BaseUtil.getTime(BaseUtil.HH_MM));
+
         }
         Log.d("SYNC", "onPerformSync   ---  " + BaseUtil.getTime(BaseUtil.HH_MM));
 

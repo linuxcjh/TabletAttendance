@@ -10,8 +10,10 @@ import android.text.InputType;
 import android.widget.EditText;
 
 import com.google.gson.reflect.TypeToken;
+import com.nuoman.tabletattendance.alarm.RemindAlarmReceiver;
 import com.nuoman.tabletattendance.api.NuoManService;
 import com.nuoman.tabletattendance.common.BasePresenter;
+import com.nuoman.tabletattendance.common.NuoManConstant;
 import com.nuoman.tabletattendance.model.LoginInfoModel;
 
 import java.io.File;
@@ -257,4 +259,16 @@ public class AppTools {
             }
     }
 
+    /**
+     * 设置提醒
+     */
+    public static void setAlertInit() {
+        try {
+            RemindAlarmReceiver alarm = new RemindAlarmReceiver();
+            alarm.setAlarm(AppConfig.getContext(), NuoManConstant.DOWN_SCREEN_LIGHT, 1, Integer.parseInt(NuoManConstant.DOWN_SCREEN_LIGHT_TIME.split(":")[0]), Integer.parseInt(NuoManConstant.DOWN_SCREEN_LIGHT_TIME.split(":")[1]));//设置屏幕亮度降
+            alarm.setAlarm(AppConfig.getContext(), NuoManConstant.REBACK_SCREEN_LIGHT, 2, Integer.parseInt(NuoManConstant.REBACK_SCREEN_LIGHT_TIME.split(":")[0]), Integer.parseInt(NuoManConstant.REBACK_SCREEN_LIGHT_TIME.split(":")[1]));//设置屏幕亮度升
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }
