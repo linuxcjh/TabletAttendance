@@ -16,6 +16,16 @@ public class ParentInfo {
     private String userIds;
     private String headPicUrl;
 
+    private boolean isSelect;
+
+    public boolean isSelect() {
+        return isSelect;
+    }
+
+    public void setSelect(boolean select) {
+        isSelect = select;
+    }
+
     public String getHeadPicUrl() {
         return headPicUrl;
     }

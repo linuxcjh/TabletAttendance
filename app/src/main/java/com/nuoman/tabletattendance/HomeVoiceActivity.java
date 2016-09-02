@@ -47,7 +47,7 @@ public class HomeVoiceActivity extends BaseActivity {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 String cardId = v.getText().toString().replace("\n", "");
-                cardId ="0087301181";
+//                cardId ="0087301181";
                 StudentInfos info = obtainCardInfo(cardId);
                 TeacherInfos teacherInfos = obtainTeacherCardInfo(cardId);
                 editInputEt.setText("");

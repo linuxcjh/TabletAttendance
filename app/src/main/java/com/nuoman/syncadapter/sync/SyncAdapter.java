@@ -93,8 +93,11 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter implements ICommonA
                 Log.d("SYNC", "CLEAR_PICTHRE_CACHE Picture   ---  " + BaseUtil.getTime(BaseUtil.HH_MM));
 
             }
+        }
 
-            //更新数据
+        //定时任务 更新数据
+        if (BaseUtil.getTime(BaseUtil.HH_MM).equals(NuoManConstant.UPDATE_TIME)) {
+
             BaseTransModel refreshModel = new BaseTransModel();
             refreshModel.setTel(AppConfig.getStringConfig(NuoManConstant.USER_NAME, ""));
             refreshModel.setMachineNo(AppConfig.getStringConfig(NuoManConstant.USER_MAC, ""));
@@ -103,6 +106,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter implements ICommonA
             Log.d("SYNC", "CLEAR_PICTURE_CACHE UPDATA   ---  " + BaseUtil.getTime(BaseUtil.HH_MM));
 
         }
+
         Log.d("SYNC", "onPerformSync   ---  " + BaseUtil.getTime(BaseUtil.HH_MM));
 
     }
@@ -138,6 +142,12 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter implements ICommonA
                     }
 
                 }
+                break;
+            case NuoManService.LOGIN:
+                LoginInfoModel model = (LoginInfoModel) data;
+                NuoManConstant.UPDATE_TIME = model.getUpdateDataTime();
+                NuoManConstant.ENTER_SET_PWD = model.getSuperPass();
+
                 break;
         }
     }

@@ -133,18 +133,24 @@ public class LoginActivity extends BaseActivity implements ICommonAction {
     public void obtainData(Object data, String methodIndex, int status, Map<String, String> parameterMap) {
         switch (methodIndex) {
             case NuoManService.LOGIN:
-                LoginInfoModel model = (LoginInfoModel) data;
-                AppConfig.setBooleanConfig(NuoManConstant.IS_LOGIN, true);//登录成功
-                AppConfig.setStringConfig(NuoManConstant.USER_NAME, loginNameTv.getText().toString());
-                AppConfig.setStringConfig(NuoManConstant.USER_MAC, loginMacTv.getText().toString());
+                if (data != null) {
 
-                CustomDialog dialog = new CustomDialog(this, mHandler, model);
-                dialog.show();
+                    LoginInfoModel model = (LoginInfoModel) data;
+                    AppConfig.setBooleanConfig(NuoManConstant.IS_LOGIN, true);//登录成功
+                    AppConfig.setStringConfig(NuoManConstant.USER_NAME, loginNameTv.getText().toString());
+                    AppConfig.setStringConfig(NuoManConstant.USER_MAC, loginMacTv.getText().toString());
 
+                    NuoManConstant.UPDATE_TIME = model.getUpdateDataTime();
+                    NuoManConstant.ENTER_SET_PWD = model.getSuperPass();
+                    CustomDialog dialog = new CustomDialog(this, mHandler, model);
+                    dialog.show();
+
+                } else {
+                    Toast.makeText(this, "登陆失败", Toast.LENGTH_SHORT).show();
+                }
                 break;
         }
     }
-
 
 
     @OnClick({R.id.login_bt, R.id.cancel_bt})

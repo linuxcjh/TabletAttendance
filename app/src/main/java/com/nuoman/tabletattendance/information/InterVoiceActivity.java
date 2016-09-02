@@ -3,6 +3,8 @@ package com.nuoman.tabletattendance.information;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.GridView;
@@ -35,7 +37,7 @@ import butterknife.OnClick;
  * 语音对话
  * Created by Alex on 2016/5/17.
  */
-public class InterVoiceActivity extends BaseActivity implements ICommonAction {
+public class InterVoiceActivity extends BaseActivity implements ICommonAction ,AdapterView.OnItemClickListener{
 
 
     @Bind(R.id.back_bt)
@@ -90,18 +92,19 @@ public class InterVoiceActivity extends BaseActivity implements ICommonAction {
 
         } else {
             transModel.setCardNo(cardNo);
-            fragment.setSendStudentInfo(infos);
+
             infos = (StudentInfos) getIntent().getSerializableExtra("model");
             //        Glide.with(this).load(infos.getStudentName())
-            nameTv.setText(infos.getStudentName());
             ParentInfo m = new ParentInfo();
             m.setDataName("群发");
+            m.setSelect(true);
             dataList.add(m);
+            fragment.setSendStudentInfo(infos);
+            nameTv.setText(infos.getStudentName());
         }
 
         if (isTeacher) {
             transModel.setTeacherId(teacherInfos.getTeacherId());
-            transModel.setKind("2");
             commonPresenter.invokeInterfaceObtainData(false, "voiceCtrl", NuoManService.GETCLASSESBYTEACHERID, transModel, new TypeToken<ReceivedParentInfoModel>() {
             });
         } else {
@@ -110,6 +113,7 @@ public class InterVoiceActivity extends BaseActivity implements ICommonAction {
         }
 
 
+        gridView.setOnItemClickListener(this);
         adapter = new ParentInformationAdapter(this, R.layout.infor_item_layout, dataList, isTeacher);
         gridView.setAdapter(adapter);
 
@@ -134,12 +138,12 @@ public class InterVoiceActivity extends BaseActivity implements ICommonAction {
                     }
                     break;
                 case NuoManService.GETCLASSESBYTEACHERID:
-//                    ReceivedParentInfoModel modelReslut = (ReceivedParentInfoModel) data;
-//                    dataList.addAll(modelReslut.getObj());
-//                    adapter.setData(dataList);
-//                    if (modelReslut.getObj().size() > 0) {
-//                        fragment.setSendStudentGroupId(modelReslut.getObj().get(0).getUserIds());
-//                    }
+                    ReceivedParentInfoModel modelReslut = (ReceivedParentInfoModel) data;
+                    dataList.addAll(modelReslut.getObj());
+                    adapter.setData(dataList);
+                    if (modelReslut.getObj().size() > 0) {
+                        fragment.setSendTeacherClassId(modelReslut.getObj().get(0).getUserIds());
+                    }
                     break;
             }
         } else {
@@ -147,6 +151,21 @@ public class InterVoiceActivity extends BaseActivity implements ICommonAction {
         }
     }
 
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+        for (int i = 0; i < dataList.size(); i++) {
+            if(i == position){
+                dataList.get(i).setSelect(true);
+
+            }else{
+                dataList.get(i).setSelect(false);
+            }
+
+        }
+        adapter.setData(dataList);
+
+    }
 
     @OnClick(R.id.back_bt)
     public void onClick() {

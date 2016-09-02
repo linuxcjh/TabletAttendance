@@ -77,10 +77,14 @@ public class AudioManager {
             mRecorder.setOutputFile(file.getAbsolutePath());
             // 设置meidaRecorder的音频源是麦克风
             mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+//            // 设置文件音频的输出格式为amr
+//            mRecorder.setOutputFormat(MediaRecorder.OutputFormat.RAW_AMR);
+//            // 设置音频的编码格式为amr
+//            mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
             // 设置文件音频的输出格式为amr
-            mRecorder.setOutputFormat(MediaRecorder.OutputFormat.RAW_AMR);
+            mRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
             // 设置音频的编码格式为amr
-            mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
+            mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
 
             // 严格遵守google官方api给出的mediaRecorder的状态流程图
             mRecorder.prepare();
@@ -107,7 +111,7 @@ public class AudioManager {
      * @return
      */
     private String generalFileName() {
-        return UUID.randomUUID().toString() + ".amr";
+        return UUID.randomUUID().toString() + ".mp3";
     }
 
     // 获得声音的level

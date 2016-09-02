@@ -17,6 +17,8 @@ import android.util.DisplayMetrics;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.nuoman.tabletattendance.common.NuoManConstant;
+
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -416,11 +418,13 @@ public class Utils {
                 boolean wifiConnected = activeInfo.getType() == ConnectivityManager.TYPE_WIFI;
                 boolean mobileConnected = activeInfo.getType() == ConnectivityManager.TYPE_MOBILE;
                 if (wifiConnected) {
-
+                    AppConfig.setStringConfig(NuoManConstant.CURRENT_NET_TYPE, "wifi");
                 } else if (mobileConnected) {
+                    AppConfig.setStringConfig(NuoManConstant.CURRENT_NET_TYPE, "mobile");
 
                 }
             } else {
+                AppConfig.setStringConfig(NuoManConstant.CURRENT_NET_TYPE, "");
                 return false;
             }
 

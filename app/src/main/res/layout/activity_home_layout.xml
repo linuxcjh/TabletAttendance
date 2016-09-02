@@ -42,8 +42,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:src="@drawable/g4_01_03" />
+                android:layout_centerVertical="true" />
         </RelativeLayout>
 
 
@@ -149,7 +148,7 @@
                         android:lineSpacingExtra="10dp"
                         android:text="西安 \n 13 - 18℃\n 多云转阴"
                         android:textColor="#252525"
-                        android:textSize="30sp" />
+                        android:textSize="25sp" />
 
                 </RelativeLayout>
 

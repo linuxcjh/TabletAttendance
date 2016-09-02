@@ -97,6 +97,14 @@
             </intent-filter>
         </receiver>
 
+        <!--网络监听-->
+        <receiver android:name=".NetReceiver" >
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+            </intent-filter>
+        </receiver>
+
+
         <activity
             android:name=".information.InformationActivity"
             android:screenOrientation="landscape" />

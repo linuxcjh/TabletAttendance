@@ -2,17 +2,17 @@
 <animation-list xmlns:android="http://schemas.android.com/apk/res/android" >
 
     <item
-        android:drawable="@drawable/right_01_03"
+        android:drawable="@drawable/left_01_03"
         android:duration="300">
     </item>
     
     <item
-        android:drawable="@drawable/right_02_03"
+        android:drawable="@drawable/left_02_03"
         android:duration="300">
     </item>
     
     <item
-        android:drawable="@drawable/right_03_03"
+        android:drawable="@drawable/left_03_03"
         android:duration="300">
     </item>
 

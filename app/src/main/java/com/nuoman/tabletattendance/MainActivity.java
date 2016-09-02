@@ -60,7 +60,7 @@ import butterknife.OnClick;
 /**
  * 首页
  */
-public class MainActivity extends BaseActivity implements ICommonAction, CameraFragment.ObtainPictureListener {
+public class MainActivity extends BaseActivity implements ICommonAction, CameraFragment.ObtainPictureListener, NetReceiver.NetEventHandle {
 
 
     /* ------Sync START ------ */
@@ -91,7 +91,6 @@ public class MainActivity extends BaseActivity implements ICommonAction, CameraF
 
     //打卡成功后延迟回到主页面
     private static final int REBACK_TIME_INDEX = 2000;
-
 
     //设置页面返回
     private static final int SET_REBACK_INDEX = 0x110;
@@ -144,8 +143,10 @@ public class MainActivity extends BaseActivity implements ICommonAction, CameraF
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        NetReceiver.ehList.add(this);
         setContentView(R.layout.activity_home_layout);
         ButterKnife.bind(this);
+        setNetWorkStatus();
         initSyncAdapter();
         initView();
         initData();
@@ -221,7 +222,7 @@ public class MainActivity extends BaseActivity implements ICommonAction, CameraF
                 if (primaryCode == Keyboard.KEYCODE_DONE) {
                     mHandler.removeMessages(BACK_INDEX);
 
-                    if (noCardEt.getText().toString().equals("666")) { //进设置页面
+                    if (noCardEt.getText().toString().equals(NuoManConstant.ENTER_SET_PWD)) { //进设置页面
                         setIniMainPage();
                         startActivityForResult(new Intent(MainActivity.this, SetInfoActivity.class), SET_REBACK_INDEX);
 
@@ -277,6 +278,47 @@ public class MainActivity extends BaseActivity implements ICommonAction, CameraF
         });
     }
 
+    /**
+     * 设置当前网络状态
+     */
+    private void setNetWorkStatus() {
+
+        Utils.checkNetworkConnection();
+        if (TextUtils.isEmpty(AppConfig.getStringConfig(NuoManConstant.CURRENT_NET_TYPE, ""))) {
+            hSingleTv.setImageResource(R.drawable.no_wifi);
+        } else if (AppConfig.getStringConfig(NuoManConstant.CURRENT_NET_TYPE, "").equals("wifi")) {
+            hSingleTv.setImageResource(R.drawable.connected_wifi);
+        } else {
+            hSingleTv.setImageResource(R.drawable.g4_01_03);
+        }
+
+
+    }
+
+    /**
+     * 网络状态变化
+     */
+    @Override
+    public void netState(NetReceiver.NetState netCode) {
+
+        switch (netCode) {
+            case NET_NO:
+                hSingleTv.setImageResource(R.drawable.no_wifi);
+                Toast.makeText(this, "没有网络连接", Toast.LENGTH_SHORT).show();
+                break;
+            case NET_4G:
+                hSingleTv.setImageResource(R.drawable.g4_01_03);
+                Toast.makeText(this, "4g网络", Toast.LENGTH_SHORT).show();
+                break;
+            case NET_WIFI:
+                hSingleTv.setImageResource(R.drawable.connected_wifi);
+                Toast.makeText(this, "WIFI网络", Toast.LENGTH_SHORT).show();
+                break;
+            default:
+                hSingleTv.setImageResource(R.drawable.no_wifi);
+        }
+
+    }
 
     /**
      * 上传图片
@@ -314,17 +356,17 @@ public class MainActivity extends BaseActivity implements ICommonAction, CameraF
                     BaseReceivedModel model = (BaseReceivedModel) data;
                     AppConfig.setStringConfig("token", model.getToken());
 //                    Toast.makeText(this, model.getToken(), Toast.LENGTH_SHORT).show();
-
                 }
                 break;
             case NuoManService.GETWEATHERFORONEDAY:
                 if (data != null) {
                     ReceivedWeatherModel model = (ReceivedWeatherModel) data;
-                    hWeatherDetailTv.setText(model.getTime());
+                    hWeatherDetailTv.setText(model.getArea() + "\n" + model.getWeatherTemp() + "\n" + model.getTime());
 
-                    if (!TextUtils.isEmpty(model.getNightShape())) {
-                        hWeatherIv.setImageDrawable(AppTools.loadImageFromAsserts(this, "WeatherIcon/Day/" + model.getNightShape().split("&")[0] + ".png"));
+                    if (!TextUtils.isEmpty(model.getWeatherShape())) {
+                        hWeatherIv.setImageDrawable(AppTools.loadImageFromAsserts(this, "WeatherIcon/Day/" + model.getWeatherShape() + ".png"));
                     }
+
                 }
 
                 break;
@@ -461,6 +503,7 @@ public class MainActivity extends BaseActivity implements ICommonAction, CameraF
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        NetReceiver.ehList.remove(this);
         mHandler.removeMessages(CURRENT_TIME_INDEX);
     }
 

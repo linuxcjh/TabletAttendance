@@ -113,7 +113,7 @@ public class InterVoiceFragment extends Fragment implements ICommonAction, Adapt
     public void setSendTeacherInfo(TeacherInfos info) {
         this.model.setUserId(info.getTeacherId());
         this.model.setType("v");
-        this.model.setKind("0");
+        this.model.setKind("2");
     }
 
     /**
@@ -216,13 +216,22 @@ public class InterVoiceFragment extends Fragment implements ICommonAction, Adapt
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+
         // 播放动画
         if (viewanim != null) {//让第二个播放的时候第一个停止播放
             viewanim.setBackgroundResource(R.drawable.adj);
             viewanim = null;
         }
-        viewanim = view.findViewById(R.id.id_recorder_anim);
-        viewanim.setBackgroundResource(R.drawable.play);
+
+        if(mDatas.get(position).getKind().equals("0")){
+            viewanim = view.findViewById(R.id.id_recorder_anim);
+            viewanim.setBackgroundResource(R.drawable.play);
+        }else{
+            viewanim = view.findViewById(R.id.id_recorder_anim_2);
+            viewanim.setBackgroundResource(R.drawable.playleft);
+        }
+
         AnimationDrawable drawable = (AnimationDrawable) viewanim
                 .getBackground();
         drawable.start();
@@ -233,6 +242,7 @@ public class InterVoiceFragment extends Fragment implements ICommonAction, Adapt
 
                     @Override
                     public void onCompletion(MediaPlayer mp) {
+
                         viewanim.setBackgroundResource(R.drawable.v_anim3);
 
                     }

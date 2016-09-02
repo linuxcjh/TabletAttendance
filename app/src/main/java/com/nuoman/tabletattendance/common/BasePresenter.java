@@ -29,14 +29,14 @@ public abstract class BasePresenter {
     public static final int REQUEST_SUCCESS = 1;//请求成功
     public static final int REQUEST_FAILURE = 0;//请求失败
     public boolean isShowProgressDialog = true;
-    public CustomProgressDialog progressDialog;
+//    public CustomProgressDialog progressDialog;
     private Context context;
 
 
     public BasePresenter() {
         if (BaseActivity.activityList.size() > 0) {
             context = BaseActivity.activityList.get(0);
-            progressDialog = new CustomProgressDialog(context);
+//            progressDialog = new CustomProgressDialog(context);
         }
     }
 
@@ -133,23 +133,23 @@ public abstract class BasePresenter {
 
 
     protected void dialogShow() {
-        if (isShowProgressDialog && progressDialog != null && !progressDialog.isShowing()) {
-            try {
-                progressDialog.show();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
+//        if (isShowProgressDialog && progressDialog != null && !progressDialog.isShowing()) {
+//            try {
+//                progressDialog.show();
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//        }
     }
 
     protected void dialogDismiss() {
-        if (progressDialog != null && progressDialog.isShowing()) {
-            try {
-                progressDialog.dismiss();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
+//        if (progressDialog != null && progressDialog.isShowing()) {
+//            try {
+//                progressDialog.dismiss();
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//        }
     }
 
 

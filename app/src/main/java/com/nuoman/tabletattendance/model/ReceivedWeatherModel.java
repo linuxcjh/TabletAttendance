@@ -6,70 +6,21 @@ package com.nuoman.tabletattendance.model;
  */
 public class ReceivedWeatherModel {
 
-//    [
-//
-//    {
-//        "dayShape":"", "daytemp":"", "daywind":"|", "nightShape":"00&晴", "nighttemp":
-//        "27", "nightwind":"东风|微风", "time":"18:00"
-//    }
-//
-//    ]
-
-    private String dayShape;
-    private String daytemp;
-    private String daywind;
-    private String nightShape;
-    private String nighttemp;
-    private String nightwind;
+//{"area":"西安","time":"18:00","weatherShape":"00","weatherSituation":"晴","weatherTemp":"20℃","weatherWind":""}
+    private String area;
     private String time;
+    private String weatherShape;
+    private String weatherSituation;
+    private String weatherTemp;
+    private String weatherWind;
 
 
-    public String getDayShape() {
-        return dayShape;
+    public String getArea() {
+        return area;
     }
 
-    public void setDayShape(String dayShape) {
-        this.dayShape = dayShape;
-    }
-
-    public String getDaytemp() {
-        return daytemp;
-    }
-
-    public void setDaytemp(String daytemp) {
-        this.daytemp = daytemp;
-    }
-
-    public String getDaywind() {
-        return daywind;
-    }
-
-    public void setDaywind(String daywind) {
-        this.daywind = daywind;
-    }
-
-    public String getNightShape() {
-        return nightShape;
-    }
-
-    public void setNightShape(String nightShape) {
-        this.nightShape = nightShape;
-    }
-
-    public String getNighttemp() {
-        return nighttemp;
-    }
-
-    public void setNighttemp(String nighttemp) {
-        this.nighttemp = nighttemp;
-    }
-
-    public String getNightwind() {
-        return nightwind;
-    }
-
-    public void setNightwind(String nightwind) {
-        this.nightwind = nightwind;
+    public void setArea(String area) {
+        this.area = area;
     }
 
     public String getTime() {
@@ -78,5 +29,37 @@ public class ReceivedWeatherModel {
 
     public void setTime(String time) {
         this.time = time;
+    }
+
+    public String getWeatherShape() {
+        return weatherShape;
+    }
+
+    public void setWeatherShape(String weatherShape) {
+        this.weatherShape = weatherShape;
+    }
+
+    public String getWeatherSituation() {
+        return weatherSituation;
+    }
+
+    public void setWeatherSituation(String weatherSituation) {
+        this.weatherSituation = weatherSituation;
+    }
+
+    public String getWeatherTemp() {
+        return weatherTemp;
+    }
+
+    public void setWeatherTemp(String weatherTemp) {
+        this.weatherTemp = weatherTemp;
+    }
+
+    public String getWeatherWind() {
+        return weatherWind;
+    }
+
+    public void setWeatherWind(String weatherWind) {
+        this.weatherWind = weatherWind;
     }
 }

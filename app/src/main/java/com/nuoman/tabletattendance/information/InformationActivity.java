@@ -3,7 +3,6 @@ package com.nuoman.tabletattendance.information;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.KeyEvent;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
@@ -69,7 +68,6 @@ public class InformationActivity extends BaseActivity implements ICommonAction {
 
         adapter = new UnreadInformationAdapter(this, R.layout.infor_item_layout, data);
         gridView.setAdapter(adapter);
-        gridView.setVisibility(View.GONE);
         editInputEt.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -94,13 +92,14 @@ public class InformationActivity extends BaseActivity implements ICommonAction {
 
         switch (methodIndex) {
             case NuoManService.GETUNREADMSG:
-                ReceivedCommonResultModel model = (ReceivedCommonResultModel) data;
-                List<ReceivedUnreadInforModel> list = new ArrayList<>();
-                list.addAll(model.getObj());
+                if (data != null) {
+                    ReceivedCommonResultModel model = (ReceivedCommonResultModel) data;
+                    List<ReceivedUnreadInforModel> list = new ArrayList<>();
+                    list.addAll(model.getObj());
 
-                adapter.setData(list);
+                    adapter.setData(list);
 
-
+                }
                 break;
         }
 

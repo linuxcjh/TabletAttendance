@@ -72,7 +72,7 @@ public class NuoManConstant {
     /**
      * 恢复屏幕亮度  定时
      */
-    public static final String REBACK_SCREEN_LIGHT= "reback_screen_light";
+    public static final String REBACK_SCREEN_LIGHT = "reback_screen_light";
 
     /**
      * 降低屏幕亮度  定时
@@ -85,11 +85,24 @@ public class NuoManConstant {
     public static String REBACK_SCREEN_LIGHT_TIME = "06:00";
 
     /**
-     * 定时清理图片缓存并更新数据
+     * 定时清理图片缓存
      */
     public static String CLEAR_PICTHRE_CACHE_TIME = "23:00";
 
+    /**
+     * 更新数据
+     */
+    public static String UPDATE_TIME = "23:00";
 
+    /**
+     * 进入设置页面密码
+     */
+    public static String ENTER_SET_PWD = "666";
+
+    /**
+     * 当前网络类型
+     */
+    public static String CURRENT_NET_TYPE = "current_net_type";
 
 
 }

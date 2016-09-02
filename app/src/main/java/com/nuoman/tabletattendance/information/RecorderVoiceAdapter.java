@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ArrayAdapter;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.nuoman.tabletattendance.R;
@@ -44,24 +45,46 @@ public class RecorderVoiceAdapter extends ArrayAdapter<VoiceReceiveModel.VoiceIt
 			viewHolder=new ViewHolder();
 			viewHolder.seconds=(TextView) convertView.findViewById(R.id.recorder_time);
 			viewHolder.length=convertView.findViewById(R.id.recorder_length);
-			
+			viewHolder.secondsLeft=(TextView) convertView.findViewById(R.id.recorder_time_2);
+			viewHolder.lengthLeft=convertView.findViewById(R.id.recorder_length_2);
+			viewHolder.leftLayout =(RelativeLayout) convertView.findViewById(R.id.left_layout);
+			viewHolder.rightLayout =(RelativeLayout) convertView.findViewById(R.id.right_layout);
+
 			convertView.setTag(viewHolder);
 		}else {
 			viewHolder=(ViewHolder) convertView.getTag();
 		}
+
+		if(getItem(position).getKind().equals("0")){
+			viewHolder.rightLayout.setVisibility(View.VISIBLE);
+			viewHolder.leftLayout.setVisibility(View.GONE);
+            viewHolder.seconds.setVisibility(View.GONE);//TODO
+			viewHolder.seconds.setText(Math.round(getItem(position).getTime())+"\"");
+			ViewGroup.LayoutParams lParams=viewHolder.length.getLayoutParams();
+			lParams.width=(int) (mMinItemWith+mMaxItemWith/60f*getItem(position).getTime());
+			viewHolder.length.setLayoutParams(lParams);
+		}else{
+			viewHolder.rightLayout.setVisibility(View.GONE);
+			viewHolder.leftLayout.setVisibility(View.VISIBLE);
+            viewHolder.secondsLeft.setVisibility(View.GONE);//TODO
+			viewHolder.secondsLeft.setText(Math.round(getItem(position).getTime())+"\"");
+			ViewGroup.LayoutParams lParams=viewHolder.lengthLeft.getLayoutParams();
+			lParams.width=(int) (mMinItemWith+mMaxItemWith/60f*getItem(position).getTime());
+			viewHolder.lengthLeft.setLayoutParams(lParams);
+		}
 		
-		
-		viewHolder.seconds.setText(Math.round(getItem(position).getTime())+"\"");
-		ViewGroup.LayoutParams lParams=viewHolder.length.getLayoutParams();
-		lParams.width=(int) (mMinItemWith+mMaxItemWith/60f*getItem(position).getTime());
-		viewHolder.length.setLayoutParams(lParams);
-		
+
 		return convertView;
 	}
 
 	class ViewHolder {
 		TextView seconds;// 时间
 		View length;// 对话框长度
+
+        TextView secondsLeft;// 时间
+		View lengthLeft;// 对话框长度
+		RelativeLayout rightLayout;
+		RelativeLayout leftLayout;
 	}
 
 }

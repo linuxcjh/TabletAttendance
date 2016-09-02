@@ -3,6 +3,8 @@ package com.nuoman.tabletattendance;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.provider.Settings;
 import android.text.InputType;
 import android.view.View;
@@ -21,6 +23,7 @@ import com.nuoman.tabletattendance.common.NuoManConstant;
 import com.nuoman.tabletattendance.common.utils.AppConfig;
 import com.nuoman.tabletattendance.common.utils.AppTools;
 import com.nuoman.tabletattendance.common.utils.DownloadService;
+import com.nuoman.tabletattendance.components.CustomDialog;
 import com.nuoman.tabletattendance.model.BaseTransModel;
 import com.nuoman.tabletattendance.model.DownloadModel;
 import com.nuoman.tabletattendance.model.LoginInfoModel;
@@ -75,6 +78,7 @@ public class SetInfoActivity extends BaseActivity implements ICommonAction {
         disableShowSoftInput(editPreTv);
         editTv.setText(AppTools.getLogInfo().getSchoolName());
         editPreTv.setText(AppTools.getLogInfo().getSchoolName());
+        selectClassBt.setText(AppConfig.getStringConfig(NuoManConstant.GRADE_NAME, "") + AppConfig.getStringConfig(NuoManConstant.CLASS_NAME, ""));
 
 
     }
@@ -86,6 +90,8 @@ public class SetInfoActivity extends BaseActivity implements ICommonAction {
 
                 if (data != null) {
                     LoginInfoModel model = (LoginInfoModel) data;
+                    NuoManConstant.UPDATE_TIME = model.getUpdateDataTime();
+                    NuoManConstant.ENTER_SET_PWD = model.getSuperPass();
                     Toast.makeText(this, "数据更新成功", Toast.LENGTH_SHORT).show();
 
                 } else {
@@ -120,6 +126,9 @@ public class SetInfoActivity extends BaseActivity implements ICommonAction {
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.select_class_bt:
+
+                CustomDialog dialog = new CustomDialog(this, mHandler, AppTools.getLogInfo());
+                dialog.show();
                 break;
             case R.id.data_refresh_bt:
                 transModel.setTel(AppConfig.getStringConfig(NuoManConstant.USER_NAME, ""));
@@ -134,7 +143,7 @@ public class SetInfoActivity extends BaseActivity implements ICommonAction {
                 });
                 break;
             case R.id.set_bt:
-                Intent intent =  new Intent(Settings.ACTION_WIFI_SETTINGS);
+                Intent intent = new Intent(Settings.ACTION_WIFI_SETTINGS);
                 startActivity(intent);
                 break;
             case R.id.change_login_bt:
@@ -187,5 +196,21 @@ public class SetInfoActivity extends BaseActivity implements ICommonAction {
             }
         }
     }
+
+    Handler mHandler = new Handler() {
+
+        @Override
+        public void handleMessage(Message msg) {
+
+            switch (msg.what) {
+                case NuoManConstant.CONFIRMDIALOG:
+                    selectClassBt.setText(AppConfig.getStringConfig(NuoManConstant.GRADE_NAME, "") + AppConfig.getStringConfig(NuoManConstant.CLASS_NAME, ""));
+                    getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
+
+                    break;
+            }
+
+        }
+    };
 
 }

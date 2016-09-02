@@ -44,6 +44,7 @@ public class CustomDialog extends Dialog implements View.OnClickListener {
 
     public CustomDialog(Context context, Handler handler, LoginInfoModel model) {
         super(context, R.style.selection_dialog_theme);
+
         this.context = context;
         this.handler = handler;
         this.model = model;

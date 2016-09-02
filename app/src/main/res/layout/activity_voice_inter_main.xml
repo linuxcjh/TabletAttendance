@@ -45,6 +45,7 @@
             android:layout_weight="1"
             android:numColumns="1"
             android:paddingLeft="60dp"
+            android:cacheColorHint="@android:color/transparent"
             android:verticalSpacing="2dp" />
 
         <Button

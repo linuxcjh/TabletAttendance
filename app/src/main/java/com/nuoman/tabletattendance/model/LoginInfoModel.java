@@ -3,18 +3,36 @@ package com.nuoman.tabletattendance.model;
 import java.util.List;
 
 public class LoginInfoModel {
-	
+
     private List<GradeExtends> gradeExtends;
     private String machineId;
     private PeopleMap peopleMap;
     private String schoolName;
     private String schoolId;
     private String areaId;
-    
-    
-	public LoginInfoModel () {
-		
-	}
+
+    private String superPass; //密码
+    private String updateDataTime;//更新时间
+
+    public String getUpdateDataTime() {
+        return updateDataTime;
+    }
+
+    public void setUpdateDataTime(String updateDataTime) {
+        this.updateDataTime = updateDataTime;
+    }
+
+    public String getSuperPass() {
+        return superPass;
+    }
+
+    public void setSuperPass(String superPass) {
+        this.superPass = superPass;
+    }
+
+    public LoginInfoModel() {
+
+    }
 
     public String getAreaId() {
         return areaId;
@@ -65,5 +83,4 @@ public class LoginInfoModel {
     }
 
 
-    
 }
