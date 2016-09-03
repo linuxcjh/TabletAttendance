@@ -176,6 +176,17 @@ public class MainActivity extends BaseActivity implements ICommonAction, CameraF
         commonPresenter.invokeInterfaceObtainData(false, "weatherCtrl", NuoManService.GETWEATHERFORONEDAY, transModel, new TypeToken<ReceivedWeatherModel>() {
         });
 
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        BaseTransModel transModel = new BaseTransModel();
+        transModel.setClassId(AppConfig.getStringConfig(NuoManConstant.CLASS_ID, ""));
+        transModel.setMachineId(AppTools.getLogInfo().getMachineId());
+        commonPresenter.invokeInterfaceObtainData(false, "loginCtrl", NuoManService.SAVEDVCLOCATION, transModel, new TypeToken<BaseTransModel>() {
+        });
     }
 
     /**

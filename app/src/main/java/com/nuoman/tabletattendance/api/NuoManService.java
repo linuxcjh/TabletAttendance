@@ -41,4 +41,7 @@ public interface NuoManService {
     //上传音频文件
     String SAVEVOICEMSG="SaveVoiceMsg";
 
+    //上传及其位置
+    String SAVEDVCLOCATION="SaveDvcLocation";
+
 }
