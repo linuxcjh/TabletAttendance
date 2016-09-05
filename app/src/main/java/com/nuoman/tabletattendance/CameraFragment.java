@@ -37,6 +37,7 @@ public class CameraFragment extends Fragment implements Callback {
 
     public interface ObtainPictureListener {
         void onChangeArticle(String pictureId);
+        void setImageBitmap(Bitmap bm);
     }
 
     ObtainPictureListener obtainPictureListener;
@@ -134,6 +135,7 @@ public class CameraFragment extends Fragment implements Callback {
             @Override
             public void onPictureTaken(byte[] data, Camera camera) {
                 Bitmap bm = BitmapFactory.decodeByteArray(data, 0, data.length);
+                obtainPictureListener.setImageBitmap(bm);
                 Matrix matrix = new Matrix();
 //                matrix.setRotate(90);
                 bm = Bitmap.createBitmap(bm, 0, 0, bm.getWidth(), bm.getHeight(),

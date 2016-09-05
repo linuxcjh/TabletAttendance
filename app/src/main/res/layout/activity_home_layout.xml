@@ -225,7 +225,7 @@
 
                 <EditText
                     android:id="@+id/no_card_et"
-                    android:layout_width="match_parent"
+                    android:layout_width="362dp"
                     android:layout_height="70dp"
                     android:background="@android:color/white"
                     android:gravity="center"

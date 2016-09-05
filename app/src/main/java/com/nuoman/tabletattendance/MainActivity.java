@@ -6,6 +6,7 @@ import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.inputmethodservice.Keyboard;
 import android.inputmethodservice.KeyboardView;
@@ -213,6 +214,7 @@ public class MainActivity extends BaseActivity implements ICommonAction, CameraF
                 return false;
             }
         });
+        keyboardKbv.setPreviewEnabled(false);
         keyboardKbv.setKeyboard(new Keyboard(this, R.xml.symbols));
         keyboardKbv.setOnKeyboardActionListener(new KeyboardView.OnKeyboardActionListener() {
             @Override
@@ -243,6 +245,7 @@ public class MainActivity extends BaseActivity implements ICommonAction, CameraF
                             cameraFragment.takePicture();
 
                         } else {
+                            setIniMainPage();
                             Toast.makeText(MainActivity.this, "输入的卡号不存在", Toast.LENGTH_SHORT).show();
                         }
                     }
@@ -331,6 +334,17 @@ public class MainActivity extends BaseActivity implements ICommonAction, CameraF
 
     }
 
+    @Override
+    public void setImageBitmap(Bitmap bm) {
+        if (bm != null) {
+            punchCardSuccess();
+            hImageIv.setVisibility(View.VISIBLE);
+            hImageIv.setImageBitmap(bm);
+        }else{
+            Toast.makeText(this,"请重新刷卡",Toast.LENGTH_SHORT).show();
+        }
+    }
+
     /**
      * 上传图片
      *
@@ -338,6 +352,10 @@ public class MainActivity extends BaseActivity implements ICommonAction, CameraF
      */
     @Override
     public void onChangeArticle(String filePath) {
+
+        if (!TextUtils.isEmpty(filePath)) {
+            hImageIv.setImageBitmap(BitmapFactory.decodeFile(filePath));
+        }
 
         if (Utils.checkNetworkConnection()) {//有网直接上传
             if (!TextUtils.isEmpty(AppConfig.getStringConfig("token", ""))) {
@@ -349,7 +367,7 @@ public class MainActivity extends BaseActivity implements ICommonAction, CameraF
             }
 
         } else { //没网存在本地
-            punchCardSuccess(filePath);
+
             BaseTransModel m = new BaseTransModel();
             m.setCardNo(AppConfig.getStringConfig(NuoManConstant.CARD_ID, ""));
             m.setAttDate(BaseUtil.getTime(BaseUtil.YYYY_MM_DD_HH_MM_SS));
@@ -366,7 +384,6 @@ public class MainActivity extends BaseActivity implements ICommonAction, CameraF
                 if (data != null) {
                     BaseReceivedModel model = (BaseReceivedModel) data;
                     AppConfig.setStringConfig("token", model.getToken());
-//                    Toast.makeText(this, model.getToken(), Toast.LENGTH_SHORT).show();
                 }
                 break;
             case NuoManService.GETWEATHERFORONEDAY:
@@ -393,13 +410,11 @@ public class MainActivity extends BaseActivity implements ICommonAction, CameraF
                         mTrans.setAttDate(parameterMap.get(key));
                     }
 
-                    Log.d("SYNC", "parameterMap   ---  " + "key= " + key + " and value= " + parameterMap.get(key));
                 }
                 if (data != null) {
                     BaseReceivedModel m = (BaseReceivedModel) data;
                     if (m.isSuccess()) {
                         Toast.makeText(this, "打卡成功", Toast.LENGTH_SHORT).show();
-                        punchCardSuccess(mTrans.getImagePath());
 
                     } else { //保存未成功上传的打卡信息
                         insert(mTrans);
@@ -424,7 +439,6 @@ public class MainActivity extends BaseActivity implements ICommonAction, CameraF
         Uri uri = this.getContentResolver().insert(NoteProviderMetaData.NoteTableMetaData.CONTENT_URI, values);
 
         Log.d("SYNC", uri.toString());
-        punchCardSuccess(transModel.getImagePath());
 
     }
 
@@ -486,7 +500,7 @@ public class MainActivity extends BaseActivity implements ICommonAction, CameraF
     /**
      * 打卡成功
      */
-    private void punchCardSuccess(String filePath) {
+    private void punchCardSuccess() {
 
         String tutelage = obtainCardInfo();
 
@@ -504,7 +518,7 @@ public class MainActivity extends BaseActivity implements ICommonAction, CameraF
         hImageIv.setVisibility(View.VISIBLE);
 //        Glide.with(this).load(filePath).into(hImageIv);
 
-        hImageIv.setImageBitmap(BitmapFactory.decodeFile(filePath));
+//        hImageIv.setImageBitmap(BitmapFactory.decodeFile(filePath));
         hPunchCardSuccessTv.setVisibility(View.VISIBLE);
         hPunchCardSuccessTv.setText(info);
 
