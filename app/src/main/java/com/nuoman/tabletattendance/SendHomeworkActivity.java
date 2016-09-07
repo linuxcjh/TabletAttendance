@@ -74,6 +74,8 @@ public class SendHomeworkActivity extends BaseActivity implements ICommonAction 
      * 图片id
      */
     private Map<Integer, String> pics = new HashMap<>();
+    private Map<Integer, String> paths = new HashMap<>();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,7 +92,7 @@ public class SendHomeworkActivity extends BaseActivity implements ICommonAction 
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 String cardId = v.getText().toString().replace("\n", "");
                 editInputEt.setText("");
-                transModel.setCardNo("0087301181");
+                transModel.setCardNo(cardId);
                 commonPresenter.invokeInterfaceObtainData(false, "homeworkCtrl", NuoManService.GETTEACHERID, transModel, new TypeToken<HomeWorkReceiveModel>() {
                 });
 
@@ -161,7 +163,17 @@ public class SendHomeworkActivity extends BaseActivity implements ICommonAction 
                 this.finish();
                 break;
             case R.id.commit_bt:
-                if (pics.size() > 0) {
+
+                if ((pics.size() != paths.size()) && paths.size() > 0) {
+
+                    for (Integer key : paths.keySet()) {
+                        uploadImageToQiNiu(paths.get(key), AppConfig.getStringConfig("token", ""), key);
+                    }
+                }
+
+                if (paths.size() > 0 && (paths.size() == pics.size())) {
+
+
                     transModel.setClassId(AppConfig.getStringConfig(NuoManConstant.CLASS_ID, ""));
 
                     StringBuilder builder = new StringBuilder();
@@ -186,45 +198,54 @@ public class SendHomeworkActivity extends BaseActivity implements ICommonAction 
         if (data != null) {
 
             String filePath = data.getStringExtra("filePath");
+
             switch (requestCode) {
                 case FIRST_IMAGE_INDEX:
                     first_image = true;
                     imageFirstIv.setImageBitmap(BitmapFactory.decodeFile(filePath));
                     imageFirstIv.setTag(filePath);
-                    uploadImageToQiNiu(filePath, AppConfig.getStringConfig("token", ""), FIRST_IMAGE_INDEX);
+                    paths.put(FIRST_IMAGE_INDEX, filePath);
+
+//                    uploadImageToQiNiu(filePath, AppConfig.getStringConfig("token", ""), FIRST_IMAGE_INDEX);
                     break;
                 case SECOND_IMAGE_INDEX:
                     second_image = true;
 
                     imageSecondIv.setImageBitmap(BitmapFactory.decodeFile(filePath));
                     imageSecondIv.setTag(filePath);
+                    paths.put(SECOND_IMAGE_INDEX, filePath);
 
-                    uploadImageToQiNiu(filePath, AppConfig.getStringConfig("token", ""), SECOND_IMAGE_INDEX);
+//                    uploadImageToQiNiu(filePath, AppConfig.getStringConfig("token", ""), SECOND_IMAGE_INDEX);
                     break;
                 case THIRD_IMAGE_INDEX:
                     thrid_image = true;
 
                     imageThirdIv.setImageBitmap(BitmapFactory.decodeFile(filePath));
                     imageThirdIv.setTag(filePath);
+                    paths.put(THIRD_IMAGE_INDEX, filePath);
 
-                    uploadImageToQiNiu(filePath, AppConfig.getStringConfig("token", ""), THIRD_IMAGE_INDEX);
+//                    uploadImageToQiNiu(filePath, AppConfig.getStringConfig("token", ""), THIRD_IMAGE_INDEX);
 
                     break;
                 case 3:
                     first_image = false;
                     imageFirstIv.setImageBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.add_03));
                     imageFirstIv.setTag("");
-
+                    paths.remove(FIRST_IMAGE_INDEX);
                     break;
                 case 4:
                     second_image = false;
                     imageSecondIv.setImageBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.add_03));
                     imageSecondIv.setTag("");
+                    paths.remove(SECOND_IMAGE_INDEX);
+
                     break;
                 case 5:
                     thrid_image = false;
                     imageThirdIv.setImageBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.add_03));
                     imageThirdIv.setTag("");
+                    paths.remove(THIRD_IMAGE_INDEX);
+
 
                     break;
             }
@@ -250,6 +271,9 @@ public class SendHomeworkActivity extends BaseActivity implements ICommonAction 
                     // info.error中包含了错误信息，可打印调试
                     // 上传成功后将key值上传到自己的服务器
                     pics.put(requestCode, key);
+                    if (pics.size() == paths.size()) {//照片全部上传成功
+                        commitBt.performClick();
+                    }
 
                     Log.d("NuoMan", "key: " + key + "\n");
                 }

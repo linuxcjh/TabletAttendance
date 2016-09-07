@@ -142,7 +142,7 @@ public class CameraActivity extends BaseActivity implements Callback {
         FileOutputStream stream = null;
         try {
             stream = new FileOutputStream(pathName);
-            bm.compress(Bitmap.CompressFormat.JPEG, 90, stream);
+            bm.compress(Bitmap.CompressFormat.JPEG, 80, stream);
             stream.flush();
             stream.close();
         } catch (Exception e) {
