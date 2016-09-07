@@ -12,6 +12,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.reflect.TypeToken;
@@ -36,6 +37,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class SetInfoActivity extends BaseActivity implements ICommonAction {
+
 
     @Bind(R.id.edit_tv)
     EditText editTv;
@@ -65,6 +67,10 @@ public class SetInfoActivity extends BaseActivity implements ICommonAction {
     Button cancelBt;
     @Bind(R.id.update_layout)
     RelativeLayout updateLayout;
+    @Bind(R.id.down_time_tv)
+    TextView downTimeTv;
+    @Bind(R.id.up_time_tv)
+    TextView upTimeTv;
     private CommonPresenter commonPresenter = new CommonPresenter(this);
 
     private BaseTransModel transModel = new BaseTransModel();
@@ -81,6 +87,8 @@ public class SetInfoActivity extends BaseActivity implements ICommonAction {
         selectClassBt.setText(AppConfig.getStringConfig(NuoManConstant.GRADE_NAME, "") + AppConfig.getStringConfig(NuoManConstant.CLASS_NAME, ""));
 
 
+        downTimeTv.setText(AppConfig.getStringConfig(NuoManConstant.DOWN_SCREEN_LIGHT, ""));
+        upTimeTv.setText(AppConfig.getStringConfig(NuoManConstant.REBACK_SCREEN_LIGHT, ""));
     }
 
     @Override
@@ -90,8 +98,8 @@ public class SetInfoActivity extends BaseActivity implements ICommonAction {
 
                 if (data != null) {
                     LoginInfoModel model = (LoginInfoModel) data;
-                    NuoManConstant.UPDATE_TIME = model.getUpdateDataTime();
-                    NuoManConstant.ENTER_SET_PWD = model.getSuperPass();
+                    AppConfig.setStringConfig(NuoManConstant.ENTER_SET_PWD, model.getSuperPass());
+                    AppConfig.setStringConfig(NuoManConstant.UPDATE_TIME, model.getUpdateDataTime());
                     Toast.makeText(this, "数据更新成功", Toast.LENGTH_SHORT).show();
 
                 } else {
@@ -122,7 +130,7 @@ public class SetInfoActivity extends BaseActivity implements ICommonAction {
     }
 
 
-    @OnClick({R.id.select_class_bt, R.id.data_refresh_bt, R.id.update_version_bt, R.id.set_bt, R.id.change_login_bt, R.id.exit_bt, R.id.save_bt, R.id.confirm_bt, R.id.cancel_bt})
+    @OnClick({R.id.down_time_tv, R.id.up_time_tv, R.id.select_class_bt, R.id.data_refresh_bt, R.id.update_version_bt, R.id.set_bt, R.id.change_login_bt, R.id.exit_bt, R.id.save_bt, R.id.confirm_bt, R.id.cancel_bt})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.select_class_bt:
@@ -166,6 +174,13 @@ public class SetInfoActivity extends BaseActivity implements ICommonAction {
                 break;
             case R.id.cancel_bt:
                 updateLayout.setVisibility(View.GONE);
+                break;
+            case R.id.down_time_tv:
+                AppTools.obtainTime(this, downTimeTv, 1);
+                break;
+            case R.id.up_time_tv:
+                AppTools.obtainTime(this, upTimeTv, 2);
+
                 break;
         }
     }

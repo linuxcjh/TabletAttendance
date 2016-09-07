@@ -1,6 +1,7 @@
 package com.nuoman.tabletattendance.common.utils;
 
 import android.app.Activity;
+import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
@@ -8,6 +9,9 @@ import android.os.Build;
 import android.os.Environment;
 import android.text.InputType;
 import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.TimePicker;
+import android.widget.Toast;
 
 import com.google.gson.reflect.TypeToken;
 import com.nuoman.tabletattendance.alarm.RemindAlarmReceiver;
@@ -20,6 +24,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Method;
+import java.util.Calendar;
 import java.util.IdentityHashMap;
 import java.util.Map;
 
@@ -265,10 +270,65 @@ public class AppTools {
     public static void setAlertInit() {
         try {
             RemindAlarmReceiver alarm = new RemindAlarmReceiver();
-            alarm.setAlarm(AppConfig.getContext(), NuoManConstant.DOWN_SCREEN_LIGHT, 1, Integer.parseInt(NuoManConstant.DOWN_SCREEN_LIGHT_TIME.split(":")[0]), Integer.parseInt(NuoManConstant.DOWN_SCREEN_LIGHT_TIME.split(":")[1]));//设置屏幕亮度降
-            alarm.setAlarm(AppConfig.getContext(), NuoManConstant.REBACK_SCREEN_LIGHT, 2, Integer.parseInt(NuoManConstant.REBACK_SCREEN_LIGHT_TIME.split(":")[0]), Integer.parseInt(NuoManConstant.REBACK_SCREEN_LIGHT_TIME.split(":")[1]));//设置屏幕亮度升
+            String down = AppConfig.getStringConfig(NuoManConstant.DOWN_SCREEN_LIGHT, "22:00");
+            String up = AppConfig.getStringConfig(NuoManConstant.REBACK_SCREEN_LIGHT, "7:00");
+
+            alarm.setAlarm(AppConfig.getContext(), NuoManConstant.DOWN_SCREEN_LIGHT, 1, Integer.parseInt(down.split(":")[0]), Integer.parseInt(down.split(":")[1]));//设置屏幕亮度降
+            alarm.setAlarm(AppConfig.getContext(), NuoManConstant.REBACK_SCREEN_LIGHT, 2, Integer.parseInt(up.split(":")[0]), Integer.parseInt(up.split(":")[1]));//设置屏幕亮度升
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * 获取时间
+     *
+     * @param textView
+     */
+    public static void obtainTime(final Activity activity, final TextView textView, final int index) {
+        final Calendar calendar = Calendar.getInstance();
+        TimePickerDialog timePickerDialog = new TimePickerDialog(activity, new TimePickerDialog.OnTimeSetListener() {
+            @Override
+            public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+
+                textView.setText(inspectTime(hourOfDay, minute));
+                if (index == 1) {
+                    AppConfig.setStringConfig(NuoManConstant.DOWN_SCREEN_LIGHT, textView.getText().toString());
+                    Toast.makeText(activity,AppConfig.getStringConfig(NuoManConstant.DOWN_SCREEN_LIGHT,"22:00"),Toast.LENGTH_SHORT).show();
+                    AppTools.setAlertInit();
+                } else if (index == 2) {
+                    AppConfig.setStringConfig(NuoManConstant.REBACK_SCREEN_LIGHT, textView.getText().toString());
+                    Toast.makeText(activity,AppConfig.getStringConfig(NuoManConstant.REBACK_SCREEN_LIGHT,"06:00"),Toast.LENGTH_SHORT).show();
+
+                    AppTools.setAlertInit();
+                }
+            }
+        }, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), false);
+        timePickerDialog.show();
+    }
+
+
+    /**
+     * 格式化事件
+     *
+     * @param hourOfDay
+     * @param minute
+     * @return
+     */
+    public static String inspectTime(int hourOfDay, int minute) {
+
+        String tempHour = String.valueOf((hourOfDay));
+        String tempMin = String.valueOf((minute));
+
+        if ((hourOfDay) < 10) {
+            tempHour = "0" + String.valueOf(hourOfDay);
+        }
+        if (minute < 10) {
+            tempMin = "0" + String.valueOf((minute));
+        }
+        String timeStr = tempHour + ":" + tempMin;
+
+        return timeStr;
+
     }
 }

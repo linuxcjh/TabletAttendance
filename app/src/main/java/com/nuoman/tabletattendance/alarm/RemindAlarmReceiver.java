@@ -7,6 +7,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.widget.Toast;
 
 import com.nuoman.tabletattendance.common.NuoManConstant;
 import com.nuoman.tabletattendance.common.utils.AppConfig;
@@ -19,6 +20,7 @@ import java.util.TimeZone;
  * When the alarm fires, this WakefulBroadcastReceiver receives the broadcast Intent
  */
 public class RemindAlarmReceiver extends BroadcastReceiver {
+
     private AlarmManager alarmMgr;
 
     @Override
@@ -26,16 +28,16 @@ public class RemindAlarmReceiver extends BroadcastReceiver {
 
         switch (intent.getAction()) {
             case NuoManConstant.DOWN_SCREEN_LIGHT:
-
+                Toast.makeText(AppConfig.getContext(),"RemindAlarmReceiver",Toast.LENGTH_SHORT).show();
                 AppTools.saveBrightness(AppConfig.getContext(), 30);
-
                 break;
             case NuoManConstant.REBACK_SCREEN_LIGHT:
+                Toast.makeText(AppConfig.getContext(),"RemindAlarmReceiver",Toast.LENGTH_SHORT).show();
+
                 AppTools.saveBrightness(AppConfig.getContext(), 255);
-
                 break;
-
         }
+
     }
 
 

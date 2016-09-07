@@ -61,7 +61,7 @@ public class LoginActivity extends BaseActivity implements ICommonAction {
     private void initData() {
         commonPresenter = new CommonPresenter(this);
         loginMacTv.setText(BaseUtil.getBluetoothMac());
-        loginNameTv.setText("");//02987301181
+        loginNameTv.setText("02987301181");//02987301181 NMKJ87301181
 
         loginNameTv.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -140,8 +140,8 @@ public class LoginActivity extends BaseActivity implements ICommonAction {
                     AppConfig.setStringConfig(NuoManConstant.USER_NAME, loginNameTv.getText().toString());
                     AppConfig.setStringConfig(NuoManConstant.USER_MAC, loginMacTv.getText().toString());
 
-                    NuoManConstant.UPDATE_TIME = model.getUpdateDataTime();
-                    NuoManConstant.ENTER_SET_PWD = model.getSuperPass();
+                    AppConfig.setStringConfig(NuoManConstant.ENTER_SET_PWD,model.getSuperPass());
+                    AppConfig.setStringConfig(NuoManConstant.UPDATE_TIME,model.getUpdateDataTime());
                     CustomDialog dialog = new CustomDialog(this, mHandler, model);
                     dialog.show();
 

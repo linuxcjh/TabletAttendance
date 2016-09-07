@@ -65,14 +65,14 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter implements ICommonA
         this.provider = provider;
 
         //定时任务 降低屏幕亮度
-        if (BaseUtil.getTime(BaseUtil.HH_MM).equals(NuoManConstant.DOWN_SCREEN_LIGHT_TIME)) {
-            AppTools.saveBrightness(getContext(), 30);
+        if (BaseUtil.getTime(BaseUtil.HH_MM).equals(AppConfig.getStringConfig(NuoManConstant.DOWN_SCREEN_LIGHT, "22:00"))) {
+            AppTools.saveBrightness(getContext(), 10);
             Log.d("SYNC", "DOWN_SCREEN_LIGHT  30   ---  " + BaseUtil.getTime(BaseUtil.HH_MM));
 
         }
 
         //定时任务 恢复屏幕亮度
-        if (BaseUtil.getTime(BaseUtil.HH_MM).equals(NuoManConstant.REBACK_SCREEN_LIGHT_TIME)) {
+        if (BaseUtil.getTime(BaseUtil.HH_MM).equals(AppConfig.getStringConfig(NuoManConstant.REBACK_SCREEN_LIGHT, "06:00"))) {
             AppTools.saveBrightness(getContext(), 255);
             Log.d("SYNC", "REBACK_SCREEN_LIGHT  255   ---  " + BaseUtil.getTime(BaseUtil.HH_MM));
 
@@ -96,7 +96,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter implements ICommonA
         }
 
         //定时任务 更新数据
-        if (BaseUtil.getTime(BaseUtil.HH_MM).equals(NuoManConstant.UPDATE_TIME)) {
+        if (BaseUtil.getTime(BaseUtil.HH_MM).equals(AppConfig.getStringConfig(NuoManConstant.UPDATE_TIME, "23:00"))) {
 
             BaseTransModel refreshModel = new BaseTransModel();
             refreshModel.setTel(AppConfig.getStringConfig(NuoManConstant.USER_NAME, ""));
@@ -107,7 +107,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter implements ICommonA
 
         }
 
-        Log.d("SYNC", "onPerformSync   ---  " + BaseUtil.getTime(BaseUtil.HH_MM));
+        Log.d("SYNC", "onPerformSync   ---  " + BaseUtil.getTime(BaseUtil.HH_MM)+"=="+AppConfig.getStringConfig(NuoManConstant.DOWN_SCREEN_LIGHT, "22:00")+"=="+AppConfig.getStringConfig(NuoManConstant.REBACK_SCREEN_LIGHT, "06:00"));
 
     }
 
@@ -145,8 +145,12 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter implements ICommonA
                 break;
             case NuoManService.LOGIN:
                 LoginInfoModel model = (LoginInfoModel) data;
-                NuoManConstant.UPDATE_TIME = model.getUpdateDataTime();
-                NuoManConstant.ENTER_SET_PWD = model.getSuperPass();
+
+                AppConfig.setStringConfig(NuoManConstant.ENTER_SET_PWD, model.getSuperPass());
+                AppConfig.setStringConfig(NuoManConstant.UPDATE_TIME, model.getUpdateDataTime());
+
+//                NuoManConstant.UPDATE_TIME = model.getUpdateDataTime();
+//                NuoManConstant.ENTER_SET_PWD = model.getSuperPass();
 
                 break;
         }

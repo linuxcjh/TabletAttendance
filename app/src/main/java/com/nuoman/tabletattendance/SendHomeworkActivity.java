@@ -3,6 +3,7 @@ package com.nuoman.tabletattendance;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -20,9 +21,12 @@ import com.nuoman.tabletattendance.common.CommonPresenter;
 import com.nuoman.tabletattendance.common.ICommonAction;
 import com.nuoman.tabletattendance.common.NuoManConstant;
 import com.nuoman.tabletattendance.common.utils.AppConfig;
+import com.nuoman.tabletattendance.common.utils.AppTools;
 import com.nuoman.tabletattendance.model.BaseReceivedModel;
 import com.nuoman.tabletattendance.model.BaseTransModel;
+import com.nuoman.tabletattendance.model.CardNoModel;
 import com.nuoman.tabletattendance.model.HomeWorkReceiveModel;
+import com.nuoman.tabletattendance.model.LoginInfoModel;
 import com.qiniu.android.http.ResponseInfo;
 import com.qiniu.android.storage.UpCompletionHandler;
 import com.qiniu.android.storage.UploadManager;
@@ -31,6 +35,7 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import butterknife.Bind;
@@ -76,6 +81,8 @@ public class SendHomeworkActivity extends BaseActivity implements ICommonAction 
     private Map<Integer, String> pics = new HashMap<>();
     private Map<Integer, String> paths = new HashMap<>();
 
+    private String cardId;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,11 +97,19 @@ public class SendHomeworkActivity extends BaseActivity implements ICommonAction 
         editInputEt.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                String cardId = v.getText().toString().replace("\n", "");
+                cardId = v.getText().toString().replace("\n", "");
                 editInputEt.setText("");
                 transModel.setCardNo(cardId);
-                commonPresenter.invokeInterfaceObtainData(false, "homeworkCtrl", NuoManService.GETTEACHERID, transModel, new TypeToken<HomeWorkReceiveModel>() {
-                });
+
+                if (TextUtils.isEmpty(obtainCardInfo())) {
+                    commonPresenter.invokeInterfaceObtainData(false, "homeworkCtrl", NuoManService.GETTEACHERID, transModel, new TypeToken<HomeWorkReceiveModel>() {
+                    });
+                } else {
+                    transModel.setTeacherId(obtainCardInfo());
+                    Toast.makeText(SendHomeworkActivity.this, "授权成功", Toast.LENGTH_SHORT).show();
+                    tipLayout.setVisibility(View.GONE);
+                }
+
 
                 return false;
             }
@@ -108,12 +123,13 @@ public class SendHomeworkActivity extends BaseActivity implements ICommonAction 
             switch (methodIndex) {
                 case NuoManService.GETTEACHERID:
                     HomeWorkReceiveModel m = (HomeWorkReceiveModel) data;
-                    if (m.isSuccess()) {
+                    if (m.isSuccess() && !TextUtils.isEmpty(m.getObj().getTeacherId()) && !m.getObj().getTeacherId().equals("-1")) {
                         transModel.setTeacherId(m.getObj().getTeacherId());
                         Toast.makeText(SendHomeworkActivity.this, "授权成功", Toast.LENGTH_SHORT).show();
                         tipLayout.setVisibility(View.GONE);
                     } else {
                         Toast.makeText(SendHomeworkActivity.this, "授权失败,请使用指定的卡号", Toast.LENGTH_SHORT).show();
+                        finish();
                     }
                     break;
                 case NuoManService.SAVEHOMEWORK:
@@ -169,10 +185,10 @@ public class SendHomeworkActivity extends BaseActivity implements ICommonAction 
                     for (Integer key : paths.keySet()) {
                         uploadImageToQiNiu(paths.get(key), AppConfig.getStringConfig("token", ""), key);
                     }
+                    return;
                 }
 
                 if (paths.size() > 0 && (paths.size() == pics.size())) {
-
 
                     transModel.setClassId(AppConfig.getStringConfig(NuoManConstant.CLASS_ID, ""));
 
@@ -282,4 +298,25 @@ public class SendHomeworkActivity extends BaseActivity implements ICommonAction 
 
     }
 
+    /**
+     * 根据卡号获取信息
+     */
+    private String obtainCardInfo() {
+
+        LoginInfoModel m = AppTools.getLogInfo();
+
+        for (int i = 0; i < m.getPeopleMap().getTeacherInfos().size(); i++) {
+            List<CardNoModel> cardNoList = m.getPeopleMap().getTeacherInfos().get(i).getCardNoList();
+
+            for (int j = 0; j < cardNoList.size(); j++) {
+
+                if (cardId.equals(cardNoList.get(j).getCardNo())) {
+                    return m.getPeopleMap().getTeacherInfos().get(i).getTeacherId();//返回老师ID
+                }
+
+            }
+
+        }
+        return "";
+    }
 }

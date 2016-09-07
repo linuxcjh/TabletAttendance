@@ -37,6 +37,7 @@ import com.nuoman.tabletattendance.common.utils.AppConfig;
 import com.nuoman.tabletattendance.common.utils.AppTools;
 import com.nuoman.tabletattendance.common.utils.BaseUtil;
 import com.nuoman.tabletattendance.common.utils.BrightnessTools;
+import com.nuoman.tabletattendance.common.utils.TextToSpeech;
 import com.nuoman.tabletattendance.common.utils.Utils;
 import com.nuoman.tabletattendance.information.InformationActivity;
 import com.nuoman.tabletattendance.model.BaseReceivedModel;
@@ -135,6 +136,8 @@ public class MainActivity extends BaseActivity implements ICommonAction, CameraF
     KeyboardView keyboardKbv;
     @Bind(R.id.no_card_layout)
     LinearLayout noCardLayout;
+
+    private TextToSpeech textToSpeech;
     private CommonPresenter commonPresenter;
 
 
@@ -190,11 +193,12 @@ public class MainActivity extends BaseActivity implements ICommonAction, CameraF
         });
     }
 
+
     /**
      * View 初始化
      */
     private void initView() {
-
+        textToSpeech = TextToSpeech.getInstance(this);
         cameraFragment = (CameraFragment) getSupportFragmentManager().findFragmentById(R.id.camera_fragment);
         hSchoolNameTv.setText(AppConfig.getStringConfig(NuoManConstant.SCHOOL_NAME, AppTools.getLogInfo().getSchoolName()));
         hTimeTv.setText(BaseUtil.getTime(BaseUtil.YYYY_MM_DD_HH_MM) + "   " + BaseUtil.getTime(BaseUtil.HH_MM_SS) + "    " + BaseUtil.getDayOfWeek());
@@ -203,14 +207,22 @@ public class MainActivity extends BaseActivity implements ICommonAction, CameraF
         editInputEt.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+
+                mHandler.removeMessages(BACK_INDEX);
+
                 if (BrightnessTools.getScreenBrightness(MainActivity.this) != 255) { //打卡时提升屏幕亮度
                     AppTools.saveBrightness(MainActivity.this, 255);
                 }
-                mHandler.removeMessages(BACK_INDEX);
                 AppConfig.setStringConfig(NuoManConstant.CARD_ID, v.getText().toString().replace("\n", ""));
-                cameraFragment.takePicture();
                 editInputEt.setText("");
+                if (!TextUtils.isEmpty(obtainCardInfo())) {//判断输入的卡号是否有效
+                    cameraFragment.takePicture();
 
+                } else {
+                    setIniMainPage();
+                    textToSpeech.startSpeaking("卡号不存在");
+                    Toast.makeText(MainActivity.this, "卡号不存在", Toast.LENGTH_SHORT).show();
+                }
                 return false;
             }
         });
@@ -235,7 +247,7 @@ public class MainActivity extends BaseActivity implements ICommonAction, CameraF
                 if (primaryCode == Keyboard.KEYCODE_DONE) {
                     mHandler.removeMessages(BACK_INDEX);
 
-                    if (noCardEt.getText().toString().equals(NuoManConstant.ENTER_SET_PWD)) { //进设置页面
+                    if (noCardEt.getText().toString().equals(AppConfig.getStringConfig(NuoManConstant.ENTER_SET_PWD, "666"))) { //进设置页面
                         setIniMainPage();
                         startActivityForResult(new Intent(MainActivity.this, SetInfoActivity.class), SET_REBACK_INDEX);
 
@@ -246,7 +258,8 @@ public class MainActivity extends BaseActivity implements ICommonAction, CameraF
 
                         } else {
                             setIniMainPage();
-                            Toast.makeText(MainActivity.this, "输入的卡号不存在", Toast.LENGTH_SHORT).show();
+                            textToSpeech.startSpeaking("卡号不存在");
+                            Toast.makeText(MainActivity.this, "卡号不存在", Toast.LENGTH_SHORT).show();
                         }
                     }
 
@@ -302,10 +315,11 @@ public class MainActivity extends BaseActivity implements ICommonAction, CameraF
             hSingleTv.setImageResource(R.drawable.no_wifi);
         } else if (AppConfig.getStringConfig(NuoManConstant.CURRENT_NET_TYPE, "").equals("wifi")) {
             hSingleTv.setImageResource(R.drawable.connected_wifi);
-        } else {
+        } else if (AppConfig.getStringConfig(NuoManConstant.CURRENT_NET_TYPE, "").equals("mobile")) {
             hSingleTv.setImageResource(R.drawable.g4_01_03);
+        } else {
+            hSingleTv.setImageResource(R.drawable.bendi_01_03);
         }
-
 
     }
 
@@ -337,11 +351,13 @@ public class MainActivity extends BaseActivity implements ICommonAction, CameraF
     @Override
     public void setImageBitmap(Bitmap bm) {
         if (bm != null) {
-            punchCardSuccess();
+            if (!punchCardSuccess()) {
+                return;
+            }
             hImageIv.setVisibility(View.VISIBLE);
             hImageIv.setImageBitmap(bm);
-        }else{
-            Toast.makeText(this,"请重新刷卡",Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, "请重新刷卡", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -500,7 +516,7 @@ public class MainActivity extends BaseActivity implements ICommonAction, CameraF
     /**
      * 打卡成功
      */
-    private void punchCardSuccess() {
+    private boolean punchCardSuccess() {
 
         String tutelage = obtainCardInfo();
 
@@ -523,6 +539,11 @@ public class MainActivity extends BaseActivity implements ICommonAction, CameraF
         hPunchCardSuccessTv.setText(info);
 
         mHandler.sendEmptyMessageDelayed(BACK_INDEX, REBACK_TIME_INDEX);
+
+        textToSpeech.startSpeaking(hTitleTv.getText().toString() + "同学打卡成功");
+
+        return true;
+
     }
 
     @Override
@@ -565,6 +586,7 @@ public class MainActivity extends BaseActivity implements ICommonAction, CameraF
             switch (requestCode) {
                 case SET_REBACK_INDEX:
                     hSchoolNameTv.setText(AppConfig.getStringConfig(NuoManConstant.SCHOOL_NAME, AppTools.getLogInfo().getSchoolName()));
+                    requestSync();
                     break;
             }
 
