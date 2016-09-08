@@ -44,4 +44,7 @@ public interface NuoManService {
     //上传及其位置
     String SAVEDVCLOCATION="SaveDvcLocation";
 
+    //获取录音列表
+    String GETAUDIOLISTBYUSERID="GetAudioListByUserId";
+
 }

@@ -21,8 +21,8 @@ import java.util.TimeZone;
  */
 public class RemindAlarmReceiver extends BroadcastReceiver {
 
-    public AlarmManager alarmMgr;
 
+    public AlarmManager alarmMgr;
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -30,15 +30,26 @@ public class RemindAlarmReceiver extends BroadcastReceiver {
         switch (intent.getAction()) {
             case NuoManConstant.DOWN_SCREEN_LIGHT:
                 Log.d("SYNC", "onReceive   ---  " + BaseUtil.getTime(BaseUtil.HH_MM) + "==" + AppConfig.getStringConfig(NuoManConstant.DOWN_SCREEN_LIGHT, "21:30") + "==" + AppConfig.getStringConfig(NuoManConstant.REBACK_SCREEN_LIGHT, "07:00"));
-                if (BaseUtil.getTime(BaseUtil.HH_MM).equals(AppConfig.getStringConfig(NuoManConstant.DOWN_SCREEN_LIGHT, "21:30"))) { //锁屏
+
+                String currentTime = BaseUtil.getTime(BaseUtil.HH_MM);
+                String downTime = AppConfig.getStringConfig(NuoManConstant.DOWN_SCREEN_LIGHT, "21:30");
+                String downTimeS = downTime.split(":")[0] + ":" + (Integer.parseInt(downTime.split(":")[1]) + 1);
+
+
+                if (currentTime.equals(downTime) || currentTime.equals(downTimeS)) { //锁屏
                     Log.d("SYNC", "onReceive DOWN_SCREEN_LIGHT  30   ---  " + BaseUtil.getTime(BaseUtil.HH_MM));
                     AppConfig.getActivity().sendBroadcast(new Intent(NuoManConstant.DROP_SCREEN_LIGHT));
                 }
 
-                if (BaseUtil.getTime(BaseUtil.HH_MM).equals(AppConfig.getStringConfig(NuoManConstant.REBACK_SCREEN_LIGHT, "07:00"))) {//唤醒
+                String upTime = AppConfig.getStringConfig(NuoManConstant.REBACK_SCREEN_LIGHT, "07:00");
+                String upTimeS = upTime.split(":")[0] + ":" + (Integer.parseInt(upTime.split(":")[1]) + 1);
+                if (currentTime.equals(upTime) || currentTime.equals(upTimeS)) {//唤醒
                     Log.d("SYNC", "onReceive REBACK_SCREEN_LIGHT  255   ---  " + BaseUtil.getTime(BaseUtil.HH_MM));
                     AppConfig.getActivity().sendBroadcast(new Intent(NuoManConstant.LIGHT_SCREEN_LIGHT));
                 }
+
+                Log.d("SYNC", "TIME    currentTime:" + currentTime + " downTime:" + downTime + "  downTimeS:" + downTimeS + " upTime:" + upTime + " upTimeS:" + upTimeS);
+
                 break;
 
         }

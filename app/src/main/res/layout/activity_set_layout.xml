@@ -10,45 +10,77 @@
         android:paddingLeft="30dp">
 
 
-        <EditText
-            android:id="@+id/edit_tv"
-            android:layout_width="300dp"
-            android:layout_height="60dp"
-            android:layout_marginTop="30dp"
-            android:textSize="18sp"
-            android:background="@android:color/white"
-            android:gravity="center"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            android:text="" />
+        <RelativeLayout
+            android:id="@+id/firt_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
 
+            <EditText
+                android:id="@+id/edit_tv"
+                android:layout_width="300dp"
+                android:layout_height="60dp"
+                android:layout_marginTop="30dp"
+                android:background="@android:color/white"
+                android:gravity="center"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:text=""
+                android:textSize="18sp" />
 
-        <EditText
-            android:id="@+id/edit_pre_tv"
-            android:layout_width="300dp"
-            android:layout_height="60dp"
-            android:layout_below="@+id/edit_tv"
-            android:layout_marginTop="20dp"
-            android:background="@android:color/white"
-            android:gravity="center"
-            android:paddingLeft="10dp"
-            android:textSize="18sp"
-            android:paddingRight="10dp"
-            android:text="" />
+            <Button
+                android:id="@+id/delete_b1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toRightOf="@+id/edit_tv"
+                android:text="删除"
+                android:textSize="18sp" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/second_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/firt_layout"
+
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/edit_pre_tv"
+                android:layout_width="300dp"
+                android:layout_height="60dp"
+                android:layout_marginTop="20dp"
+                android:background="@android:color/white"
+                android:gravity="center"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:text=""
+                android:textSize="18sp" />
+
+            <Button
+                android:id="@+id/delete_b2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toRightOf="@+id/edit_pre_tv"
+                android:text="删除"
+                android:textSize="18sp" />
+        </RelativeLayout>
+
 
         <TextView
             android:id="@+id/set_manager_tv"
             android:layout_width="300dp"
             android:layout_height="60dp"
-            android:layout_below="@+id/edit_pre_tv"
+            android:layout_below="@+id/second_layout"
             android:layout_marginTop="60dp"
             android:background="@android:color/white"
             android:gravity="center"
-            android:textSize="18sp"
-            android:text="注册设备管理器"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
-            />
+            android:text="注册设备管理器"
+            android:textSize="18sp" />
 
         <TextView
             android:id="@+id/down_time_tv"
@@ -58,11 +90,11 @@
             android:layout_marginTop="20dp"
             android:background="@android:color/white"
             android:gravity="center"
-            android:textSize="18sp"
             android:hint="设置屏幕熄灭时间"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
-            android:text="" />
+            android:text=""
+            android:textSize="18sp" />
 
         <TextView
             android:id="@+id/up_time_tv"
@@ -72,11 +104,11 @@
             android:layout_marginTop="20dp"
             android:background="@android:color/white"
             android:gravity="center"
-            android:textSize="18sp"
             android:hint="设置屏幕唤醒时间"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
-            android:text="" />
+            android:text=""
+            android:textSize="18sp" />
 
         <RelativeLayout
             android:layout_width="200dp"

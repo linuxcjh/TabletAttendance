@@ -128,7 +128,7 @@ public class CameraActivity extends BaseActivity implements Callback {
 
                 String dirPath = AppTools.getFileSavePath(AppConfig.getContext());
                 filePath = dirPath + "/" + System.currentTimeMillis() + ".jpg";
-                savePicture(bm, filePath);
+                savePicture(convertBmp(bm), filePath);
                 setResult(RESULT_OK, new Intent().putExtra("filePath", filePath));
                 finish();
 //                uploadImageToQiNiu(filePath, AppTools.getAcacheData(NuoManConstant.TOKEN));
@@ -136,7 +136,16 @@ public class CameraActivity extends BaseActivity implements Callback {
         });
     }
 
+    public Bitmap convertBmp(Bitmap bmp) {
+        int w = bmp.getWidth();
+        int h = bmp.getHeight();
 
+        Matrix matrix = new Matrix();
+        matrix.postScale(-1, 1); // 镜像水平翻转
+        Bitmap convertBmp = Bitmap.createBitmap(bmp, 0, 0, w, h, matrix, true);
+
+        return convertBmp;
+    }
 
     public void savePicture(Bitmap bm, String pathName) {
         FileOutputStream stream = null;

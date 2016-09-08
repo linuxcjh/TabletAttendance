@@ -103,6 +103,8 @@ public class InterVoiceFragment extends Fragment implements ICommonAction, Adapt
      */
     public void setSendStudentGroupId(String groupId) {
         this.model.setDestId(groupId);
+        commonPresenter.invokeInterfaceObtainData(false, "voiceCtrl", NuoManService.GETAUDIOLISTBYUSERID, model, new TypeToken<VoiceReceiveModel>() {
+        });
     }
 
 
@@ -124,6 +126,8 @@ public class InterVoiceFragment extends Fragment implements ICommonAction, Adapt
      */
     public void setSendTeacherClassId(String classId) {
         this.model.setDestId(classId);
+        commonPresenter.invokeInterfaceObtainData(false, "voiceCtrl", NuoManService.GETAUDIOLISTBYUSERID, model, new TypeToken<VoiceReceiveModel>() {
+        });
     }
 
     private void initView() {
@@ -174,6 +178,22 @@ public class InterVoiceFragment extends Fragment implements ICommonAction, Adapt
                         List<VoiceReceiveModel> m = (List<VoiceReceiveModel>) data;
                         mDatas.clear();
                         mDatas.addAll(m.get(0).getObj());
+                        mAdapter.notifyDataSetChanged();
+                        listview.setSelection(mDatas.size() - 1);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+
+                break;
+            case NuoManService.GETAUDIOLISTBYUSERID:
+                try {
+                    if (data != null) {
+
+                        VoiceReceiveModel m = (VoiceReceiveModel) data;
+                        mDatas.clear();
+                        mDatas.addAll(m.getObj());
                         mAdapter.notifyDataSetChanged();
                         listview.setSelection(mDatas.size() - 1);
                     }

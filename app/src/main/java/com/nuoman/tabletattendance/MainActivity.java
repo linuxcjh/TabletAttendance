@@ -151,6 +151,9 @@ public class MainActivity extends BaseActivity implements ICommonAction, CameraF
     private ScreenLightReceiver screenLightReceiver;
     private RemindAlarmReceiver alarm = new RemindAlarmReceiver();
 
+
+    private boolean isTeacher;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -384,6 +387,9 @@ public class MainActivity extends BaseActivity implements ICommonAction, CameraF
                 hSingleTv.setImageResource(R.drawable.connected_wifi);
                 Toast.makeText(this, "WIFI网络", Toast.LENGTH_SHORT).show();
                 break;
+            case NET_UNKNOWN:
+                hSingleTv.setImageResource(R.drawable.bendi_01_03);
+                break;
             default:
                 hSingleTv.setImageResource(R.drawable.no_wifi);
         }
@@ -565,12 +571,7 @@ public class MainActivity extends BaseActivity implements ICommonAction, CameraF
     private boolean punchCardSuccess() {
 
         String tutelage = obtainCardInfo();
-
-        String info = "年      级：" + AppConfig.getStringConfig(NuoManConstant.GRADE_NAME, "") + System.getProperty("line.separator")
-                + "班      级：" + AppConfig.getStringConfig(NuoManConstant.CLASS_NAME, "") + System.getProperty("line.separator")
-                + "监 护 人：" + tutelage + System.getProperty("line.separator")
-                + "卡      号：" + AppConfig.getStringConfig(NuoManConstant.CARD_ID, "") + System.getProperty("line.separator")
-                + "签到时间：" + BaseUtil.getTime("HH:mm:ss");
+        String info = "";
 
         weatherOperationLayout.setVisibility(View.VISIBLE);
         noCardLayout.setVisibility(View.GONE);
@@ -579,11 +580,24 @@ public class MainActivity extends BaseActivity implements ICommonAction, CameraF
         hTitleTv.setVisibility(View.VISIBLE);
         hImageIv.setVisibility(View.VISIBLE);
         hPunchCardSuccessTv.setVisibility(View.VISIBLE);
-        hPunchCardSuccessTv.setText(info);
 
         mHandler.sendEmptyMessageDelayed(BACK_INDEX, REBACK_TIME_INDEX);
 
-        textToSpeech.startSpeaking(hTitleTv.getText().toString() + "同学打卡成功");
+        if (isTeacher) {
+            textToSpeech.startSpeaking(hTitleTv.getText().toString());
+            isTeacher = false;
+            info = "卡      号：" + AppConfig.getStringConfig(NuoManConstant.CARD_ID, "") + System.getProperty("line.separator")
+                    + "签到时间：" + BaseUtil.getTime("HH:mm:ss");
+        } else {
+            textToSpeech.startSpeaking(hTitleTv.getText().toString() + "同学");
+            info = "年      级：" + AppConfig.getStringConfig(NuoManConstant.GRADE_NAME, "") + System.getProperty("line.separator")
+                    + "班      级：" + AppConfig.getStringConfig(NuoManConstant.CLASS_NAME, "") + System.getProperty("line.separator")
+                    + "监 护 人：" + tutelage + System.getProperty("line.separator")
+                    + "卡      号：" + AppConfig.getStringConfig(NuoManConstant.CARD_ID, "") + System.getProperty("line.separator")
+                    + "签到时间：" + BaseUtil.getTime("HH:mm:ss");
+        }
+
+        hPunchCardSuccessTv.setText(info);
 
         return true;
 
@@ -617,6 +631,21 @@ public class MainActivity extends BaseActivity implements ICommonAction, CameraF
 
                     hTitleTv.setText(m.getPeopleMap().getStudentInfos().get(i).getStudentName());
                     return cardNoList.get(j).getCardRole();//返回监护人
+                }
+
+            }
+
+        }
+
+        for (int i = 0; i < m.getPeopleMap().getTeacherInfos().size(); i++) {
+            List<CardNoModel> cardNoList = m.getPeopleMap().getTeacherInfos().get(i).getCardNoList();
+
+            for (int j = 0; j < cardNoList.size(); j++) {
+
+                if (currentCardNo.equals(cardNoList.get(j).getCardNo())) {
+                    isTeacher = true;
+                    hTitleTv.setText(m.getPeopleMap().getTeacherInfos().get(i).getTeacherName());
+                    return hTitleTv.getText().toString();//返回监护人
                 }
 
             }

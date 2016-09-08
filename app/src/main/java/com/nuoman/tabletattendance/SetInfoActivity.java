@@ -6,7 +6,9 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.Settings;
+import android.text.Editable;
 import android.text.InputType;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -74,6 +76,10 @@ public class SetInfoActivity extends BaseActivity implements ICommonAction {
     TextView upTimeTv;
     @Bind(R.id.set_manager_tv)
     TextView setManagerTv;
+    @Bind(R.id.delete_b1)
+    Button deleteB1;
+    @Bind(R.id.delete_b2)
+    Button deleteB2;
     private CommonPresenter commonPresenter = new CommonPresenter(this);
 
     private BaseTransModel transModel = new BaseTransModel();
@@ -128,7 +134,7 @@ public class SetInfoActivity extends BaseActivity implements ICommonAction {
     }
 
 
-    @OnClick({R.id.set_manager_tv, R.id.down_time_tv, R.id.up_time_tv, R.id.select_class_bt, R.id.data_refresh_bt, R.id.update_version_bt, R.id.set_bt, R.id.change_login_bt, R.id.exit_bt, R.id.save_bt, R.id.confirm_bt, R.id.cancel_bt})
+    @OnClick({R.id.set_manager_tv, R.id.delete_b1, R.id.delete_b2, R.id.down_time_tv, R.id.up_time_tv, R.id.select_class_bt, R.id.data_refresh_bt, R.id.update_version_bt, R.id.set_bt, R.id.change_login_bt, R.id.exit_bt, R.id.save_bt, R.id.confirm_bt, R.id.cancel_bt})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.select_class_bt:
@@ -159,7 +165,11 @@ public class SetInfoActivity extends BaseActivity implements ICommonAction {
                 finish();
                 break;
             case R.id.save_bt:
-                AppConfig.setStringConfig(NuoManConstant.SCHOOL_NAME, editTv.getText().toString() + "\n" + editPreTv.getText().toString());
+                if (TextUtils.isEmpty(editPreTv.getText().toString())) {
+                    AppConfig.setStringConfig(NuoManConstant.SCHOOL_NAME, editTv.getText().toString());
+                } else {
+                    AppConfig.setStringConfig(NuoManConstant.SCHOOL_NAME, editTv.getText().toString() + "\n" + editPreTv.getText().toString());
+                }
                 Toast.makeText(this, "保存成功", Toast.LENGTH_SHORT).show();
                 setResult(RESULT_OK, new Intent());
                 finish();
@@ -185,6 +195,33 @@ public class SetInfoActivity extends BaseActivity implements ICommonAction {
                     Toast.makeText(this, "已注册启动器", Toast.LENGTH_SHORT).show();
                 } else {
                     LockScreenUtils.getInstance().activeManager(this);
+                }
+                break;
+            case R.id.delete_b1:
+
+                if (!TextUtils.isEmpty(editTv.getText().toString())) {
+                    int index = editTv.getSelectionStart();
+
+                    if ((index - 1) > 0 || (index - 1) == 0) {
+                        Editable editable = editTv.getText();
+                        editable.delete(index - 1, index);
+                        editTv.setText(editable.toString());
+                        editTv.setSelection(index - 1);
+                    }
+                }
+
+                break;
+            case R.id.delete_b2:
+
+                if (!TextUtils.isEmpty(editPreTv.getText().toString())) {
+                    int index = editPreTv.getSelectionStart();
+
+                    if ((index - 1) > 0 || (index - 1) == 0) {
+                        Editable editable = editPreTv.getText();
+                        editable.delete(index - 1, index);
+                        editPreTv.setText(editable.toString());
+                        editPreTv.setSelection(index - 1);
+                    }
                 }
                 break;
         }
