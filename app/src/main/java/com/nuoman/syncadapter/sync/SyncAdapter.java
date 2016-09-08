@@ -188,7 +188,6 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter implements ICommonA
      */
     private void upLoadPunchCardInfo(List<BaseTransModel> transModels) {
 
-
         for (int i = 0; i < transModels.size(); i++) {
 
             if (!TextUtils.isEmpty(AppTools.getAcacheData(NuoManConstant.TOKEN))) {

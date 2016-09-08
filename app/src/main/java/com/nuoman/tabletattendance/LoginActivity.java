@@ -62,7 +62,7 @@ public class LoginActivity extends BaseActivity implements ICommonAction {
     private void initData() {
         commonPresenter = new CommonPresenter(this);
         loginMacTv.setText(BaseUtil.getBluetoothMac());
-        loginNameTv.setText("02987301181");//02987301181 NMKJ87301181
+        loginNameTv.setText("");//02987301181 NMKJ87301181
 
 //        loginBt.performClick();
         loginNameTv.setOnTouchListener(new View.OnTouchListener() {
@@ -138,6 +138,10 @@ public class LoginActivity extends BaseActivity implements ICommonAction {
                 if (data != null) {
 
                     LoginInfoModel model = (LoginInfoModel) data;
+                    if (model.getSchoolId().equals("-1")) {
+                        Toast.makeText(this, "登陆失败", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
                     AppConfig.setBooleanConfig(NuoManConstant.IS_LOGIN, true);//登录成功
 
                     AppTools.acachePut(NuoManConstant.USER_NAME, loginNameTv.getText().toString());
@@ -162,6 +166,11 @@ public class LoginActivity extends BaseActivity implements ICommonAction {
                     Toast.makeText(this, "请输入账号", Toast.LENGTH_SHORT).show();
                     return;
                 }
+                if (loginNameTv.getText().toString().equals("666666")) {
+                    finish();
+                    return;
+                }
+
                 transModel.setTel(loginNameTv.getText().toString());
                 transModel.setMachineNo(loginMacTv.getText().toString());
                 commonPresenter.invokeInterfaceObtainData(false, "loginCtrl", NuoManService.LOGIN, transModel, new TypeToken<LoginInfoModel>() {
