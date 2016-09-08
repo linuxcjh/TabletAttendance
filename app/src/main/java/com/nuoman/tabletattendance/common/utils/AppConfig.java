@@ -1,5 +1,6 @@
 package com.nuoman.tabletattendance.common.utils;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 
@@ -13,6 +14,8 @@ public class AppConfig {
 
     private static Context mContext;
 
+    private static Activity activity;
+
     public static Context getContext() {
         return mContext;
     }
@@ -21,6 +24,13 @@ public class AppConfig {
         AppConfig.mContext = context;
     }
 
+    public static Activity getActivity() {
+        return activity;
+    }
+
+    public static void setActivity(Activity activity) {
+        AppConfig.activity = activity;
+    }
 
     /**
      * Editor Object
@@ -120,7 +130,6 @@ public class AppConfig {
         boolean site = preferences.getBoolean(key, defValue);
         return site;
     }
-
 
 
 }

@@ -11,10 +11,8 @@ import android.text.InputType;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.TimePicker;
-import android.widget.Toast;
 
 import com.google.gson.reflect.TypeToken;
-import com.nuoman.tabletattendance.alarm.RemindAlarmReceiver;
 import com.nuoman.tabletattendance.api.NuoManService;
 import com.nuoman.tabletattendance.common.BasePresenter;
 import com.nuoman.tabletattendance.common.NuoManConstant;
@@ -264,21 +262,6 @@ public class AppTools {
             }
     }
 
-    /**
-     * 设置提醒
-     */
-    public static void setAlertInit() {
-        try {
-            RemindAlarmReceiver alarm = new RemindAlarmReceiver();
-            String down = AppConfig.getStringConfig(NuoManConstant.DOWN_SCREEN_LIGHT, "22:00");
-            String up = AppConfig.getStringConfig(NuoManConstant.REBACK_SCREEN_LIGHT, "7:00");
-
-            alarm.setAlarm(AppConfig.getContext(), NuoManConstant.DOWN_SCREEN_LIGHT, 1, Integer.parseInt(down.split(":")[0]), Integer.parseInt(down.split(":")[1]));//设置屏幕亮度降
-            alarm.setAlarm(AppConfig.getContext(), NuoManConstant.REBACK_SCREEN_LIGHT, 2, Integer.parseInt(up.split(":")[0]), Integer.parseInt(up.split(":")[1]));//设置屏幕亮度升
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 
     /**
      * 获取时间
@@ -294,13 +277,8 @@ public class AppTools {
                 textView.setText(inspectTime(hourOfDay, minute));
                 if (index == 1) {
                     AppConfig.setStringConfig(NuoManConstant.DOWN_SCREEN_LIGHT, textView.getText().toString());
-                    Toast.makeText(activity,AppConfig.getStringConfig(NuoManConstant.DOWN_SCREEN_LIGHT,"22:00"),Toast.LENGTH_SHORT).show();
-                    AppTools.setAlertInit();
                 } else if (index == 2) {
                     AppConfig.setStringConfig(NuoManConstant.REBACK_SCREEN_LIGHT, textView.getText().toString());
-                    Toast.makeText(activity,AppConfig.getStringConfig(NuoManConstant.REBACK_SCREEN_LIGHT,"06:00"),Toast.LENGTH_SHORT).show();
-
-                    AppTools.setAlertInit();
                 }
             }
         }, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), false);
@@ -331,4 +309,5 @@ public class AppTools {
         return timeStr;
 
     }
+
 }

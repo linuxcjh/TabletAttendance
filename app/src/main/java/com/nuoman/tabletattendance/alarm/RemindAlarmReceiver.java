@@ -7,11 +7,11 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.widget.Toast;
+import android.util.Log;
 
 import com.nuoman.tabletattendance.common.NuoManConstant;
 import com.nuoman.tabletattendance.common.utils.AppConfig;
-import com.nuoman.tabletattendance.common.utils.AppTools;
+import com.nuoman.tabletattendance.common.utils.BaseUtil;
 
 import java.util.Calendar;
 import java.util.TimeZone;
@@ -21,21 +21,27 @@ import java.util.TimeZone;
  */
 public class RemindAlarmReceiver extends BroadcastReceiver {
 
-    private AlarmManager alarmMgr;
+    public AlarmManager alarmMgr;
+
+
 
     @Override
     public void onReceive(Context context, Intent intent) {
 
         switch (intent.getAction()) {
             case NuoManConstant.DOWN_SCREEN_LIGHT:
-                Toast.makeText(AppConfig.getContext(),"RemindAlarmReceiver",Toast.LENGTH_SHORT).show();
-                AppTools.saveBrightness(AppConfig.getContext(), 30);
-                break;
-            case NuoManConstant.REBACK_SCREEN_LIGHT:
-                Toast.makeText(AppConfig.getContext(),"RemindAlarmReceiver",Toast.LENGTH_SHORT).show();
+                Log.d("SYNC", "onReceive   ---  " + BaseUtil.getTime(BaseUtil.HH_MM) + "==" + AppConfig.getStringConfig(NuoManConstant.DOWN_SCREEN_LIGHT, "21:30") + "==" + AppConfig.getStringConfig(NuoManConstant.REBACK_SCREEN_LIGHT, "07:00"));
+                if (BaseUtil.getTime(BaseUtil.HH_MM).equals(AppConfig.getStringConfig(NuoManConstant.DOWN_SCREEN_LIGHT, "21:30"))) { //锁屏
+                    Log.d("SYNC", "onReceive DOWN_SCREEN_LIGHT  30   ---  " + BaseUtil.getTime(BaseUtil.HH_MM));
+                    AppConfig.getActivity().sendBroadcast(new Intent(NuoManConstant.DROP_SCREEN_LIGHT));
 
-                AppTools.saveBrightness(AppConfig.getContext(), 255);
+                }
+                if (BaseUtil.getTime(BaseUtil.HH_MM).equals(AppConfig.getStringConfig(NuoManConstant.REBACK_SCREEN_LIGHT, "07:00"))) {//唤醒
+                    Log.d("SYNC", "onReceive REBACK_SCREEN_LIGHT  255   ---  " + BaseUtil.getTime(BaseUtil.HH_MM));
+                }
+
                 break;
+
         }
 
     }
@@ -47,9 +53,9 @@ public class RemindAlarmReceiver extends BroadcastReceiver {
      *
      * @param context
      */
-    public void setAlarm(Context context, String index, int requestCode, int HOUR_OF_DAY, int MINUTE) {
-
+    public void setAlarm(Context context, String index, int requestCode) {
         alarmMgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+
         Intent intent = new Intent(context, RemindAlarmReceiver.class);
         intent.setAction(index);
         PendingIntent alarmIntent = PendingIntent.getBroadcast(context, requestCode, intent, 0);
@@ -57,20 +63,9 @@ public class RemindAlarmReceiver extends BroadcastReceiver {
         TimeZone.setDefault(TimeZone.getTimeZone("GMT+8"));
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis());
-        calendar.set(Calendar.HOUR_OF_DAY, HOUR_OF_DAY);
-        calendar.set(Calendar.MINUTE, MINUTE);
-        calendar.set(Calendar.SECOND, 0);
-        calendar.set(Calendar.MILLISECOND, 0);
-
-        long time = 0l;
-        if (calendar.getTimeInMillis() <= System.currentTimeMillis()) { //小于当前时间则第二天开始执行
-            time = calendar.getTimeInMillis() + AlarmManager.INTERVAL_DAY;
-        } else {
-            time = calendar.getTimeInMillis();
-        }
 
         alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP,
-                time, AlarmManager.INTERVAL_DAY, alarmIntent);
+                calendar.getTimeInMillis(), 1 * 60 * 1000, alarmIntent);
 
         // Enable {@code SampleBootReceiver} to automatically restart the alarm when the
         // device is rebooted.

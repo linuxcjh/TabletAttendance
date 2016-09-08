@@ -64,20 +64,6 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter implements ICommonA
     public void onPerformSync(Account account, Bundle extras, String authority, ContentProviderClient provider, SyncResult syncResult) {
         this.provider = provider;
 
-        //定时任务 降低屏幕亮度
-        if (BaseUtil.getTime(BaseUtil.HH_MM).equals(AppConfig.getStringConfig(NuoManConstant.DOWN_SCREEN_LIGHT, "22:00"))) {
-            AppTools.saveBrightness(getContext(), 10);
-            Log.d("SYNC", "DOWN_SCREEN_LIGHT  30   ---  " + BaseUtil.getTime(BaseUtil.HH_MM));
-
-        }
-
-        //定时任务 恢复屏幕亮度
-        if (BaseUtil.getTime(BaseUtil.HH_MM).equals(AppConfig.getStringConfig(NuoManConstant.REBACK_SCREEN_LIGHT, "06:00"))) {
-            AppTools.saveBrightness(getContext(), 255);
-            Log.d("SYNC", "REBACK_SCREEN_LIGHT  255   ---  " + BaseUtil.getTime(BaseUtil.HH_MM));
-
-        }
-
         //查询是否有未上传的打卡记录
         List<BaseTransModel> transModels = query(provider);
 
@@ -86,7 +72,6 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter implements ICommonA
 
         //定时任务 清空图片缓存
         if (BaseUtil.getTime(BaseUtil.HH_MM).equals(NuoManConstant.CLEAR_PICTHRE_CACHE_TIME)) {
-
             //判断是否有未上传的图片
             if (transModels.size() == 0) {
                 AppTools.deleteAllFiles(new File(AppTools.getFileSavePath(AppConfig.getContext())));
@@ -107,7 +92,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter implements ICommonA
 
         }
 
-        Log.d("SYNC", "onPerformSync   ---  " + BaseUtil.getTime(BaseUtil.HH_MM)+"=="+AppConfig.getStringConfig(NuoManConstant.DOWN_SCREEN_LIGHT, "22:00")+"=="+AppConfig.getStringConfig(NuoManConstant.REBACK_SCREEN_LIGHT, "06:00"));
+        Log.d("SYNC", "onPerformSync   ---  " + BaseUtil.getTime(BaseUtil.HH_MM));
 
     }
 
@@ -148,9 +133,6 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter implements ICommonA
 
                 AppConfig.setStringConfig(NuoManConstant.ENTER_SET_PWD, model.getSuperPass());
                 AppConfig.setStringConfig(NuoManConstant.UPDATE_TIME, model.getUpdateDataTime());
-
-//                NuoManConstant.UPDATE_TIME = model.getUpdateDataTime();
-//                NuoManConstant.ENTER_SET_PWD = model.getSuperPass();
 
                 break;
         }
@@ -242,7 +224,6 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter implements ICommonA
                         commonPresenter.invokeInterfaceObtainData(true, "attDataCtrl", NuoManService.WRITEATTLOG, model, new TypeToken<BaseReceivedModel>() {
                         });
 
-                        Log.d("NuoMan", "key: " + key + "\n");
                     }
                 }, null);
             }

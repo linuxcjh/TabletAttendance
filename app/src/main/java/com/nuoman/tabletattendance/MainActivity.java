@@ -2,10 +2,12 @@ package com.nuoman.tabletattendance;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
+import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.inputmethodservice.Keyboard;
@@ -28,6 +30,7 @@ import android.widget.Toast;
 
 import com.google.gson.reflect.TypeToken;
 import com.nuoman.syncadapter.pro.NoteProviderMetaData;
+import com.nuoman.tabletattendance.alarm.RemindAlarmReceiver;
 import com.nuoman.tabletattendance.api.NuoManService;
 import com.nuoman.tabletattendance.common.BaseActivity;
 import com.nuoman.tabletattendance.common.CommonPresenter;
@@ -37,6 +40,7 @@ import com.nuoman.tabletattendance.common.utils.AppConfig;
 import com.nuoman.tabletattendance.common.utils.AppTools;
 import com.nuoman.tabletattendance.common.utils.BaseUtil;
 import com.nuoman.tabletattendance.common.utils.BrightnessTools;
+import com.nuoman.tabletattendance.common.utils.LockScreenUtils;
 import com.nuoman.tabletattendance.common.utils.TextToSpeech;
 import com.nuoman.tabletattendance.common.utils.Utils;
 import com.nuoman.tabletattendance.information.InformationActivity;
@@ -142,19 +146,51 @@ public class MainActivity extends BaseActivity implements ICommonAction, CameraF
 
 
     private CameraFragment cameraFragment;
-    LoginInfoModel logInfo = AppTools.getLogInfo();
+    private LoginInfoModel logInfo = AppTools.getLogInfo();
+
+    private ScreenLightReceiver screenLightReceiver;
+    private RemindAlarmReceiver alarm = new RemindAlarmReceiver();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        NetReceiver.ehList.add(this);
+        AppConfig.setActivity(this);
+        setInitAlert();
+        NetReceiver.ehList.add(this);//注册网络状态变化监听
         setContentView(R.layout.activity_home_layout);
         ButterKnife.bind(this);
+        registerBroadReceiver();
         setNetWorkStatus();
         initSyncAdapter();
         initView();
         initData();
 
+
+    }
+
+    /**
+     * 设置屏幕亮度定时任务
+     */
+    private void setInitAlert() {
+        alarm.setAlarm(AppConfig.getContext(), NuoManConstant.DOWN_SCREEN_LIGHT, 1);
+    }
+
+    /**
+     * 取消闹钟
+     */
+    private void cancelAlert() {
+        alarm.cancelAlarm(AppConfig.getContext(), NuoManConstant.DOWN_SCREEN_LIGHT, 1);
+
+    }
+
+    /**
+     * 广播注册
+     */
+    private void registerBroadReceiver() {
+        screenLightReceiver = new ScreenLightReceiver();
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(NuoManConstant.DROP_SCREEN_LIGHT);
+        registerReceiver(screenLightReceiver, filter);
     }
 
     /**
@@ -165,7 +201,6 @@ public class MainActivity extends BaseActivity implements ICommonAction, CameraF
         ContentResolver.setSyncAutomatically(mAccount, NoteProviderMetaData.AUTHORITY, true);
         ContentResolver.addPeriodicSync(mAccount, NoteProviderMetaData.AUTHORITY, Bundle.EMPTY, SYNC_INTERVAL);
         requestSync();
-
     }
 
     /**
@@ -247,7 +282,9 @@ public class MainActivity extends BaseActivity implements ICommonAction, CameraF
                 if (primaryCode == Keyboard.KEYCODE_DONE) {
                     mHandler.removeMessages(BACK_INDEX);
 
+
                     if (noCardEt.getText().toString().equals(AppConfig.getStringConfig(NuoManConstant.ENTER_SET_PWD, "666"))) { //进设置页面
+
                         setIniMainPage();
                         startActivityForResult(new Intent(MainActivity.this, SetInfoActivity.class), SET_REBACK_INDEX);
 
@@ -504,10 +541,13 @@ public class MainActivity extends BaseActivity implements ICommonAction, CameraF
                 startActivity(new Intent(this, HomeVoiceActivity.class));
                 break;
             case R.id.h_no_card_iv:
-                noCardEt.setText("");
-                weatherOperationLayout.setVisibility(View.GONE);
-                noCardLayout.setVisibility(View.VISIBLE);
-                mHandler.sendEmptyMessageDelayed(BACK_INDEX, 20000);
+
+                startActivityForResult(new Intent(MainActivity.this, SetInfoActivity.class), SET_REBACK_INDEX);
+
+//                noCardEt.setText("");
+//                weatherOperationLayout.setVisibility(View.GONE);
+//                noCardLayout.setVisibility(View.VISIBLE);
+//                mHandler.sendEmptyMessageDelayed(BACK_INDEX, 20000);
                 break;
         }
     }
@@ -549,7 +589,10 @@ public class MainActivity extends BaseActivity implements ICommonAction, CameraF
     @Override
     protected void onDestroy() {
         super.onDestroy();
+
+        unregisterReceiver(screenLightReceiver);
         NetReceiver.ehList.remove(this);
+        cancelAlert();
         mHandler.removeMessages(CURRENT_TIME_INDEX);
     }
 
@@ -655,4 +698,24 @@ public class MainActivity extends BaseActivity implements ICommonAction, CameraF
     }
 
     /* ------------------------------------------Sync END ------------------------------------------------------------------------- */
+
+    /**
+     * 熄灭屏幕的广播
+     */
+
+    public class ScreenLightReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            switch (intent.getAction()) {
+                case NuoManConstant.DROP_SCREEN_LIGHT://熄灭屏幕
+
+                    Toast.makeText(AppConfig.getContext(), " ScreenLightReceiver ", Toast.LENGTH_SHORT).show();
+                    LockScreenUtils.getInstance().LockScreen(MainActivity.this);
+
+                    break;
+            }
+        }
+    }
+
 }

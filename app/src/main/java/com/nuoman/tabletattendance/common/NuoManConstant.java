@@ -95,5 +95,8 @@ public class NuoManConstant {
      */
     public static String CURRENT_NET_TYPE = "current_net_type";
 
+    public static final String DROP_SCREEN_LIGHT = "drop_screen_light";
+
+
 
 }
