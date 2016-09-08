@@ -80,19 +80,24 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter implements ICommonA
             }
         }
 
+        //更新时间
+        String updateTime = AppTools.getLogInfo().getUpdateDataTime();
+        if (TextUtils.isEmpty(updateTime)) {
+            updateTime = "23:00";
+        }
         //定时任务 更新数据
-        if (BaseUtil.getTime(BaseUtil.HH_MM).equals(AppConfig.getStringConfig(NuoManConstant.UPDATE_TIME, "23:00"))) {
-
+        if (BaseUtil.getTime(BaseUtil.HH_MM).equals(updateTime)) {
             BaseTransModel refreshModel = new BaseTransModel();
-            refreshModel.setTel(AppConfig.getStringConfig(NuoManConstant.USER_NAME, ""));
-            refreshModel.setMachineNo(AppConfig.getStringConfig(NuoManConstant.USER_MAC, ""));
+
+            refreshModel.setTel(AppTools.getAcacheData(NuoManConstant.USER_NAME));
+            refreshModel.setMachineNo(AppTools.getAcacheData(NuoManConstant.USER_MAC));
+
             commonPresenter.invokeInterfaceObtainData(false, "loginCtrl", NuoManService.LOGIN, refreshModel, new TypeToken<LoginInfoModel>() {
             });
             Log.d("SYNC", "CLEAR_PICTURE_CACHE UPDATA   ---  " + BaseUtil.getTime(BaseUtil.HH_MM));
-
         }
 
-        Log.d("SYNC", "onPerformSync   ---  " + BaseUtil.getTime(BaseUtil.HH_MM));
+        Log.d("SYNC", "onPerformSync   ---  " + BaseUtil.getTime(BaseUtil.HH_MM)+"  ==  "+AppTools.getAcacheData(NuoManConstant.USER_MAC));
 
     }
 
@@ -104,7 +109,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter implements ICommonA
             case NuoManService.GETTOKEN:
                 if (data != null) {
                     BaseReceivedModel model = (BaseReceivedModel) data;
-                    AppConfig.setStringConfig("token", model.getToken());
+                    AppTools.acachePut(NuoManConstant.TOKEN,model.getToken());
+//                    AppConfig.setStringConfig("token", model.getToken());
                 }
                 break;
             case NuoManService.WRITEATTLOG:
@@ -129,10 +135,6 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter implements ICommonA
                 }
                 break;
             case NuoManService.LOGIN:
-                LoginInfoModel model = (LoginInfoModel) data;
-
-                AppConfig.setStringConfig(NuoManConstant.ENTER_SET_PWD, model.getSuperPass());
-                AppConfig.setStringConfig(NuoManConstant.UPDATE_TIME, model.getUpdateDataTime());
 
                 break;
         }
@@ -162,7 +164,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter implements ICommonA
                 transModel.setUnique_id(id);
                 transModel.setMachineNo(loginInfo.getMachineId());
                 transModel.setMachineId(loginInfo.getMachineId());
-                transModel.setTel(AppConfig.getStringConfig(NuoManConstant.USER_NAME, ""));
+                transModel.setTel(AppTools.getAcacheData(NuoManConstant.USER_NAME));
                 transModel.setCardNo(punchCardNo);
                 transModel.setAttDate(punchTime);
                 transModel.setUnique_id(id);
@@ -189,8 +191,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter implements ICommonA
 
         for (int i = 0; i < transModels.size(); i++) {
 
-            if (!TextUtils.isEmpty(AppConfig.getStringConfig("token", ""))) {
-                uploadImageToQiNiu(transModels.get(i).getImagePath(), AppConfig.getStringConfig("token", ""), transModels.get(i));
+            if (!TextUtils.isEmpty(AppTools.getAcacheData(NuoManConstant.TOKEN))) {
+                uploadImageToQiNiu(transModels.get(i).getImagePath(), AppTools.getAcacheData(NuoManConstant.TOKEN), transModels.get(i));
             } else { //重新请求token
                 commonPresenter.invokeInterfaceObtainData(false, "qiniuCtrl", NuoManService.GETTOKEN, null, new TypeToken<BaseReceivedModel>() {
                 });

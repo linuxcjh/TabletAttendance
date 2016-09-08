@@ -95,7 +95,22 @@ public class NuoManConstant {
      */
     public static String CURRENT_NET_TYPE = "current_net_type";
 
+    /**
+     * 熄灭屏幕
+     */
     public static final String DROP_SCREEN_LIGHT = "drop_screen_light";
+
+    /**
+     * 点亮屏幕
+     */
+    public static final String LIGHT_SCREEN_LIGHT = "light_screen_light";
+
+
+    /**
+     * token
+     */
+    public static final String TOKEN = "token";
+
 
 
 

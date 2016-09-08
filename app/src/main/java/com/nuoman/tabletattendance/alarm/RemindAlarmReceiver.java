@@ -24,7 +24,6 @@ public class RemindAlarmReceiver extends BroadcastReceiver {
     public AlarmManager alarmMgr;
 
 
-
     @Override
     public void onReceive(Context context, Intent intent) {
 
@@ -34,12 +33,12 @@ public class RemindAlarmReceiver extends BroadcastReceiver {
                 if (BaseUtil.getTime(BaseUtil.HH_MM).equals(AppConfig.getStringConfig(NuoManConstant.DOWN_SCREEN_LIGHT, "21:30"))) { //锁屏
                     Log.d("SYNC", "onReceive DOWN_SCREEN_LIGHT  30   ---  " + BaseUtil.getTime(BaseUtil.HH_MM));
                     AppConfig.getActivity().sendBroadcast(new Intent(NuoManConstant.DROP_SCREEN_LIGHT));
-
                 }
+
                 if (BaseUtil.getTime(BaseUtil.HH_MM).equals(AppConfig.getStringConfig(NuoManConstant.REBACK_SCREEN_LIGHT, "07:00"))) {//唤醒
                     Log.d("SYNC", "onReceive REBACK_SCREEN_LIGHT  255   ---  " + BaseUtil.getTime(BaseUtil.HH_MM));
+                    AppConfig.getActivity().sendBroadcast(new Intent(NuoManConstant.LIGHT_SCREEN_LIGHT));
                 }
-
                 break;
 
         }
@@ -65,7 +64,7 @@ public class RemindAlarmReceiver extends BroadcastReceiver {
         calendar.setTimeInMillis(System.currentTimeMillis());
 
         alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP,
-                calendar.getTimeInMillis(), 1 * 60 * 1000, alarmIntent);
+                calendar.getTimeInMillis(), 59 * 1000, alarmIntent);
 
         // Enable {@code SampleBootReceiver} to automatically restart the alarm when the
         // device is rebooted.

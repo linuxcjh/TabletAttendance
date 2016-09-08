@@ -23,7 +23,8 @@ import com.nuoman.tabletattendance.R;
 import com.nuoman.tabletattendance.api.NuoManService;
 import com.nuoman.tabletattendance.common.CommonPresenter;
 import com.nuoman.tabletattendance.common.ICommonAction;
-import com.nuoman.tabletattendance.common.utils.AppConfig;
+import com.nuoman.tabletattendance.common.NuoManConstant;
+import com.nuoman.tabletattendance.common.utils.AppTools;
 import com.nuoman.tabletattendance.model.BaseReceivedModel;
 import com.nuoman.tabletattendance.model.StudentInfos;
 import com.nuoman.tabletattendance.model.TeacherInfos;
@@ -131,8 +132,9 @@ public class InterVoiceFragment extends Fragment implements ICommonAction, Adapt
 
             @Override
             public void onFinished(float seconds, String filePath) {
-                if (!TextUtils.isEmpty(AppConfig.getStringConfig("token", ""))) {
-                    uploadImageToQiNiu(seconds, filePath, AppConfig.getStringConfig("token", ""));
+
+                if (!TextUtils.isEmpty(AppTools.getAcacheData(NuoManConstant.TOKEN))) {
+                    uploadImageToQiNiu(seconds, filePath, AppTools.getAcacheData(NuoManConstant.TOKEN));
                 } else { //重新请求token
                     commonPresenter.invokeInterfaceObtainData(false, "qiniuCtrl", NuoManService.GETTOKEN, null, new TypeToken<BaseReceivedModel>() {
                     });
@@ -159,7 +161,7 @@ public class InterVoiceFragment extends Fragment implements ICommonAction, Adapt
                 try {
                     if (data != null) {
                         BaseReceivedModel model = (BaseReceivedModel) data;
-                        AppConfig.setStringConfig("token", model.getToken());
+                         AppTools.acachePut(NuoManConstant.TOKEN,model.getToken());
                     }
                 } catch (Exception e) {
                     e.printStackTrace();

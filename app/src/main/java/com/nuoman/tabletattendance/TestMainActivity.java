@@ -14,7 +14,8 @@ import com.nuoman.tabletattendance.api.NuoManService;
 import com.nuoman.tabletattendance.common.BaseActivity;
 import com.nuoman.tabletattendance.common.CommonPresenter;
 import com.nuoman.tabletattendance.common.ICommonAction;
-import com.nuoman.tabletattendance.common.utils.AppConfig;
+import com.nuoman.tabletattendance.common.NuoManConstant;
+import com.nuoman.tabletattendance.common.utils.AppTools;
 import com.nuoman.tabletattendance.common.utils.CameraNoMarkActivity;
 import com.nuoman.tabletattendance.model.BaseReceivedModel;
 import com.nuoman.tabletattendance.model.BaseTransModel;
@@ -73,7 +74,8 @@ public class TestMainActivity extends BaseActivity implements ICommonAction {
             case NuoManService.GETTOKEN:
                 BaseReceivedModel model = (BaseReceivedModel) data;
                 contentTv.setText(model.getToken());
-                AppConfig.setStringConfig("token", model.getToken());
+
+                 AppTools.acachePut(NuoManConstant.TOKEN,model.getToken());
                 break;
         }
     }
@@ -90,7 +92,7 @@ public class TestMainActivity extends BaseActivity implements ICommonAction {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (data != null) {
-            uploadImageToQiNiu(data.getStringExtra("filePath"), AppConfig.getStringConfig("token", ""));
+            uploadImageToQiNiu(data.getStringExtra("filePath"), AppTools.getAcacheData(NuoManConstant.TOKEN));
         }
     }
 

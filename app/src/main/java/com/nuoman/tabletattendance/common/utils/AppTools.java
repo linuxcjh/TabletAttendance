@@ -8,6 +8,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Environment;
 import android.text.InputType;
+import android.text.TextUtils;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -164,9 +165,10 @@ public class AppTools {
      */
     public static LoginInfoModel getLogInfo() {
 
-        LoginInfoModel model = BasePresenter.gson.fromJson(AppConfig.getStringConfig(NuoManService.LOGIN, ""), new TypeToken<LoginInfoModel>() {
+//        LoginInfoModel model = BasePresenter.gson.fromJson(AppConfig.getStringConfig(NuoManService.LOGIN, ""), new TypeToken<LoginInfoModel>() {
+//        }.getType());
+        LoginInfoModel model = BasePresenter.gson.fromJson(ACache.get(AppConfig.getContext()).getAsString(NuoManService.LOGIN), new TypeToken<LoginInfoModel>() {
         }.getType());
-
         return model;
     }
 
@@ -308,6 +310,42 @@ public class AppTools {
 
         return timeStr;
 
+    }
+
+
+    /**
+     * 获取ACACHE实力
+     *
+     * @return
+     */
+    public static ACache getAcache() {
+
+        return ACache.get(AppConfig.getContext());
+    }
+
+    /**
+     * 存数据
+     *
+     * @param key
+     * @param value
+     */
+    public static void acachePut(String key, String value) {
+        getAcache().put(key, value);
+    }
+
+    /**
+     * 获取String类型数据
+     *
+     * @param key
+     * @return
+     */
+    public static String getAcacheData(String key) {
+
+        String result = getAcache().getAsString(key);
+        if (TextUtils.isEmpty(result)) {
+            result = "";
+        }
+        return result;
     }
 
 }

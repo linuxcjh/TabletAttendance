@@ -190,6 +190,7 @@ public class MainActivity extends BaseActivity implements ICommonAction, CameraF
         screenLightReceiver = new ScreenLightReceiver();
         IntentFilter filter = new IntentFilter();
         filter.addAction(NuoManConstant.DROP_SCREEN_LIGHT);
+        filter.addAction(NuoManConstant.LIGHT_SCREEN_LIGHT);
         registerReceiver(screenLightReceiver, filter);
     }
 
@@ -283,7 +284,11 @@ public class MainActivity extends BaseActivity implements ICommonAction, CameraF
                     mHandler.removeMessages(BACK_INDEX);
 
 
-                    if (noCardEt.getText().toString().equals(AppConfig.getStringConfig(NuoManConstant.ENTER_SET_PWD, "666"))) { //进设置页面
+                    String pwd = AppTools.getLogInfo().getSuperPass();
+                    if (TextUtils.isEmpty(pwd)) {
+                        pwd = "666";
+                    }
+                    if (noCardEt.getText().toString().equals(pwd)) { //进设置页面
 
                         setIniMainPage();
                         startActivityForResult(new Intent(MainActivity.this, SetInfoActivity.class), SET_REBACK_INDEX);
@@ -411,8 +416,8 @@ public class MainActivity extends BaseActivity implements ICommonAction, CameraF
         }
 
         if (Utils.checkNetworkConnection()) {//有网直接上传
-            if (!TextUtils.isEmpty(AppConfig.getStringConfig("token", ""))) {
-                uploadImageToQiNiu(filePath, AppConfig.getStringConfig("token", ""));
+            if (!TextUtils.isEmpty(AppTools.getAcacheData(NuoManConstant.TOKEN))) {
+                uploadImageToQiNiu(filePath, AppTools.getAcacheData(NuoManConstant.TOKEN));
             } else { //重新请求token
                 commonPresenter.invokeInterfaceObtainData(false, "qiniuCtrl", NuoManService.GETTOKEN, null, new TypeToken<BaseReceivedModel>() {
                 });
@@ -436,7 +441,7 @@ public class MainActivity extends BaseActivity implements ICommonAction, CameraF
             case NuoManService.GETTOKEN:
                 if (data != null) {
                     BaseReceivedModel model = (BaseReceivedModel) data;
-                    AppConfig.setStringConfig("token", model.getToken());
+                    AppTools.acachePut(NuoManConstant.TOKEN, model.getToken());
                 }
                 break;
             case NuoManService.GETWEATHERFORONEDAY:
@@ -538,16 +543,17 @@ public class MainActivity extends BaseActivity implements ICommonAction, CameraF
                 startActivity(new Intent(this, InformationActivity.class));
                 break;
             case R.id.h_voice_iv:
+
                 startActivity(new Intent(this, HomeVoiceActivity.class));
                 break;
             case R.id.h_no_card_iv:
 
-                startActivityForResult(new Intent(MainActivity.this, SetInfoActivity.class), SET_REBACK_INDEX);
+//                startActivityForResult(new Intent(MainActivity.this, SetInfoActivity.class), SET_REBACK_INDEX);
 
-//                noCardEt.setText("");
-//                weatherOperationLayout.setVisibility(View.GONE);
-//                noCardLayout.setVisibility(View.VISIBLE);
-//                mHandler.sendEmptyMessageDelayed(BACK_INDEX, 20000);
+                noCardEt.setText("");
+                weatherOperationLayout.setVisibility(View.GONE);
+                noCardLayout.setVisibility(View.VISIBLE);
+                mHandler.sendEmptyMessageDelayed(BACK_INDEX, 40000);
                 break;
         }
     }
@@ -572,9 +578,6 @@ public class MainActivity extends BaseActivity implements ICommonAction, CameraF
         hOperationLayout.setVisibility(View.GONE);
         hTitleTv.setVisibility(View.VISIBLE);
         hImageIv.setVisibility(View.VISIBLE);
-//        Glide.with(this).load(filePath).into(hImageIv);
-
-//        hImageIv.setImageBitmap(BitmapFactory.decodeFile(filePath));
         hPunchCardSuccessTv.setVisibility(View.VISIBLE);
         hPunchCardSuccessTv.setText(info);
 
@@ -654,7 +657,7 @@ public class MainActivity extends BaseActivity implements ICommonAction, CameraF
                     BaseTransModel transModel = new BaseTransModel();
                     transModel.setMachineNo(logInfo.getMachineId());
                     transModel.setMachineId(logInfo.getMachineId());
-                    transModel.setTel(AppConfig.getStringConfig(NuoManConstant.USER_NAME, ""));
+                    transModel.setTel(AppTools.getAcacheData(NuoManConstant.USER_NAME));
                     transModel.setCardNo(AppConfig.getStringConfig(NuoManConstant.CARD_ID, ""));
                     transModel.setAttDate(BaseUtil.getTime(BaseUtil.YYYY_MM_DD_HH_MM_SS));
                     transModel.setAttPicUrl(key);
@@ -710,8 +713,12 @@ public class MainActivity extends BaseActivity implements ICommonAction, CameraF
             switch (intent.getAction()) {
                 case NuoManConstant.DROP_SCREEN_LIGHT://熄灭屏幕
 
-                    Toast.makeText(AppConfig.getContext(), " ScreenLightReceiver ", Toast.LENGTH_SHORT).show();
                     LockScreenUtils.getInstance().LockScreen(MainActivity.this);
+
+                    break;
+                case NuoManConstant.LIGHT_SCREEN_LIGHT:
+
+                    LockScreenUtils.getInstance().wakeUpAndUnlock(MainActivity.this);
 
                     break;
             }

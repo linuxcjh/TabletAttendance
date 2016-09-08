@@ -183,7 +183,7 @@ public class SendHomeworkActivity extends BaseActivity implements ICommonAction 
                 if ((pics.size() != paths.size()) && paths.size() > 0) {
 
                     for (Integer key : paths.keySet()) {
-                        uploadImageToQiNiu(paths.get(key), AppConfig.getStringConfig("token", ""), key);
+                        uploadImageToQiNiu(paths.get(key), AppTools.getAcacheData(NuoManConstant.TOKEN), key);
                     }
                     return;
                 }
@@ -222,7 +222,7 @@ public class SendHomeworkActivity extends BaseActivity implements ICommonAction 
                     imageFirstIv.setTag(filePath);
                     paths.put(FIRST_IMAGE_INDEX, filePath);
 
-//                    uploadImageToQiNiu(filePath, AppConfig.getStringConfig("token", ""), FIRST_IMAGE_INDEX);
+//                    uploadImageToQiNiu(filePath, AppTools.getAcacheData(NuoManConstant.TOKEN), FIRST_IMAGE_INDEX);
                     break;
                 case SECOND_IMAGE_INDEX:
                     second_image = true;
@@ -231,7 +231,7 @@ public class SendHomeworkActivity extends BaseActivity implements ICommonAction 
                     imageSecondIv.setTag(filePath);
                     paths.put(SECOND_IMAGE_INDEX, filePath);
 
-//                    uploadImageToQiNiu(filePath, AppConfig.getStringConfig("token", ""), SECOND_IMAGE_INDEX);
+//                    uploadImageToQiNiu(filePath, AppTools.getAcacheData(NuoManConstant.TOKEN), SECOND_IMAGE_INDEX);
                     break;
                 case THIRD_IMAGE_INDEX:
                     thrid_image = true;
@@ -240,7 +240,7 @@ public class SendHomeworkActivity extends BaseActivity implements ICommonAction 
                     imageThirdIv.setTag(filePath);
                     paths.put(THIRD_IMAGE_INDEX, filePath);
 
-//                    uploadImageToQiNiu(filePath, AppConfig.getStringConfig("token", ""), THIRD_IMAGE_INDEX);
+//                    uploadImageToQiNiu(filePath, AppTools.getAcacheData(NuoManConstant.TOKEN), THIRD_IMAGE_INDEX);
 
                     break;
                 case 3:

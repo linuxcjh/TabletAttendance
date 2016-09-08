@@ -24,6 +24,7 @@ import com.nuoman.tabletattendance.common.NuoManConstant;
 import com.nuoman.tabletattendance.common.utils.AppConfig;
 import com.nuoman.tabletattendance.common.utils.AppTools;
 import com.nuoman.tabletattendance.common.utils.DownloadService;
+import com.nuoman.tabletattendance.common.utils.LockScreenUtils;
 import com.nuoman.tabletattendance.components.CustomDialog;
 import com.nuoman.tabletattendance.model.BaseTransModel;
 import com.nuoman.tabletattendance.model.DownloadModel;
@@ -71,6 +72,8 @@ public class SetInfoActivity extends BaseActivity implements ICommonAction {
     TextView downTimeTv;
     @Bind(R.id.up_time_tv)
     TextView upTimeTv;
+    @Bind(R.id.set_manager_tv)
+    TextView setManagerTv;
     private CommonPresenter commonPresenter = new CommonPresenter(this);
 
     private BaseTransModel transModel = new BaseTransModel();
@@ -86,7 +89,6 @@ public class SetInfoActivity extends BaseActivity implements ICommonAction {
         editPreTv.setText(AppTools.getLogInfo().getSchoolName());
         selectClassBt.setText(AppConfig.getStringConfig(NuoManConstant.GRADE_NAME, "") + AppConfig.getStringConfig(NuoManConstant.CLASS_NAME, ""));
 
-
         downTimeTv.setText(AppConfig.getStringConfig(NuoManConstant.DOWN_SCREEN_LIGHT, ""));
         upTimeTv.setText(AppConfig.getStringConfig(NuoManConstant.REBACK_SCREEN_LIGHT, ""));
     }
@@ -97,14 +99,10 @@ public class SetInfoActivity extends BaseActivity implements ICommonAction {
             case NuoManService.LOGIN:
 
                 if (data != null) {
-                    LoginInfoModel model = (LoginInfoModel) data;
-                    AppConfig.setStringConfig(NuoManConstant.ENTER_SET_PWD, model.getSuperPass());
-                    AppConfig.setStringConfig(NuoManConstant.UPDATE_TIME, model.getUpdateDataTime());
                     Toast.makeText(this, "数据更新成功", Toast.LENGTH_SHORT).show();
 
                 } else {
                     Toast.makeText(this, "数据更新失败", Toast.LENGTH_SHORT).show();
-
                 }
 
                 break;
@@ -130,7 +128,7 @@ public class SetInfoActivity extends BaseActivity implements ICommonAction {
     }
 
 
-    @OnClick({R.id.down_time_tv, R.id.up_time_tv, R.id.select_class_bt, R.id.data_refresh_bt, R.id.update_version_bt, R.id.set_bt, R.id.change_login_bt, R.id.exit_bt, R.id.save_bt, R.id.confirm_bt, R.id.cancel_bt})
+    @OnClick({R.id.set_manager_tv, R.id.down_time_tv, R.id.up_time_tv, R.id.select_class_bt, R.id.data_refresh_bt, R.id.update_version_bt, R.id.set_bt, R.id.change_login_bt, R.id.exit_bt, R.id.save_bt, R.id.confirm_bt, R.id.cancel_bt})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.select_class_bt:
@@ -139,8 +137,8 @@ public class SetInfoActivity extends BaseActivity implements ICommonAction {
                 dialog.show();
                 break;
             case R.id.data_refresh_bt:
-                transModel.setTel(AppConfig.getStringConfig(NuoManConstant.USER_NAME, ""));
-                transModel.setMachineNo(AppConfig.getStringConfig(NuoManConstant.USER_MAC, ""));
+                transModel.setTel(AppTools.getAcacheData(NuoManConstant.USER_NAME));
+                transModel.setMachineNo(AppTools.getAcacheData(NuoManConstant.USER_MAC));
                 commonPresenter.invokeInterfaceObtainData(false, "loginCtrl", NuoManService.LOGIN, transModel, new TypeToken<LoginInfoModel>() {
                 });
                 break;
@@ -180,7 +178,14 @@ public class SetInfoActivity extends BaseActivity implements ICommonAction {
                 break;
             case R.id.up_time_tv:
                 AppTools.obtainTime(this, upTimeTv, 2);
+                break;
+            case R.id.set_manager_tv:
 
+                if (LockScreenUtils.getInstance().isRegistered()) {
+                    Toast.makeText(this, "已注册启动器", Toast.LENGTH_SHORT).show();
+                } else {
+                    LockScreenUtils.getInstance().activeManager(this);
+                }
                 break;
         }
     }

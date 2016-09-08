@@ -21,6 +21,7 @@ import com.nuoman.tabletattendance.common.CommonPresenter;
 import com.nuoman.tabletattendance.common.ICommonAction;
 import com.nuoman.tabletattendance.common.NuoManConstant;
 import com.nuoman.tabletattendance.common.utils.AppConfig;
+import com.nuoman.tabletattendance.common.utils.AppTools;
 import com.nuoman.tabletattendance.common.utils.BaseUtil;
 import com.nuoman.tabletattendance.components.CustomDialog;
 import com.nuoman.tabletattendance.model.BaseTransModel;
@@ -63,7 +64,7 @@ public class LoginActivity extends BaseActivity implements ICommonAction {
         loginMacTv.setText(BaseUtil.getBluetoothMac());
         loginNameTv.setText("02987301181");//02987301181 NMKJ87301181
 
-        loginBt.performClick();
+//        loginBt.performClick();
         loginNameTv.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -138,11 +139,10 @@ public class LoginActivity extends BaseActivity implements ICommonAction {
 
                     LoginInfoModel model = (LoginInfoModel) data;
                     AppConfig.setBooleanConfig(NuoManConstant.IS_LOGIN, true);//登录成功
-                    AppConfig.setStringConfig(NuoManConstant.USER_NAME, loginNameTv.getText().toString());
-                    AppConfig.setStringConfig(NuoManConstant.USER_MAC, loginMacTv.getText().toString());
 
-                    AppConfig.setStringConfig(NuoManConstant.ENTER_SET_PWD, model.getSuperPass());
-                    AppConfig.setStringConfig(NuoManConstant.UPDATE_TIME, model.getUpdateDataTime());
+                    AppTools.acachePut(NuoManConstant.USER_NAME, loginNameTv.getText().toString());
+                    AppTools.acachePut(NuoManConstant.USER_MAC, loginMacTv.getText().toString());
+
                     CustomDialog dialog = new CustomDialog(this, mHandler, model);
                     dialog.show();
 

@@ -3,6 +3,7 @@ package com.nuoman.tabletattendance.common;
 import android.text.TextUtils;
 
 import com.google.gson.reflect.TypeToken;
+import com.nuoman.tabletattendance.common.utils.ACache;
 import com.nuoman.tabletattendance.common.utils.AppConfig;
 
 /**
@@ -33,7 +34,8 @@ public class ParseResult {
         Object result = null;
         if (!TextUtils.isEmpty(receivedStr)) {
             result = BasePresenter.gson.fromJson(receivedStr, typeToken.getType());
-            AppConfig.setStringConfig(methodName, receivedStr);//缓存接口数据内容
+            ACache.get(AppConfig.getContext()).put(methodName, receivedStr);//缓存到文件
+//            AppConfig.setStringConfig(methodName, receivedStr);//缓存接口数据内容
         }
 
         return result;

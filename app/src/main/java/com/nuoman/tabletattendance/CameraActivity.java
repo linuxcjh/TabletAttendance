@@ -131,7 +131,7 @@ public class CameraActivity extends BaseActivity implements Callback {
                 savePicture(bm, filePath);
                 setResult(RESULT_OK, new Intent().putExtra("filePath", filePath));
                 finish();
-//                uploadImageToQiNiu(filePath, AppConfig.getStringConfig("token", ""));
+//                uploadImageToQiNiu(filePath, AppTools.getAcacheData(NuoManConstant.TOKEN));
             }
         });
     }
