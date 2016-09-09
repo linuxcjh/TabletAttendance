@@ -56,7 +56,6 @@ import com.qiniu.android.storage.UploadManager;
 import org.json.JSONObject;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -546,12 +545,12 @@ public class MainActivity extends BaseActivity implements ICommonAction, CameraF
                 break;
             case R.id.h_no_card_iv:
 
-//                startActivityForResult(new Intent(MainActivity.this, SetInfoActivity.class), SET_REBACK_INDEX);
+                startActivityForResult(new Intent(MainActivity.this, SetInfoActivity.class), SET_REBACK_INDEX);
 
-                noCardEt.setText("");
-                weatherOperationLayout.setVisibility(View.GONE);
-                noCardLayout.setVisibility(View.VISIBLE);
-                mHandler.sendEmptyMessageDelayed(BACK_INDEX, 40000);
+//                noCardEt.setText("");
+//                weatherOperationLayout.setVisibility(View.GONE);
+//                noCardLayout.setVisibility(View.VISIBLE);
+//                mHandler.sendEmptyMessageDelayed(BACK_INDEX, 40000);
                 break;
         }
     }
@@ -656,27 +655,13 @@ public class MainActivity extends BaseActivity implements ICommonAction, CameraF
                         hSchoolNameTv.setText(AppConfig.getStringConfig(NuoManConstant.SCHOOL_NAME, AppTools.getLogInfo().getSchoolName()));
                         requestSync();
                     } else {
-                        try {
-                            Runtime runtime = Runtime.getRuntime();
-                            runtime.exec("input keyevent " + KeyEvent.KEYCODE_BACK);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
+                        moveTaskToBack(false);
                     }
 
                     break;
             }
 
         }
-    }
-
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_BACK) {
-            moveTaskToBack(false);
-            return true;
-        }
-        return super.onKeyDown(keyCode, event);
     }
 
     /**

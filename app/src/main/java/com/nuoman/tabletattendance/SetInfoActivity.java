@@ -82,6 +82,10 @@ public class SetInfoActivity extends BaseActivity implements ICommonAction {
     Button deleteB2;
     @Bind(R.id.back_bt)
     Button backBt;
+    @Bind(R.id.display_tv)
+    Button displayTv;
+    @Bind(R.id.play_tv)
+    Button playTv;
     private CommonPresenter commonPresenter = new CommonPresenter(this);
 
     private BaseTransModel transModel = new BaseTransModel();
@@ -136,7 +140,7 @@ public class SetInfoActivity extends BaseActivity implements ICommonAction {
     }
 
 
-    @OnClick({R.id.back_bt,R.id.set_manager_tv, R.id.delete_b1, R.id.delete_b2, R.id.down_time_tv, R.id.up_time_tv, R.id.select_class_bt, R.id.data_refresh_bt, R.id.update_version_bt, R.id.set_bt, R.id.change_login_bt, R.id.exit_bt, R.id.save_bt, R.id.confirm_bt, R.id.cancel_bt})
+    @OnClick({R.id.play_tv, R.id.display_tv, R.id.back_bt, R.id.set_manager_tv, R.id.delete_b1, R.id.delete_b2, R.id.down_time_tv, R.id.up_time_tv, R.id.select_class_bt, R.id.data_refresh_bt, R.id.update_version_bt, R.id.set_bt, R.id.change_login_bt, R.id.exit_bt, R.id.save_bt, R.id.confirm_bt, R.id.cancel_bt})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.select_class_bt:
@@ -230,6 +234,15 @@ public class SetInfoActivity extends BaseActivity implements ICommonAction {
                 break;
             case R.id.back_bt:
                 finish();
+                break;
+            case R.id.display_tv:
+                AppTools.setSystemUIEnabled(false);
+                Toast.makeText(AppConfig.getContext(), "隐藏成功,重启生效", Toast.LENGTH_LONG).show();
+                break;
+            case R.id.play_tv:
+                AppTools.setSystemUIEnabled(true);
+                Toast.makeText(AppConfig.getContext(), "已显示,重启生效", Toast.LENGTH_LONG).show();
+
                 break;
         }
     }
