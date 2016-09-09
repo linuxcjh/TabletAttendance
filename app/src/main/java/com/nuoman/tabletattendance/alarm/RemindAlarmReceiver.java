@@ -11,6 +11,7 @@ import android.util.Log;
 
 import com.nuoman.tabletattendance.common.NuoManConstant;
 import com.nuoman.tabletattendance.common.utils.AppConfig;
+import com.nuoman.tabletattendance.common.utils.AppTools;
 import com.nuoman.tabletattendance.common.utils.BaseUtil;
 
 import java.util.Calendar;
@@ -39,6 +40,7 @@ public class RemindAlarmReceiver extends BroadcastReceiver {
                 if (currentTime.equals(downTime) || currentTime.equals(downTimeS)) { //锁屏
                     Log.d("SYNC", "onReceive DOWN_SCREEN_LIGHT  30   ---  " + BaseUtil.getTime(BaseUtil.HH_MM));
                     AppConfig.getActivity().sendBroadcast(new Intent(NuoManConstant.DROP_SCREEN_LIGHT));
+                    AppTools.saveBrightness(AppConfig.getContext(), 0);//关闭背光
                 }
 
                 String upTime = AppConfig.getStringConfig(NuoManConstant.REBACK_SCREEN_LIGHT, "07:00");
@@ -46,6 +48,7 @@ public class RemindAlarmReceiver extends BroadcastReceiver {
                 if (currentTime.equals(upTime) || currentTime.equals(upTimeS)) {//唤醒
                     Log.d("SYNC", "onReceive REBACK_SCREEN_LIGHT  255   ---  " + BaseUtil.getTime(BaseUtil.HH_MM));
                     AppConfig.getActivity().sendBroadcast(new Intent(NuoManConstant.LIGHT_SCREEN_LIGHT));
+                    AppTools.saveBrightness(AppConfig.getContext(), 255);//开启背光
                 }
 
                 Log.d("SYNC", "TIME    currentTime:" + currentTime + " downTime:" + downTime + "  downTimeS:" + downTimeS + " upTime:" + upTime + " upTimeS:" + upTimeS);

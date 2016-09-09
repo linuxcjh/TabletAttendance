@@ -1,9 +1,5 @@
 package com.nuoman.tabletattendance.common.utils;
 
-import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothManager;
-import android.content.Context;
-
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -29,12 +25,12 @@ public class BaseUtil {
      * @return 返回本机蓝牙地址
      */
     public static String getBluetoothMac() {
-        BluetoothManager bluetoothManager = (BluetoothManager) AppConfig.getContext().getSystemService(Context.BLUETOOTH_SERVICE);
-        BluetoothAdapter bluetoothAdapter = bluetoothManager.getAdapter();
-        if (bluetoothAdapter == null)
+//        BluetoothManager bluetoothManager = (BluetoothManager) AppConfig.getContext().getSystemService(Context.BLUETOOTH_SERVICE);
+//        BluetoothAdapter bluetoothAdapter = bluetoothManager.getAdapter();
+//        if (bluetoothAdapter == null)
             return "无蓝牙模块";
-        else
-            return bluetoothAdapter.getAddress().replace(":", "");
+//        else
+//            return bluetoothAdapter.getAddress().replace(":", "");
     }
 
     /**

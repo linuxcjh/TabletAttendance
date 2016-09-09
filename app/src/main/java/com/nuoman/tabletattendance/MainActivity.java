@@ -56,6 +56,7 @@ import com.qiniu.android.storage.UploadManager;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -355,16 +356,7 @@ public class MainActivity extends BaseActivity implements ICommonAction, CameraF
      */
     private void setNetWorkStatus() {
 
-        Utils.checkNetworkConnection();
-        if (TextUtils.isEmpty(AppConfig.getStringConfig(NuoManConstant.CURRENT_NET_TYPE, ""))) {
-            hSingleTv.setImageResource(R.drawable.no_wifi);
-        } else if (AppConfig.getStringConfig(NuoManConstant.CURRENT_NET_TYPE, "").equals("wifi")) {
-            hSingleTv.setImageResource(R.drawable.connected_wifi);
-        } else if (AppConfig.getStringConfig(NuoManConstant.CURRENT_NET_TYPE, "").equals("mobile")) {
-            hSingleTv.setImageResource(R.drawable.g4_01_03);
-        } else {
-            hSingleTv.setImageResource(R.drawable.bendi_01_03);
-        }
+        netState(new NetReceiver().isConnected(this));
 
     }
 
@@ -660,12 +652,32 @@ public class MainActivity extends BaseActivity implements ICommonAction, CameraF
         if (data != null) {
             switch (requestCode) {
                 case SET_REBACK_INDEX:
-                    hSchoolNameTv.setText(AppConfig.getStringConfig(NuoManConstant.SCHOOL_NAME, AppTools.getLogInfo().getSchoolName()));
-                    requestSync();
+                    if (!data.getBooleanExtra("exit", false)) {
+                        hSchoolNameTv.setText(AppConfig.getStringConfig(NuoManConstant.SCHOOL_NAME, AppTools.getLogInfo().getSchoolName()));
+                        requestSync();
+                    } else {
+                        moveTaskToBack(false);
+                        try {
+                            Runtime runtime = Runtime.getRuntime();
+                            runtime.exec("input keyevent " + KeyEvent.KEYCODE_BACK);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
                     break;
             }
 
         }
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            moveTaskToBack(false);
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
     }
 
     /**

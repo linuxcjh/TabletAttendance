@@ -4,6 +4,20 @@
     android:layout_height="match_parent"
     android:background="@drawable/bg">
 
+    <Button
+        android:id="@+id/back_bt"
+        android:layout_width="160dp"
+        android:layout_height="60dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginBottom="10dp"
+        android:layout_marginRight="30dp"
+        android:background="@drawable/login_bt_bg"
+        android:gravity="center"
+        android:text="返回"
+        android:textColor="@android:color/white"
+        android:textSize="30dp" />
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
