@@ -136,7 +136,7 @@ public class SetInfoActivity extends BaseActivity implements ICommonAction {
     }
 
 
-    @OnClick({R.id.back_bt, R.id.set_manager_tv, R.id.delete_b1, R.id.delete_b2, R.id.down_time_tv, R.id.up_time_tv, R.id.select_class_bt, R.id.data_refresh_bt, R.id.update_version_bt, R.id.set_bt, R.id.change_login_bt, R.id.exit_bt, R.id.save_bt, R.id.confirm_bt, R.id.cancel_bt})
+    @OnClick({R.id.back_bt,R.id.set_manager_tv, R.id.delete_b1, R.id.delete_b2, R.id.down_time_tv, R.id.up_time_tv, R.id.select_class_bt, R.id.data_refresh_bt, R.id.update_version_bt, R.id.set_bt, R.id.change_login_bt, R.id.exit_bt, R.id.save_bt, R.id.confirm_bt, R.id.cancel_bt})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.select_class_bt:

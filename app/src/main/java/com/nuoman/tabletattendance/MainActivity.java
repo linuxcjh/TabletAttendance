@@ -656,7 +656,6 @@ public class MainActivity extends BaseActivity implements ICommonAction, CameraF
                         hSchoolNameTv.setText(AppConfig.getStringConfig(NuoManConstant.SCHOOL_NAME, AppTools.getLogInfo().getSchoolName()));
                         requestSync();
                     } else {
-                        moveTaskToBack(false);
                         try {
                             Runtime runtime = Runtime.getRuntime();
                             runtime.exec("input keyevent " + KeyEvent.KEYCODE_BACK);

@@ -19,6 +19,7 @@ import com.nuoman.tabletattendance.common.BasePresenter;
 import com.nuoman.tabletattendance.common.NuoManConstant;
 import com.nuoman.tabletattendance.model.LoginInfoModel;
 
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -348,4 +349,22 @@ public class AppTools {
         return result;
     }
 
+
+    /**
+     * Uses Root access to enable and disable SystemUI.
+     *
+     * @param enabled Decide whether to enable or disable.
+     */
+    public static void setSystemUIEnabled(boolean enabled) {
+        try {
+            Process p = Runtime.getRuntime().exec("su");
+            DataOutputStream os = new DataOutputStream(p.getOutputStream());
+            os.writeBytes("pm " + (enabled ? "enable" : "disable")
+                    + " com.android.systemui\n");
+            os.writeBytes("exit\n");
+            os.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }
