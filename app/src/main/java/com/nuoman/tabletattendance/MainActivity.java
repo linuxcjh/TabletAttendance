@@ -545,12 +545,12 @@ public class MainActivity extends BaseActivity implements ICommonAction, CameraF
                 break;
             case R.id.h_no_card_iv:
 
-                startActivityForResult(new Intent(MainActivity.this, SetInfoActivity.class), SET_REBACK_INDEX);
+//                startActivityForResult(new Intent(MainActivity.this, SetInfoActivity.class), SET_REBACK_INDEX);
 
-//                noCardEt.setText("");
-//                weatherOperationLayout.setVisibility(View.GONE);
-//                noCardLayout.setVisibility(View.VISIBLE);
-//                mHandler.sendEmptyMessageDelayed(BACK_INDEX, 40000);
+                noCardEt.setText("");
+                weatherOperationLayout.setVisibility(View.GONE);
+                noCardLayout.setVisibility(View.VISIBLE);
+                mHandler.sendEmptyMessageDelayed(BACK_INDEX, 40000);
                 break;
         }
     }

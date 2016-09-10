@@ -97,7 +97,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter implements ICommonA
             Log.d("SYNC", "CLEAR_PICTURE_CACHE UPDATA   ---  " + BaseUtil.getTime(BaseUtil.HH_MM));
         }
 
-        Log.d("SYNC", "onPerformSync   ---  " + BaseUtil.getTime(BaseUtil.HH_MM)+"  ==  "+AppTools.getAcacheData(NuoManConstant.USER_MAC));
+        Log.d("SYNC", "onPerformSync   ---  " + BaseUtil.getTime(BaseUtil.HH_MM) + "  ==  " + AppTools.getAcacheData(NuoManConstant.USER_MAC));
 
     }
 
@@ -109,29 +109,31 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter implements ICommonA
             case NuoManService.GETTOKEN:
                 if (data != null) {
                     BaseReceivedModel model = (BaseReceivedModel) data;
-                    AppTools.acachePut(NuoManConstant.TOKEN,model.getToken());
+                    AppTools.acachePut(NuoManConstant.TOKEN, model.getToken());
 //                    AppConfig.setStringConfig("token", model.getToken());
                 }
                 break;
             case NuoManService.WRITEATTLOG:
-                BaseReceivedModel m = (BaseReceivedModel) data;
-                if (m.isSuccess()) {
-                    String id = "";
-                    for (String key : parameterMap.keySet()) {
-                        if (key.equals("unique_id")) {
-                            id = parameterMap.get(key);
+                if (data != null) {
+                    BaseReceivedModel m = (BaseReceivedModel) data;
+                    if (m.isSuccess()) {
+                        String id = "";
+                        for (String key : parameterMap.keySet()) {
+                            if (key.equals("unique_id")) {
+                                id = parameterMap.get(key);
+                            }
+                            Log.d("SYNC", "parameterMap   ---  " + "key= " + key + " and value= " + parameterMap.get(key));
                         }
-                        Log.d("SYNC", "parameterMap   ---  " + "key= " + key + " and value= " + parameterMap.get(key));
+
+                        Log.d("SYNC", "obtainData   ---  id :" + id + " ====== " + BaseUtil.getTime(BaseUtil.HH_MM));
+                        try {
+                            provider.delete(Uri.parse("content://" + NoteProviderMetaData.AUTHORITY + "/notes" + "/" + id), null, null);
+
+                        } catch (RemoteException e) {
+                            e.printStackTrace();
+                        }
+
                     }
-
-                    Log.d("SYNC", "obtainData   ---  id :" + id + " ====== " + BaseUtil.getTime(BaseUtil.HH_MM));
-                    try {
-                        provider.delete(Uri.parse("content://" + NoteProviderMetaData.AUTHORITY + "/notes" + "/" + id), null, null);
-
-                    } catch (RemoteException e) {
-                        e.printStackTrace();
-                    }
-
                 }
                 break;
             case NuoManService.LOGIN:
