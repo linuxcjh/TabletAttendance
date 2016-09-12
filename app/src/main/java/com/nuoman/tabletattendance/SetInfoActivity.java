@@ -101,8 +101,8 @@ public class SetInfoActivity extends BaseActivity implements ICommonAction {
         editPreTv.setText(AppTools.getLogInfo().getSchoolName());
         selectClassBt.setText(AppConfig.getStringConfig(NuoManConstant.GRADE_NAME, "") + AppConfig.getStringConfig(NuoManConstant.CLASS_NAME, ""));
 
-        downTimeTv.setText(AppConfig.getStringConfig(NuoManConstant.DOWN_SCREEN_LIGHT, ""));
-        upTimeTv.setText(AppConfig.getStringConfig(NuoManConstant.REBACK_SCREEN_LIGHT, ""));
+        downTimeTv.setText(AppConfig.getStringConfig(NuoManConstant.DOWN_SCREEN_LIGHT, "19:00"));
+        upTimeTv.setText(AppConfig.getStringConfig(NuoManConstant.REBACK_SCREEN_LIGHT, "07:00"));
     }
 
     @Override

@@ -33,7 +33,7 @@ public class RemindAlarmReceiver extends BroadcastReceiver {
                 Log.d("SYNC", "onReceive   ---  " + BaseUtil.getTime(BaseUtil.HH_MM) + "==" + AppConfig.getStringConfig(NuoManConstant.DOWN_SCREEN_LIGHT, "21:30") + "==" + AppConfig.getStringConfig(NuoManConstant.REBACK_SCREEN_LIGHT, "07:00"));
 
                 String currentTime = BaseUtil.getTime(BaseUtil.HH_MM);
-                String downTime = AppConfig.getStringConfig(NuoManConstant.DOWN_SCREEN_LIGHT, "21:30");
+                String downTime = AppConfig.getStringConfig(NuoManConstant.DOWN_SCREEN_LIGHT, "19:00");
                 String downTimeS = downTime.split(":")[0] + ":" + (Integer.parseInt(downTime.split(":")[1]) + 1);
 
 
@@ -43,7 +43,7 @@ public class RemindAlarmReceiver extends BroadcastReceiver {
                     AppTools.saveBrightness(AppConfig.getContext(), 0);//关闭背光
                 }
 
-                String upTime = AppConfig.getStringConfig(NuoManConstant.REBACK_SCREEN_LIGHT, "07:00");
+                String upTime = AppConfig.getStringConfig(NuoManConstant.REBACK_SCREEN_LIGHT, "06:00");
                 String upTimeS = upTime.split(":")[0] + ":" + (Integer.parseInt(upTime.split(":")[1]) + 1);
                 if (currentTime.equals(upTime) || currentTime.equals(upTimeS)) {//唤醒
                     Log.d("SYNC", "onReceive REBACK_SCREEN_LIGHT  255   ---  " + BaseUtil.getTime(BaseUtil.HH_MM));

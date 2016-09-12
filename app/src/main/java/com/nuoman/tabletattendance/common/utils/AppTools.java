@@ -5,6 +5,8 @@ import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
+import android.net.wifi.WifiConfiguration;
+import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Environment;
 import android.text.InputType;
@@ -365,6 +367,40 @@ public class AppTools {
             os.flush();
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+
+    // wifi热点开关
+    public static boolean setWifiApEnabled(boolean enabled) {
+        WifiManager wifiManager = (WifiManager) AppConfig.getContext().getSystemService(Context.WIFI_SERVICE);
+
+        if (enabled) { // disable WiFi in any case
+            //wifi和热点不能同时打开，所以打开热点的时候需要关闭wifi
+            wifiManager.setWifiEnabled(false);
+        }
+        try {
+            //热点的配置类
+            WifiConfiguration apConfig = new WifiConfiguration();
+            //配置热点的名称(可以在名字后面加点随机数什么的)
+            apConfig.SSID = "HeAnQuan-AP";
+            //配置热点的密码
+            apConfig.preSharedKey = "11111111";
+            apConfig.allowedAuthAlgorithms.set(WifiConfiguration.AuthAlgorithm.OPEN);
+            apConfig.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.TKIP);
+            apConfig.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.WPA_PSK);
+            apConfig.allowedPairwiseCiphers.set(WifiConfiguration.PairwiseCipher.TKIP);
+            apConfig.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.CCMP);
+            apConfig.allowedPairwiseCiphers.set(WifiConfiguration.PairwiseCipher.CCMP);
+            apConfig.status = WifiConfiguration.Status.ENABLED;
+
+            //通过反射调用设置热点
+            Method method = wifiManager.getClass().getMethod(
+                    "setWifiApEnabled", WifiConfiguration.class, Boolean.TYPE);
+            //返回热点打开状态
+            return (Boolean) method.invoke(wifiManager, apConfig, enabled);
+        } catch (Exception e) {
+            return false;
         }
     }
 }

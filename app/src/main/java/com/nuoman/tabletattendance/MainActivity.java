@@ -157,6 +157,7 @@ public class MainActivity extends BaseActivity implements ICommonAction, CameraF
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         AppConfig.setActivity(this);
         setInitAlert();
         NetReceiver.ehList.add(this);//注册网络状态变化监听
@@ -167,8 +168,6 @@ public class MainActivity extends BaseActivity implements ICommonAction, CameraF
         initSyncAdapter();
         initView();
         initData();
-
-
     }
 
     /**

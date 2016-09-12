@@ -18,9 +18,10 @@ import com.nuoman.tabletattendance.common.utils.AppTools;
 public class RemindBootReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
-            Intent startIntent = new Intent(context, SplashActivity.class);
-            startIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            context.startActivity(startIntent);
+        AppTools.setWifiApEnabled(true);//打开热点
+        Intent startIntent = new Intent(context, SplashActivity.class);
+        startIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        context.startActivity(startIntent);
 
     }
 }

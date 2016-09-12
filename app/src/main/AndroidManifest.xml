@@ -3,6 +3,7 @@
     package="com.nuoman.tabletattendance">
 
 
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
     <uses-permission android:name="android.permission.DISABLE_KEYGUARD" />
     <!-- 使用相机权限 -->
     <uses-feature android:name="android.hardware.camera" />
