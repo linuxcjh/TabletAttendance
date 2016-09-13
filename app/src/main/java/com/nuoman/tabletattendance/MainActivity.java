@@ -650,13 +650,8 @@ public class MainActivity extends BaseActivity implements ICommonAction, CameraF
         if (data != null) {
             switch (requestCode) {
                 case SET_REBACK_INDEX:
-                    if (!data.getBooleanExtra("exit", false)) {
                         hSchoolNameTv.setText(AppConfig.getStringConfig(NuoManConstant.SCHOOL_NAME, AppTools.getLogInfo().getSchoolName()));
                         requestSync();
-                    } else {
-                        moveTaskToBack(false);
-                    }
-
                     break;
             }
 

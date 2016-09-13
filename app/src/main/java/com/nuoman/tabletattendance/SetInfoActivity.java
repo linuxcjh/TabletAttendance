@@ -102,7 +102,7 @@ public class SetInfoActivity extends BaseActivity implements ICommonAction {
         selectClassBt.setText(AppConfig.getStringConfig(NuoManConstant.GRADE_NAME, "") + AppConfig.getStringConfig(NuoManConstant.CLASS_NAME, ""));
 
         downTimeTv.setText(AppConfig.getStringConfig(NuoManConstant.DOWN_SCREEN_LIGHT, "19:00"));
-        upTimeTv.setText(AppConfig.getStringConfig(NuoManConstant.REBACK_SCREEN_LIGHT, "07:00"));
+        upTimeTv.setText(AppConfig.getStringConfig(NuoManConstant.REBACK_SCREEN_LIGHT, "06:00"));
     }
 
     @Override
@@ -169,8 +169,8 @@ public class SetInfoActivity extends BaseActivity implements ICommonAction {
                 startActivity(new Intent(this, LoginActivity.class));
                 break;
             case R.id.exit_bt:
-                setResult(RESULT_OK, new Intent().putExtra("exit", true));
-                finish();
+                moveTaskToBack(true);
+//
                 break;
             case R.id.save_bt:
                 if (TextUtils.isEmpty(editPreTv.getText().toString())) {
