@@ -62,7 +62,7 @@ public class LoginActivity extends BaseActivity implements ICommonAction {
     private void initData() {
         commonPresenter = new CommonPresenter(this);
         loginMacTv.setText(BaseUtil.getBluetoothMac());
-        loginNameTv.setText("02987301181");//02987301181 NMKJ87301181
+        loginNameTv.setText("");//02987301181 NMKJ87301181
 //        loginBt.performClick();
         loginNameTv.setOnTouchListener(new View.OnTouchListener() {
             @Override
