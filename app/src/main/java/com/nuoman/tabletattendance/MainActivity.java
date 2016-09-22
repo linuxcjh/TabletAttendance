@@ -254,6 +254,8 @@ public class MainActivity extends BaseActivity implements ICommonAction, CameraF
                 AppConfig.setStringConfig(NuoManConstant.CARD_ID, v.getText().toString().replace("\n", ""));
                 editInputEt.setText("");
                 if (!TextUtils.isEmpty(obtainCardInfo())) {//判断输入的卡号是否有效
+                    commonPresenter.invokeInterfaceObtainData(false, "qiniuCtrl", NuoManService.GETTOKEN, null, new TypeToken<BaseReceivedModel>() {
+                    });
                     cameraFragment.takePicture();
 
                 } else {
@@ -298,6 +300,8 @@ public class MainActivity extends BaseActivity implements ICommonAction, CameraF
                     } else {
                         AppConfig.setStringConfig(NuoManConstant.CARD_ID, noCardEt.getText().toString().replace("\n", ""));
                         if (!TextUtils.isEmpty(obtainCardInfo())) {//判断输入的卡号是否有效
+                            commonPresenter.invokeInterfaceObtainData(false, "qiniuCtrl", NuoManService.GETTOKEN, null, new TypeToken<BaseReceivedModel>() {
+                            });
                             cameraFragment.takePicture();
 
                         } else {
@@ -414,10 +418,6 @@ public class MainActivity extends BaseActivity implements ICommonAction, CameraF
         if (Utils.checkNetworkConnection()) {//有网直接上传
             if (!TextUtils.isEmpty(AppTools.getAcacheData(NuoManConstant.TOKEN))) {
                 uploadImageToQiNiu(filePath, AppTools.getAcacheData(NuoManConstant.TOKEN));
-            } else { //重新请求token
-                commonPresenter.invokeInterfaceObtainData(false, "qiniuCtrl", NuoManService.GETTOKEN, null, new TypeToken<BaseReceivedModel>() {
-                });
-                Toast.makeText(MainActivity.this, "重新获取Token信息", Toast.LENGTH_SHORT).show();
             }
 
         } else { //没网存在本地
@@ -438,6 +438,7 @@ public class MainActivity extends BaseActivity implements ICommonAction, CameraF
                 if (data != null) {
                     BaseReceivedModel model = (BaseReceivedModel) data;
                     AppTools.acachePut(NuoManConstant.TOKEN, model.getToken());
+
                 }
                 break;
             case NuoManService.GETWEATHERFORONEDAY:
@@ -649,8 +650,8 @@ public class MainActivity extends BaseActivity implements ICommonAction, CameraF
         if (data != null) {
             switch (requestCode) {
                 case SET_REBACK_INDEX:
-                        hSchoolNameTv.setText(AppConfig.getStringConfig(NuoManConstant.SCHOOL_NAME, AppTools.getLogInfo().getSchoolName()));
-                        requestSync();
+                    hSchoolNameTv.setText(AppConfig.getStringConfig(NuoManConstant.SCHOOL_NAME, AppTools.getLogInfo().getSchoolName()));
+                    requestSync();
                     break;
             }
 
@@ -672,16 +673,25 @@ public class MainActivity extends BaseActivity implements ICommonAction, CameraF
             uploadManager.put(filePath, file.getName(), token, new UpCompletionHandler() {
                 @Override
                 public void complete(String key, ResponseInfo info, JSONObject res) {
-                    BaseTransModel transModel = new BaseTransModel();
-                    transModel.setMachineNo(logInfo.getMachineId());
-                    transModel.setMachineId(logInfo.getMachineId());
-                    transModel.setTel(AppTools.getAcacheData(NuoManConstant.USER_NAME));
-                    transModel.setCardNo(AppConfig.getStringConfig(NuoManConstant.CARD_ID, ""));
-                    transModel.setAttDate(BaseUtil.getTime(BaseUtil.YYYY_MM_DD_HH_MM_SS));
-                    transModel.setAttPicUrl(key);
-                    transModel.setImagePath(filePath);
-                    commonPresenter.invokeInterfaceObtainData(true, "attDataCtrl", NuoManService.WRITEATTLOG, transModel, new TypeToken<BaseReceivedModel>() {
-                    });
+                    if (info.statusCode == 200) {
+                        BaseTransModel transModel = new BaseTransModel();
+                        transModel.setMachineNo(logInfo.getMachineId());
+                        transModel.setMachineId(logInfo.getMachineId());
+                        transModel.setTel(AppTools.getAcacheData(NuoManConstant.USER_NAME));
+                        transModel.setCardNo(AppConfig.getStringConfig(NuoManConstant.CARD_ID, ""));
+                        transModel.setAttDate(BaseUtil.getTime(BaseUtil.YYYY_MM_DD_HH_MM_SS));
+                        transModel.setAttPicUrl(key);
+                        transModel.setImagePath(filePath);
+                        commonPresenter.invokeInterfaceObtainData(true, "attDataCtrl", NuoManService.WRITEATTLOG, transModel, new TypeToken<BaseReceivedModel>() {
+                        });
+                    } else { //保存本地
+                        BaseTransModel m = new BaseTransModel();
+                        m.setCardNo(AppConfig.getStringConfig(NuoManConstant.CARD_ID, ""));
+                        m.setAttDate(BaseUtil.getTime(BaseUtil.YYYY_MM_DD_HH_MM_SS));
+                        m.setImagePath(filePath);
+                        insert(m);
+                    }
+
                     Log.d("NuoMan", "key: " + key + "\n");
                 }
             }, null);

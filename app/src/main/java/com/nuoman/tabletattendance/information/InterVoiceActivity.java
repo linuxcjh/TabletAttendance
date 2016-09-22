@@ -19,6 +19,9 @@ import com.nuoman.tabletattendance.api.NuoManService;
 import com.nuoman.tabletattendance.common.BaseActivity;
 import com.nuoman.tabletattendance.common.CommonPresenter;
 import com.nuoman.tabletattendance.common.ICommonAction;
+import com.nuoman.tabletattendance.common.NuoManConstant;
+import com.nuoman.tabletattendance.common.utils.AppTools;
+import com.nuoman.tabletattendance.model.BaseReceivedModel;
 import com.nuoman.tabletattendance.model.BaseTransModel;
 import com.nuoman.tabletattendance.model.ParentInfo;
 import com.nuoman.tabletattendance.model.ReceivedParentInfoModel;
@@ -77,7 +80,10 @@ public class InterVoiceActivity extends BaseActivity implements ICommonAction ,A
     }
 
     private void initView() {
+
         commonPresenter = new CommonPresenter(this);
+        commonPresenter.invokeInterfaceObtainData(false, "qiniuCtrl", NuoManService.GETTOKEN, null, new TypeToken<BaseReceivedModel>() {
+        });
         fragment = new InterVoiceFragment();
 
         cardNo = getIntent().getStringExtra("cardNo");
@@ -129,6 +135,13 @@ public class InterVoiceActivity extends BaseActivity implements ICommonAction ,A
     public void obtainData(Object data, String methodIndex, int status, Map<String, String> parameterMap) {
         if (data != null) {
             switch (methodIndex) {
+                case NuoManService.GETTOKEN:
+                    if (data != null) {
+                        BaseReceivedModel model = (BaseReceivedModel) data;
+                        AppTools.acachePut(NuoManConstant.TOKEN, model.getToken());
+
+                    }
+                    break;
                 case NuoManService.GETPARENTSBYCARDNO:
                     ReceivedParentInfoModel model = (ReceivedParentInfoModel) data;
                     dataList.addAll(model.getObj());

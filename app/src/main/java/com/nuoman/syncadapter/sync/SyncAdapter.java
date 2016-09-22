@@ -110,7 +110,6 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter implements ICommonA
                 if (data != null) {
                     BaseReceivedModel model = (BaseReceivedModel) data;
                     AppTools.acachePut(NuoManConstant.TOKEN, model.getToken());
-//                    AppConfig.setStringConfig("token", model.getToken());
                 }
                 break;
             case NuoManService.WRITEATTLOG:
@@ -189,7 +188,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter implements ICommonA
      * 上传打卡信息
      */
     private void upLoadPunchCardInfo(List<BaseTransModel> transModels) {
-
+        commonPresenter.invokeInterfaceObtainData(false, "qiniuCtrl", NuoManService.GETTOKEN, null, new TypeToken<BaseReceivedModel>() {
+        });
         for (int i = 0; i < transModels.size(); i++) {
 
             if (!TextUtils.isEmpty(AppTools.getAcacheData(NuoManConstant.TOKEN))) {

@@ -94,6 +94,8 @@ public class SendHomeworkActivity extends BaseActivity implements ICommonAction 
     }
 
     private void initView() {
+        commonPresenter.invokeInterfaceObtainData(false, "qiniuCtrl", NuoManService.GETTOKEN, null, new TypeToken<BaseReceivedModel>() {
+        });
         editInputEt.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -121,6 +123,13 @@ public class SendHomeworkActivity extends BaseActivity implements ICommonAction 
         if (data != null) {
 
             switch (methodIndex) {
+                case NuoManService.GETTOKEN:
+                    if (data != null) {
+                        BaseReceivedModel model = (BaseReceivedModel) data;
+                        AppTools.acachePut(NuoManConstant.TOKEN, model.getToken());
+
+                    }
+                    break;
                 case NuoManService.GETTEACHERID:
                     HomeWorkReceiveModel m = (HomeWorkReceiveModel) data;
                     if (m.isSuccess() && !TextUtils.isEmpty(m.getObj().getTeacherId()) && !m.getObj().getTeacherId().equals("-1")) {
