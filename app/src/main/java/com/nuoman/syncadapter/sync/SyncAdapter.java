@@ -188,16 +188,9 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter implements ICommonA
      * 上传打卡信息
      */
     private void upLoadPunchCardInfo(List<BaseTransModel> transModels) {
-        commonPresenter.invokeInterfaceObtainData(false, "qiniuCtrl", NuoManService.GETTOKEN, null, new TypeToken<BaseReceivedModel>() {
-        });
         for (int i = 0; i < transModels.size(); i++) {
 
-            if (!TextUtils.isEmpty(AppTools.getAcacheData(NuoManConstant.TOKEN))) {
-                uploadImageToQiNiu(transModels.get(i).getImagePath(), AppTools.getAcacheData(NuoManConstant.TOKEN), transModels.get(i));
-            } else { //重新请求token
-                commonPresenter.invokeInterfaceObtainData(false, "qiniuCtrl", NuoManService.GETTOKEN, null, new TypeToken<BaseReceivedModel>() {
-                });
-            }
+            uploadImageToQiNiu(transModels.get(i).getImagePath(), AppTools.getAcacheData(NuoManConstant.TOKEN), transModels.get(i));
 
         }
 
@@ -222,10 +215,14 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter implements ICommonA
                     public void complete(String key, ResponseInfo info, JSONObject res) {
                         // info.error中包含了错误信息，可打印调试
                         // 上传成功后将key值上传到自己的服务器
-
-                        model.setAttPicUrl(key);
-                        commonPresenter.invokeInterfaceObtainData(true, "attDataCtrl", NuoManService.WRITEATTLOG, model, new TypeToken<BaseReceivedModel>() {
-                        });
+                        if (info.statusCode == 200) {
+                            model.setAttPicUrl(key);
+                            commonPresenter.invokeInterfaceObtainData(true, "attDataCtrl", NuoManService.WRITEATTLOG, model, new TypeToken<BaseReceivedModel>() {
+                            });
+                        } else {
+                            commonPresenter.invokeInterfaceObtainData(false, "qiniuCtrl", NuoManService.GETTOKEN, null, new TypeToken<BaseReceivedModel>() {
+                            });
+                        }
 
                     }
                 }, null);
