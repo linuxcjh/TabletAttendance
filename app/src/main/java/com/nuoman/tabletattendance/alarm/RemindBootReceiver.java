@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 
 import com.nuoman.tabletattendance.SplashActivity;
-import com.nuoman.tabletattendance.common.utils.AppTools;
 
 
 /**
@@ -18,7 +17,7 @@ import com.nuoman.tabletattendance.common.utils.AppTools;
 public class RemindBootReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
-        AppTools.setWifiApEnabled(true);//打开热点
+//        AppTools.setWifiApEnabled(true);//打开热点
         Intent startIntent = new Intent(context, SplashActivity.class);
         startIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(startIntent);

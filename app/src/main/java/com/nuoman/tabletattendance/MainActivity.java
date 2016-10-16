@@ -21,6 +21,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -80,6 +81,10 @@ public class MainActivity extends BaseActivity implements ICommonAction, CameraF
     public static final long SYNC_INTERVAL =
             SYNC_INTERVAL_IN_MINUTES *
                     SECONDS_PER_MINUTE;
+    @Bind(R.id.h_attendance_bt)
+    Button hAttendanceBt;
+    @Bind(R.id.h_temperature_iv)
+    ImageView hTemperatureIv;
 
     private Account mAccount;
 
@@ -168,6 +173,7 @@ public class MainActivity extends BaseActivity implements ICommonAction, CameraF
         initSyncAdapter();
         initView();
         initData();
+
     }
 
     /**
@@ -464,7 +470,6 @@ public class MainActivity extends BaseActivity implements ICommonAction, CameraF
                     } else if (key.equals("attDate")) {
                         mTrans.setAttDate(parameterMap.get(key));
                     }
-
                 }
                 if (data != null) {
                     BaseReceivedModel m = (BaseReceivedModel) data;
@@ -529,7 +534,7 @@ public class MainActivity extends BaseActivity implements ICommonAction, CameraF
 
     }
 
-    @OnClick({R.id.h_homework_iv, R.id.h_info_iv, R.id.h_voice_iv, R.id.h_no_card_iv})
+    @OnClick({R.id.h_homework_iv, R.id.h_info_iv, R.id.h_voice_iv, R.id.h_no_card_iv, R.id.h_attendance_bt, R.id.h_temperature_iv})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.h_homework_iv:
@@ -543,6 +548,14 @@ public class MainActivity extends BaseActivity implements ICommonAction, CameraF
 
                 startActivity(new Intent(this, HomeVoiceActivity.class));
                 break;
+            case R.id.h_attendance_bt:
+                startActivity(new Intent(this, AttendanceDetailsActivity.class));
+
+                break;
+            case R.id.h_temperature_iv:
+                startActivity(new Intent(this, TemperatureActivity.class));
+
+                break;
             case R.id.h_no_card_iv:
 
 //                startActivityForResult(new Intent(MainActivity.this, SetInfoActivity.class), SET_REBACK_INDEX);
@@ -551,6 +564,7 @@ public class MainActivity extends BaseActivity implements ICommonAction, CameraF
                 noCardLayout.setVisibility(View.VISIBLE);
                 mHandler.sendEmptyMessageDelayed(BACK_INDEX, 40000);
                 break;
+
         }
     }
 
@@ -727,6 +741,7 @@ public class MainActivity extends BaseActivity implements ICommonAction, CameraF
         b.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
         ContentResolver.requestSync(mAccount, NoteProviderMetaData.AUTHORITY, b);
     }
+
 
     /* ------------------------------------------Sync END ------------------------------------------------------------------------- */
 

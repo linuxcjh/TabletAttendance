@@ -47,4 +47,15 @@ public interface NuoManService {
     //获取录音列表
     String GETAUDIOLISTBYUSERID="GetAudioListByUserId";
 
+
+    //获取考勤信息列表接口
+    String GETATTLISTBYCLASSID="GetAttListByClassId";
+
+
+    //保存体温接口：
+    String SAVETEMPERATURE="SaveTemperature";
+
+
+
+
 }

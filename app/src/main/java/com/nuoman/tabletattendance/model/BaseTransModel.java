@@ -33,6 +33,26 @@ public class BaseTransModel {
 
     private String kind;
 
+    private String cardno;  //考勤卡号
+    private String temper  ; //体温     不带单位，例如 38.5
+
+
+    public String getCardno() {
+        return cardno;
+    }
+
+    public void setCardno(String cardno) {
+        this.cardno = cardno;
+    }
+
+    public String getTemper() {
+        return temper;
+    }
+
+    public void setTemper(String temper) {
+        this.temper = temper;
+    }
+
     public String getKind() {
         return kind;
     }
