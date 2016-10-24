@@ -48,6 +48,11 @@ public class BaseUtil {
         return simpleDateFormat.format(new Date());
     }
 
+    public static String getTime(String patter, long deltaTime) {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(patter);
+        return simpleDateFormat.format(new Date(System.currentTimeMillis() + deltaTime));
+    }
+
     /**
      * 获取星期数
      *

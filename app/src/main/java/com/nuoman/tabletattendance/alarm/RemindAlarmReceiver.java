@@ -45,7 +45,18 @@ public class RemindAlarmReceiver extends BroadcastReceiver {
 
                 String upTime = AppConfig.getStringConfig(NuoManConstant.REBACK_SCREEN_LIGHT, "06:00");
                 String upTimeS = upTime.split(":")[0] + ":" + (Integer.parseInt(upTime.split(":")[1]) + 1);
-                if (currentTime.equals(upTime) || currentTime.equals(upTimeS)) {//唤醒
+                String upTimeS2 = upTime.split(":")[0] + ":" + (Integer.parseInt(upTime.split(":")[1]) + 2);
+                String upTimeS3 = upTime.split(":")[0] + ":" + (Integer.parseInt(upTime.split(":")[1]) + 3);
+                String upTimeS4 = upTime.split(":")[0] + ":" + (Integer.parseInt(upTime.split(":")[1]) + 4);
+                String upTimeS5 = upTime.split(":")[0] + ":" + (Integer.parseInt(upTime.split(":")[1]) + 5);
+
+                if (currentTime.equals(upTime)
+                        || currentTime.equals(upTimeS)
+                        || currentTime.equals(upTimeS2)
+                        || currentTime.equals(upTimeS3)
+                        || currentTime.equals(upTimeS4)
+                        || currentTime.equals(upTimeS5)
+                        ) {//唤醒
                     Log.d("SYNC", "onReceive REBACK_SCREEN_LIGHT  255   ---  " + BaseUtil.getTime(BaseUtil.HH_MM));
                     AppConfig.getActivity().sendBroadcast(new Intent(NuoManConstant.LIGHT_SCREEN_LIGHT));
                     AppTools.saveBrightness(AppConfig.getContext(), 255);//开启背光
