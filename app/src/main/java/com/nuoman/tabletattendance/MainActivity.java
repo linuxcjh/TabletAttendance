@@ -63,6 +63,8 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+import static com.nuoman.tabletattendance.common.utils.AppConfig.getStringConfig;
+
 /**
  * 首页
  */
@@ -225,7 +227,7 @@ public class MainActivity extends BaseActivity implements ICommonAction, CameraF
     protected void onResume() {
         super.onResume();
         BaseTransModel transModel = new BaseTransModel();
-        transModel.setClassId(AppConfig.getStringConfig(NuoManConstant.CLASS_ID, ""));
+        transModel.setClassId(getStringConfig(NuoManConstant.CLASS_ID, ""));
         transModel.setMachineId(AppTools.getLogInfo().getMachineId());
         commonPresenter.invokeInterfaceObtainData(false, "loginCtrl", NuoManService.SAVEDVCLOCATION, transModel, new TypeToken<BaseTransModel>() {
         });
@@ -238,7 +240,7 @@ public class MainActivity extends BaseActivity implements ICommonAction, CameraF
     private void initView() {
         textToSpeech = TextToSpeech.getInstance(this);
         cameraFragment = (CameraFragment) getSupportFragmentManager().findFragmentById(R.id.camera_fragment);
-        hSchoolNameTv.setText(AppConfig.getStringConfig(NuoManConstant.SCHOOL_NAME, AppTools.getLogInfo().getSchoolName()));
+        hSchoolNameTv.setText(getStringConfig(NuoManConstant.SCHOOL_NAME, AppTools.getLogInfo().getSchoolName()));
         hTimeTv.setText(BaseUtil.getTime(BaseUtil.YYYY_MM_DD_HH_MM) + "   " + BaseUtil.getTime(BaseUtil.HH_MM_SS) + "    " + BaseUtil.getDayOfWeek());
         mHandler.sendEmptyMessageDelayed(CURRENT_TIME_INDEX, REFRESH_TIME_INDEX);
 
@@ -303,6 +305,7 @@ public class MainActivity extends BaseActivity implements ICommonAction, CameraF
                             commonPresenter.invokeInterfaceObtainData(false, "qiniuCtrl", NuoManService.GETTOKEN, null, new TypeToken<BaseReceivedModel>() {
                             });
                             cameraFragment.takePicture();
+                            setIniMainPage();//判断卡号有效直接返回主页面
 
                         } else {
                             setIniMainPage();
@@ -423,7 +426,7 @@ public class MainActivity extends BaseActivity implements ICommonAction, CameraF
         } else { //没网存在本地
 
             BaseTransModel m = new BaseTransModel();
-            m.setCardNo(AppConfig.getStringConfig(NuoManConstant.CARD_ID, ""));
+            m.setCardNo(getStringConfig(NuoManConstant.CARD_ID, ""));
             m.setAttDate(BaseUtil.getTime(BaseUtil.YYYY_MM_DD_HH_MM_SS));
             m.setImagePath(filePath);
             insert(m);
@@ -576,14 +579,14 @@ public class MainActivity extends BaseActivity implements ICommonAction, CameraF
         if (isTeacher) {
             textToSpeech.startSpeaking(hTitleTv.getText().toString());
             isTeacher = false;
-            info = "卡      号：" + AppConfig.getStringConfig(NuoManConstant.CARD_ID, "") + System.getProperty("line.separator")
+            info = "卡      号：" + getStringConfig(NuoManConstant.CARD_ID, "") + System.getProperty("line.separator")
                     + "签到时间：" + BaseUtil.getTime("HH:mm:ss");
         } else {
             textToSpeech.startSpeaking(hTitleTv.getText().toString() + "同学");
-            info = "年      级：" + AppConfig.getStringConfig(NuoManConstant.GRADE_NAME, "") + System.getProperty("line.separator")
-                    + "班      级：" + AppConfig.getStringConfig(NuoManConstant.CLASS_NAME, "") + System.getProperty("line.separator")
+            info = "年      级：" + getStringConfig(NuoManConstant.GRADE_NAME, "") + System.getProperty("line.separator")
+                    + "班      级：" + getStringConfig(NuoManConstant.CLASS_NAME, "") + System.getProperty("line.separator")
                     + "监 护 人：" + tutelage + System.getProperty("line.separator")
-                    + "卡      号：" + AppConfig.getStringConfig(NuoManConstant.CARD_ID, "") + System.getProperty("line.separator")
+                    + "卡      号：" + getStringConfig(NuoManConstant.CARD_ID, "") + System.getProperty("line.separator")
                     + "签到时间：" + BaseUtil.getTime("HH:mm:ss");
         }
 
@@ -610,7 +613,7 @@ public class MainActivity extends BaseActivity implements ICommonAction, CameraF
 
         LoginInfoModel m = AppTools.getLogInfo();
 
-        String currentCardNo = AppConfig.getStringConfig(NuoManConstant.CARD_ID, "");
+        String currentCardNo = getStringConfig(NuoManConstant.CARD_ID, "");
 
         for (int i = 0; i < m.getPeopleMap().getStudentInfos().size(); i++) {
             List<CardNoModel> cardNoList = m.getPeopleMap().getStudentInfos().get(i).getCardNoList();
@@ -650,7 +653,7 @@ public class MainActivity extends BaseActivity implements ICommonAction, CameraF
         if (data != null) {
             switch (requestCode) {
                 case SET_REBACK_INDEX:
-                    hSchoolNameTv.setText(AppConfig.getStringConfig(NuoManConstant.SCHOOL_NAME, AppTools.getLogInfo().getSchoolName()));
+                    hSchoolNameTv.setText(getStringConfig(NuoManConstant.SCHOOL_NAME, AppTools.getLogInfo().getSchoolName()));
                     requestSync();
                     break;
             }
@@ -678,7 +681,7 @@ public class MainActivity extends BaseActivity implements ICommonAction, CameraF
                         transModel.setMachineNo(logInfo.getMachineId());
                         transModel.setMachineId(logInfo.getMachineId());
                         transModel.setTel(AppTools.getAcacheData(NuoManConstant.USER_NAME));
-                        transModel.setCardNo(AppConfig.getStringConfig(NuoManConstant.CARD_ID, ""));
+                        transModel.setCardNo(getStringConfig(NuoManConstant.CARD_ID, ""));
                         transModel.setAttDate(BaseUtil.getTime(BaseUtil.YYYY_MM_DD_HH_MM_SS));
                         transModel.setAttPicUrl(key);
                         transModel.setImagePath(filePath);
@@ -686,7 +689,7 @@ public class MainActivity extends BaseActivity implements ICommonAction, CameraF
                         });
                     } else { //保存本地
                         BaseTransModel m = new BaseTransModel();
-                        m.setCardNo(AppConfig.getStringConfig(NuoManConstant.CARD_ID, ""));
+                        m.setCardNo(getStringConfig(NuoManConstant.CARD_ID, ""));
                         m.setAttDate(BaseUtil.getTime(BaseUtil.YYYY_MM_DD_HH_MM_SS));
                         m.setImagePath(filePath);
                         insert(m);
@@ -748,6 +751,11 @@ public class MainActivity extends BaseActivity implements ICommonAction, CameraF
 
                     LockScreenUtils.getInstance().wakeUpAndUnlock(MainActivity.this);
 
+                    break;
+                case NuoManConstant.UPLOAD_DEVICE_INFO://上传设备信息
+
+                    commonPresenter.invokeInterfaceObtainData(false, "loginCtrl", NuoManService.DEVICECOMM, intent.getSerializableExtra("model"), new TypeToken<BaseReceivedModel>() {
+                    });
                     break;
             }
         }

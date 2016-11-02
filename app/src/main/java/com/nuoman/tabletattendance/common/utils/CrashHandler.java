@@ -8,6 +8,7 @@ import android.content.Intent;
 
 import com.nuoman.tabletattendance.SplashActivity;
 import com.nuoman.tabletattendance.common.BaseActivity;
+import com.nuoman.tabletattendance.common.NuoManConstant;
 
 import java.lang.Thread.UncaughtExceptionHandler;
 
@@ -45,6 +46,8 @@ public class CrashHandler implements UncaughtExceptionHandler {
     public void uncaughtException(Thread thread, Throwable ex) {
 
         try {
+            AppConfig.setIntConfig(NuoManConstant.DEVICE_STATUS, 3);
+            AppConfig.setStringConfig(NuoManConstant.DEVICE_STATUS_DEC, "程序退出：" + ex.getMessage().substring(0, 253));
             Thread.sleep(2000);
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -52,7 +55,7 @@ public class CrashHandler implements UncaughtExceptionHandler {
         Intent intent = new Intent(mContext.getApplicationContext(), SplashActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         PendingIntent restartIntent = PendingIntent.getActivity(
-                mContext, 0, intent,PendingIntent.FLAG_ONE_SHOT);
+                mContext, 0, intent, PendingIntent.FLAG_ONE_SHOT);
         //退出程序
         AlarmManager mgr = (AlarmManager) mContext.getSystemService(Context.ALARM_SERVICE);
         mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 1000,

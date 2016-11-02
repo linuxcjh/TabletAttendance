@@ -13,6 +13,7 @@ import com.nuoman.tabletattendance.common.NuoManConstant;
 import com.nuoman.tabletattendance.common.utils.AppConfig;
 import com.nuoman.tabletattendance.common.utils.AppTools;
 import com.nuoman.tabletattendance.common.utils.BaseUtil;
+import com.nuoman.tabletattendance.model.BaseTransModel;
 
 import java.util.Calendar;
 import java.util.TimeZone;
@@ -63,6 +64,20 @@ public class RemindAlarmReceiver extends BroadcastReceiver {
                 }
 
                 Log.d("SYNC", "TIME    currentTime:" + currentTime + " downTime:" + downTime + "  downTimeS:" + downTimeS + " upTime:" + upTime + " upTimeS:" + upTimeS);
+
+                //判断是否上传异常信息
+                int status = AppConfig.getIntConfig(NuoManConstant.DEVICE_STATUS, 0);
+                if (status != 0) {
+                    BaseTransModel transModel = new BaseTransModel();
+                    transModel.setDvcId(AppTools.getLogInfo().getMachineId());
+                    transModel.setStatus(status + "");
+                    transModel.setDesc(AppConfig.getStringConfig(NuoManConstant.DEVICE_STATUS_DEC, ""));
+                    AppConfig.getActivity().sendBroadcast(new Intent(NuoManConstant.UPLOAD_DEVICE_INFO).putExtra("model", transModel));
+                    AppConfig.setIntConfig(NuoManConstant.DEVICE_STATUS, 0);//初始化
+                    AppConfig.setStringConfig(NuoManConstant.DEVICE_STATUS_DEC, "");
+
+                }
+
 
                 break;
 

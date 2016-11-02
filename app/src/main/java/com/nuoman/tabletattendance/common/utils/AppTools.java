@@ -1,6 +1,7 @@
 package com.nuoman.tabletattendance.common.utils;
 
 import android.app.Activity;
+import android.app.ActivityManager;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.pm.PackageManager;
@@ -28,6 +29,7 @@ import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.util.Calendar;
 import java.util.IdentityHashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -370,7 +372,37 @@ public class AppTools {
         }
     }
 
+    /**
+     * 判断程序是否在前台运行
+     *
+     * @param context
+     * @return
+     */
+    public static boolean isAppOnForeground(Activity context) {
+        // Returns a list of application processes that are running on the
+        // device
 
+        ActivityManager activityManager = (ActivityManager) context.getApplicationContext().getSystemService(Context.ACTIVITY_SERVICE);
+        String packageName = context.getApplicationContext().getPackageName();
+
+        List<ActivityManager.RunningAppProcessInfo> appProcesses = activityManager
+                .getRunningAppProcesses();
+        if (appProcesses == null) {
+            return false;
+        }
+
+        for (ActivityManager.RunningAppProcessInfo appProcess : appProcesses)
+
+        {
+            // The name of the process that this object is associated with.
+            if (appProcess.processName.equals(packageName)
+                    && appProcess.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND) {
+                return true;
+            }
+        }
+
+        return false;
+    }
     // wifi热点开关
     public static boolean setWifiApEnabled(boolean enabled) {
         WifiManager wifiManager = (WifiManager) AppConfig.getContext().getSystemService(Context.WIFI_SERVICE);

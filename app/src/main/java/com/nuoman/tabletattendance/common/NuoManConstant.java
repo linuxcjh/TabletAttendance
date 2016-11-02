@@ -105,11 +105,24 @@ public class NuoManConstant {
      */
     public static final String LIGHT_SCREEN_LIGHT = "light_screen_light";
 
+    /**
+     * 上传设备信息
+     */
+    public static final String UPLOAD_DEVICE_INFO = "upload_device_info";
+
 
     /**
      * token
      */
     public static final String TOKEN = "token";
+
+    /**
+     * 设备状态
+     */
+    public static final String DEVICE_STATUS = "device_status";
+    public static final String DEVICE_STATUS_DEC = "device_status_dec";
+
+
 
 
 

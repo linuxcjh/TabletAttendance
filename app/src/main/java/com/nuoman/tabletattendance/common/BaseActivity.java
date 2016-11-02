@@ -9,6 +9,9 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 
+import com.nuoman.tabletattendance.common.utils.AppConfig;
+import com.nuoman.tabletattendance.common.utils.AppTools;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,6 +33,20 @@ public class BaseActivity extends FragmentActivity {
 //去掉虚拟按键全屏显示
         getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
         activityList.add(0, this);
+    }
+
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (AppTools.isAppOnForeground(BaseActivity.this)) {
+            AppConfig.setIntConfig(NuoManConstant.DEVICE_STATUS, 3);
+            AppConfig.setStringConfig(NuoManConstant.DEVICE_STATUS_DEC, "程序恢复前台运行");
+        } else {
+            AppConfig.setIntConfig(NuoManConstant.DEVICE_STATUS, 1);
+            AppConfig.setStringConfig(NuoManConstant.DEVICE_STATUS_DEC, "程序后台运行");
+
+        }
     }
 
 

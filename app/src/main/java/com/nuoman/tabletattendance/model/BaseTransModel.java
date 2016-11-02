@@ -1,10 +1,12 @@
 package com.nuoman.tabletattendance.model;
 
+import java.io.Serializable;
+
 /**
  * AUTHOR: Alex
  * DATE: 9/8/2016 10:38
  */
-public class BaseTransModel {
+public class BaseTransModel implements Serializable{
 
     //    {"machineId":"1","cardNo":"0008124733","attDate":"2016-08-16 11:25:02","attPicUrl":"aaaaaaa.jpg"}
     private String tel;
@@ -32,6 +34,35 @@ public class BaseTransModel {
     private String type;//type取值范围: 1: 大蓝 2：小蓝  3：大黑
 
     private String kind;
+
+    private String dvcId; //设备ID
+    private String status;    //设备状态  0：正常 1：主程序未运行 2：拍照异常 3：其他异常
+    private String desc;//问题描述(长度不超过255)
+
+
+    public String getDvcId() {
+        return dvcId;
+    }
+
+    public void setDvcId(String dvcId) {
+        this.dvcId = dvcId;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getDesc() {
+        return desc;
+    }
+
+    public void setDesc(String desc) {
+        this.desc = desc;
+    }
 
     public String getKind() {
         return kind;

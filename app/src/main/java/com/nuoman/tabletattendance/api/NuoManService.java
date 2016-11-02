@@ -47,4 +47,7 @@ public interface NuoManService {
     //获取录音列表
     String GETAUDIOLISTBYUSERID="GetAudioListByUserId";
 
+    //上传设备信息
+    String DEVICECOMM="DeviceComm";
+
 }
