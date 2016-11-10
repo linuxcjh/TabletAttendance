@@ -149,6 +149,7 @@
         </receiver>
         <meta-data android:value="330ff14c26f5121d072dc03ecbd4b90a" android:name="BUG_HD_SDK_GENERAL_KEY" />
 
+        <activity android:name=".AttendanceDetailsActivity"/>
     </application>
 
 </manifest>

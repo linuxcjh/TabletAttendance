@@ -57,18 +57,36 @@
                 android:layout_weight="1"
                 android:orientation="vertical">
 
-                <TextView
-                    android:id="@+id/h_school_name_tv"
-                    android:layout_width="437dp"
-                    android:layout_height="233dp"
-                    android:layout_marginTop="20dp"
-                    android:background="@drawable/main_school_punch_name_bg"
-                    android:gravity="center"
-                    android:lineSpacingExtra="10dp"
-                    android:text="西安市高新区\n蓓蕾幼儿园"
-                    android:textColor="#0CABFE"
-                    android:textSize="50dp"
-                    android:textStyle="bold" />
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="255dp">
+
+                    <TextView
+                        android:id="@+id/h_school_name_tv"
+                        android:layout_width="437dp"
+                        android:layout_height="233dp"
+                        android:layout_marginTop="20dp"
+                        android:background="@drawable/main_school_punch_name_bg"
+                        android:gravity="center"
+                        android:lineSpacingExtra="10dp"
+                        android:text="西安市高新区\n蓓蕾幼儿园"
+                        android:textColor="#0CABFE"
+                        android:textSize="50dp"
+                        android:textStyle="bold" />
+
+                    <Button
+                        android:id="@+id/h_attendance_bt"
+                        android:layout_width="100dp"
+                        android:layout_height="34dp"
+                        android:layout_alignParentBottom="true"
+                        android:layout_alignParentRight="true"
+                        android:layout_marginBottom="20dp"
+                        android:layout_marginRight="70dp"
+                        android:background="@drawable/att_details_03"
+                        android:textColor="@android:color/white"
+                        android:textSize="16sp" />
+
+                </RelativeLayout>
 
                 <RelativeLayout
                     android:layout_width="match_parent"

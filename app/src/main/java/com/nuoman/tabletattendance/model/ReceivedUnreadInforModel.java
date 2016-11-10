@@ -8,6 +8,15 @@ public class ReceivedUnreadInforModel {
 
     private String headPicUrl;
     private String studentName;
+    private String attStatus;
+
+    public String getAttStatus() {
+        return attStatus;
+    }
+
+    public void setAttStatus(String attStatus) {
+        this.attStatus = attStatus;
+    }
 
     public String getHeadPicUrl() {
         return headPicUrl;

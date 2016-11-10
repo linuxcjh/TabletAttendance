@@ -49,5 +49,8 @@ public interface NuoManService {
 
     //上传设备信息
     String DEVICECOMM="DeviceComm";
+    
+    //获取考勤信息列表接口
+    String GETATTLISTBYCLASSID="GetAttListByClassId";
 
 }

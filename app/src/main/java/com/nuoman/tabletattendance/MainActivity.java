@@ -21,6 +21,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -142,6 +143,9 @@ public class MainActivity extends BaseActivity implements ICommonAction, CameraF
     KeyboardView keyboardKbv;
     @Bind(R.id.no_card_layout)
     LinearLayout noCardLayout;
+    @Bind(R.id.h_attendance_bt)
+    Button hAttendanceBt;
+
 
     private TextToSpeech textToSpeech;
     private CommonPresenter commonPresenter;
@@ -532,7 +536,7 @@ public class MainActivity extends BaseActivity implements ICommonAction, CameraF
 
     }
 
-    @OnClick({R.id.h_homework_iv, R.id.h_info_iv, R.id.h_voice_iv, R.id.h_no_card_iv})
+    @OnClick({R.id.h_homework_iv, R.id.h_info_iv, R.id.h_voice_iv, R.id.h_attendance_bt, R.id.h_no_card_iv})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.h_homework_iv:
@@ -545,6 +549,10 @@ public class MainActivity extends BaseActivity implements ICommonAction, CameraF
             case R.id.h_voice_iv:
 
                 startActivity(new Intent(this, HomeVoiceActivity.class));
+                break;
+            case R.id.h_attendance_bt:
+                startActivity(new Intent(this, AttendanceDetailsActivity.class));
+
                 break;
             case R.id.h_no_card_iv:
 
